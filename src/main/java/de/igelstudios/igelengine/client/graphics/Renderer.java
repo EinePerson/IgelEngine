@@ -38,7 +38,7 @@ public class Renderer {
 
     int vao, vbo,ebo;
     public Renderer(){
-        tex = Texture.get("test.png");
+        tex = Texture.get("test2.png");
         shader = new Shader("default");
         vao = glGenVertexArrays();
         glBindVertexArray(vao);

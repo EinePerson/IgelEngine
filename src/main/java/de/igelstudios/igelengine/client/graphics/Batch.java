@@ -2,7 +2,11 @@ package de.igelstudios.igelengine.client.graphics;
 
 import de.igelstudios.igelengine.client.ClientScene;
 import de.igelstudios.igelengine.client.graphics.shader.Shader;
+import de.igelstudios.igelengine.client.graphics.texture.Texture;
 import de.igelstudios.igelengine.common.scene.SceneObject;
+import org.joml.Vector2f;
+
+import java.util.List;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -17,7 +21,7 @@ public class Batch {
 
     public Batch(int size){
         shader = new Shader("default");
-        vertices = new float[size * 24];
+        vertices = new float[size * 20];
         this.size = size;
 
         vao = glGenVertexArrays();
@@ -32,11 +36,11 @@ public class Batch {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,indices,GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0,2,GL_FLOAT,false,24,0);
+        glVertexAttribPointer(0,2,GL_FLOAT,false,20,0);
         glEnableVertexAttribArray(0);
 
 
-        glVertexAttribPointer(1,4,GL_FLOAT,false,24,8);
+        glVertexAttribPointer(1,3,GL_FLOAT,false,20,8);
         glEnableVertexAttribArray(1);
     }
 
@@ -55,6 +59,12 @@ public class Batch {
         shader.use();
         shader.putMat("projMat",scene.getCam().getProjMat());
         shader.putMat("viewMat",scene.getCam().getViewMat());
+
+        List<Texture> tex = Texture.get().stream().toList();
+        for (int i = 0; i < tex.size(); i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            tex.get(i).bind();
+        }
 
         glBindVertexArray(vao);
         glEnableVertexAttribArray(0);
@@ -82,10 +92,11 @@ public class Batch {
     }
 
     public void add(int i,SceneObject obj){
-        int j = i * 24;
+        int j = i * 20;
 
         float k = 1.0f;
         float l = 1.0f;
+        Vector2f[] vecs = mapToSheet(obj.getUv().x,obj.getUv().y);
         for (int m = 0; m < 4; m++) {
             switch (m) {
                 case 1 -> l = 0.0f;
@@ -96,14 +107,27 @@ public class Batch {
 
             vertices[j] = obj.getPos().x + k;
             vertices[j + 1] = obj.getPos().y + l;
+            vertices[j + 2] = obj.getTex();
+            vertices[j + 3] = Texture.TEX_COORDS[m].x * 0.0625f;
+            vertices[j + 4] = Texture.TEX_COORDS[m].y * 0.0625f;
+            //vertices[j + 5] = obj.getCol().w;
 
-            vertices[j + 2] = obj.getCol().x;
-            vertices[j + 3] = obj.getCol().y;
-            vertices[j + 4] = obj.getCol().z;
-            vertices[j + 5] = obj.getCol().w;
-
-            j += 6;
+            j += 5;
         }
+    }
+
+    public Vector2f[] mapToSheet(int u,int v){
+        float topY = (v + 256) / 16.0f;
+        float rightX = (u + 256) / 16.0f;
+        float leftX = u / 16.0f;
+        float bottomY = v / 16.0f;
+
+        return new Vector2f[]{
+                new Vector2f(rightX, topY),
+                new Vector2f(rightX, bottomY),
+                new Vector2f(leftX, bottomY),
+                new Vector2f(leftX, topY)
+        };
     }
 
     public int getSize() {

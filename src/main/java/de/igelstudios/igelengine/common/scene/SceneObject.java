@@ -2,29 +2,42 @@ package de.igelstudios.igelengine.common.scene;
 
 import de.igelstudios.igelengine.common.util.Test;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector4f;
 
 public class SceneObject {
     protected Vector2f pos;
     protected String name;
+    protected Vector2i uv;
 
-    @Test
-    protected Vector4f col;
+    protected int tex;
 
     public SceneObject setPos(Vector2f pos) {
         this.pos = pos;
         return this;
     }
 
-    @Test
-    public SceneObject setCol(Vector4f col) {
-        this.col = col;
+    public SceneObject setTex(int tex) {
+        this.tex = tex;
         return this;
     }
 
-    @Test
-    public Vector4f getCol() {
-        return col;
+    public SceneObject setUv(Vector2i uv) {
+        this.uv = uv;
+        return this;
+    }
+
+    public SceneObject setUv(int u,int v) {
+        this.uv = new Vector2i(u,v);
+        return this;
+    }
+
+    public int getTex() {
+        return tex;
+    }
+
+    public Vector2i getUv() {
+        return uv;
     }
 
     public SceneObject setName(String name) {

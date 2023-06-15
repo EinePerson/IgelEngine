@@ -2,6 +2,7 @@ package de.igelstudios.igelengine.client;
 
 import de.igelstudios.ClientMain;
 import de.igelstudios.igelengine.client.graphics.Renderer;
+import de.igelstudios.igelengine.client.graphics.texture.Texture;
 import de.igelstudios.igelengine.client.keys.HIDInput;
 import de.igelstudios.igelengine.common.Engine;
 import de.igelstudios.igelengine.common.networking.client.Client;
@@ -29,22 +30,22 @@ public class ClientEngine extends Engine {
         scene = new ClientScene();
 
 
-        //scene.addObject(new SceneObject().setPos(new Vector2f(0f,0f)).setCol(new Vector4f(1.0f,0.0f,0.0f,0.0f)));
+        scene.addObject(new SceneObject().setPos(new Vector2f(0f,0f)).setTex(0).setUv(0,0));
         //scene.addObject(new SceneObject().setPos(new Vector2f(79f,44f)).setCol(new Vector4f(0.0f,1.0f,0.0f,0.0f)));
         //lmn;lnm;mnl;mln;nlm;nml;
-        int k = 0;
+        /*int k = 0;
         float l = 0.001f;
         float m = 0.001f;
         float n = 0.001f;
         for (int i = 0; i < 80; i++) {
             for (int j = 0; j < 45; j++) {
                 scene.addObject(new SceneObject().setPos(new Vector2f(i,j)).setCol(new Vector4f(l * (j + 1),m * (j + 1),n * (j + 1),0.0f)));
-                if(k < 1200)m += 0.00001f;
-                else if(k < 2400)l += 0.00001f;
+                if(k < 1200)l += 0.00001f;
+                else if(k < 2400)m += 0.00001f;
                 else n += 0.00001f;
                 k++;
             }
-        }
+        }*/
     }
 
     @Override
