@@ -2,10 +2,25 @@ package de.igelstudios.igelengine.common.scene;
 
 import de.igelstudios.igelengine.common.entity.Entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Scene {
-    protected Entity[][] entities;
+    protected List<SceneObject> objects;
 
     public Scene(){
-        entities = new Entity[16][16];
+        objects = new ArrayList<>();
+    }
+
+    public List<SceneObject> getObjects() {
+        return objects;
+    }
+
+    public void addObject(SceneObject obj){
+        objects.add(obj);
+    }
+
+    public void removeObject(SceneObject obj){
+        objects.remove(obj);
     }
 }

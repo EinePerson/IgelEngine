@@ -5,8 +5,8 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class Camera {
-    private static final int TILES_X = 160;
-    private static final int TILES_Y = 90;
+    public static final int TILES_X = 40;
+    public static final int TILES_Y = 23;
     private Matrix4f projMat, viewMat;
     private Vector2f pos;
 
@@ -19,7 +19,7 @@ public class Camera {
 
     public void adjust(){
         projMat.identity();
-        projMat.ortho(0.0f,16 * TILES_X,0.0f,16 * TILES_Y,0.0f,100f);
+        projMat.ortho(0.0f,80,0.0f,45,0.0f,100f);
     }
 
     public Matrix4f getViewMat() {

@@ -2,6 +2,7 @@ package de.igelstudios.igelengine.client;
 
 import de.igelstudios.ClientMain;
 import de.igelstudios.ServerMain;
+import de.igelstudios.igelengine.client.graphics.texture.Texture;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
@@ -48,6 +49,7 @@ public class Window{
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_DECORATED,GLFW_FALSE);
         if(windowed)glfwWindowHint(GLFW_RESIZABLE,GLFW_TRUE);
 
         window = glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
@@ -58,13 +60,10 @@ public class Window{
 
         glfwRequestWindowAttention(window);
         try(MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer i = stack.mallocInt(1);
-            IntBuffer j = stack.mallocInt(1);
-            IntBuffer k = stack.mallocInt(1);
-            ByteBuffer img = stbi_load("src/main/resources/Icon.png",i,j,k,4);
-            if(img == null)throw new RuntimeException("Could not Load Image");
+            Texture.TextureInfo info = new Texture.TextureInfo();
+            ByteBuffer img = Texture.read("Icon.png",info);
             GLFWImage glfwImg = GLFWImage.malloc();
-            glfwImg.set(i.get(),j.get(),img);
+            glfwImg.set(info.ip0().get(),info.ip1().get(),img);
             glfwSetWindowIcon(window, GLFWImage.calloc(1,stack).put(0,glfwImg));
         }
         glfwSetWindowSizeLimits(window, width, height, width, height);

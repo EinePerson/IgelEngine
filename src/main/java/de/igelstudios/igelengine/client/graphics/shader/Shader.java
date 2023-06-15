@@ -6,13 +6,14 @@ import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 
-import static org.lwjgl.opengl.GL40.*;
+import static org.lwjgl.opengl.GL46.*;
 
 public class Shader {
     private int[] shaders;
@@ -35,21 +36,17 @@ public class Shader {
 
     }
     private static int load(int type,String name){
-        try {
+        try(InputStream stream = Objects.requireNonNull(Shader.class.getClassLoader().getResourceAsStream("shaders/" + name))) {
             int id = glCreateShader(type);
-            glShaderSource(id, Files.readString(Path.of(Objects.requireNonNull(Shader.class.getClassLoader().getResource("shader/" + name)).toURI())));
+            glShaderSource(id,new String(stream.readAllBytes()));
             glCompileShader(id);
             int i = glGetShaderi(id, GL_COMPILE_STATUS);
             if (i == GL_FALSE) ClientMain.LOGGER.error(name + " Shader compilation failed." + glGetShaderInfoLog(id, glGetShaderi(id, GL_INFO_LOG_LENGTH)));
 
             return id;
-        } catch (IOException | URISyntaxException | NullPointerException e) {
+        } catch (IOException | NullPointerException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public int getProgram() {
-        return program;
     }
 
     public Shader(String name){

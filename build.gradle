@@ -4,6 +4,8 @@ plugins {
     id 'java'
 }
 
+//sourceCompatibility = project.java_version
+//targetCompatibility = project.java_version
 group = 'de.igelstudios'
 version = project.game_version
 
@@ -67,22 +69,28 @@ jar {
                 'Main-Class': 'de.igelstudios.ClientMain'
         )
     }
-}
-
-/*tasks.register('compileShaders') {
-    inputs.dir "src/main/shader"
-    outputs.dir "src/main/resources/shader"
-    doLast {
-        fileTree("src/main/shader").each { shaderFile ->
-            def spvFile = file("${projectDir}/src/main/resources/shader/${shaderFile.name}.spv")
-            if (!spvFile.exists() || shaderFile.lastModified() > spvFile.lastModified()) {
-                exec {
-                    workingDir file("${projectDir}/src/main/shader")
-                    commandLine "glslc", "${shaderFile}", "-o", "${spvFile}"
-                }
-            }
-        }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
-processResources.dependsOn compileShaders*/
+tasks.register('fatJar', Jar) {
+    manifest.from jar.manifest
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    } {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
+    with jar
+}
+
+
+tasks.withType(Jar).all {
+    duplicatesStrategy 'exclude'
+}
+
+artifacts {
+    archives fatJar
+}
