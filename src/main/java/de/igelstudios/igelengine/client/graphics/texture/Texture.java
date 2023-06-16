@@ -19,12 +19,12 @@ import java.util.Objects;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
-    public static final int SPRITE_PER_TEXTURE = 4;
+    public static final int SPRITE_PER_TEXTURE = 16;
     public static final Vector2f[] TEX_COORDS = {
-            new Vector2f(1, 1),
             new Vector2f(1, 0),
-            new Vector2f(0, 0),
+            new Vector2f(1, 1),
             new Vector2f(0, 1),
+            new Vector2f(0, 0),
     };
     private static final Map<String, Texture> textures = new HashMap<>();
     private String path;
@@ -68,7 +68,7 @@ public class Texture {
             ByteBuffer byteBuffer = BufferUtils.createByteBuffer(bytes.length);
             byteBuffer.put(bytes);
             byteBuffer.rewind();
-            stbi_set_flip_vertically_on_load(flip);
+            //stbi_set_flip_vertically_on_load(flip);
             ByteBuffer img = STBImage.stbi_load_from_memory(byteBuffer, info.ip0, info.ip1, info.ip2, 4);
             if(img == null)throw new RuntimeException("Could not load image" + stbi_failure_reason());
             return img;

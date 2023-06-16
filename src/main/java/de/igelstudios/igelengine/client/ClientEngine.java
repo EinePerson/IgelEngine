@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 public class ClientEngine extends Engine {
+
     private Window window;
     private final HIDInput input;
     private Renderer renderer;
@@ -30,7 +31,8 @@ public class ClientEngine extends Engine {
         scene = new ClientScene();
 
 
-        scene.addObject(new SceneObject().setPos(new Vector2f(0f,0f)).setTex(0).setUv(0,0));
+        scene.addObject(new SceneObject().setPos(new Vector2f(0f,0f)).setTex(0).setUv(0,15));
+        scene.addObject(new SceneObject().setPos(new Vector2f(0f,1f)).setTex(0).setUv(0,0));
         //scene.addObject(new SceneObject().setPos(new Vector2f(79f,44f)).setCol(new Vector4f(0.0f,1.0f,0.0f,0.0f)));
         //lmn;lnm;mnl;mln;nlm;nml;
         /*int k = 0;

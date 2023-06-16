@@ -108,8 +108,8 @@ public class Batch {
             vertices[j] = obj.getPos().x + k;
             vertices[j + 1] = obj.getPos().y + l;
             vertices[j + 2] = obj.getTex();
-            vertices[j + 3] = Texture.TEX_COORDS[m].x * 0.0625f;
-            vertices[j + 4] = Texture.TEX_COORDS[m].y * 0.0625f;
+            vertices[j + 3] = (Texture.TEX_COORDS[m].x + obj.getUv().x) * ((float) 1 / Texture.SPRITE_PER_TEXTURE);
+            vertices[j + 4] = (Texture.TEX_COORDS[m].y + obj.getUv().y) * ((float) 1 / Texture.SPRITE_PER_TEXTURE);
             //vertices[j + 5] = obj.getCol().w;
 
             j += 5;
