@@ -20,7 +20,7 @@ public class Camera {
     public void adjust(){
         projMat.identity();
         //INFO 80,45
-        projMat.ortho(0.0f,1 ,0.0f,1,0.0f,100f);
+        projMat.ortho(0.0f,80 ,0.0f,45,0.0f,100f);
     }
 
     public Matrix4f getViewMat() {
