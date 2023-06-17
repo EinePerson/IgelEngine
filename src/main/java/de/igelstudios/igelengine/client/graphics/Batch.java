@@ -2,11 +2,13 @@ package de.igelstudios.igelengine.client.graphics;
 
 import de.igelstudios.igelengine.client.ClientScene;
 import de.igelstudios.igelengine.client.graphics.shader.Shader;
+import de.igelstudios.igelengine.client.graphics.text.Char;
 import de.igelstudios.igelengine.client.graphics.texture.Texture;
 import de.igelstudios.igelengine.common.scene.SceneObject;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL15.*;
@@ -18,10 +20,13 @@ public class Batch {
     private Shader shader;
     private float[] vertices;
     private int vao,vbo;
-    private final int size;
+    private int size;
     private boolean dirty;
+    private final int orgSize;
+    private int gi = 0;
 
     public Batch(int size){
+        this.orgSize = size;
         shader = new Shader("default");
         vertices = new float[size * 20];
         this.size = size;
@@ -105,6 +110,7 @@ public class Batch {
 
     public void add(int i,SceneObject obj){
         int j = i * 20;
+        if(j >= vertices.length)widen();
 
         float k = 1.0f;
         float l = 1.0f;
@@ -129,5 +135,36 @@ public class Batch {
 
     public int getSize() {
         return size;
+    }
+
+    private void widen(){
+        System.out.println("Widening");
+        int bSize = size;
+        size += orgSize;
+        float[] nvertices = new float[size * 20];
+        System.arraycopy(vertices,0,nvertices,0,bSize * 20);
+
+        vertices = nvertices;
+
+        vao = glGenVertexArrays();
+        glBindVertexArray(vao);
+
+        vbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER,vbo);
+        glBufferData(GL_ARRAY_BUFFER,vertices.length * 4L,GL_DYNAMIC_DRAW);
+
+        int ebo = glGenBuffers();
+        int[] indices = genIndices();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,indices,GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0,2,GL_FLOAT,false,20,0);
+        glEnableVertexAttribArray(0);
+
+
+        glVertexAttribPointer(1,3,GL_FLOAT,false,20,8);
+        glEnableVertexAttribArray(1);
+
+        dirty = true;
     }
 }
