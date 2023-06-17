@@ -1,17 +1,16 @@
 package de.igelstudios.igelengine.common;
 
-import de.igelstudios.igelengine.common.scene.Scene;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
-
 public abstract class Engine {
-    protected static final int TPS = 20;
 
     private boolean running;
+    public void start(){
+        running = true;
+        run();
+    }
 
     public final void run() {
         running = true;
-        double ticks = 1000000000d / TPS;
+        double ticks = 1000000000d / 20;
         double delta = 0d;
         long org = System.nanoTime();
         long sTimer = 0;
@@ -36,7 +35,7 @@ public abstract class Engine {
 
 
     /**
-     * Called about every second
+     * Called every second
      */
     public void second(){
 
@@ -59,7 +58,7 @@ public abstract class Engine {
     public abstract void tick(long deltat);
 
     /**
-     * called every itteration of the loop
+     * called every iteration of the loop
      */
     public void loop(){
 

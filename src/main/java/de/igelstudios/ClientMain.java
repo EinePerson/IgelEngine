@@ -1,7 +1,10 @@
 package de.igelstudios;
 
+import de.igelstudios.game.config.ClientConfig;
 import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.Window;
+import de.igelstudios.igelengine.client.graphics.text.GLFont;
+import de.igelstudios.igelengine.client.lang.Text;
 import de.igelstudios.igelengine.common.Engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +29,17 @@ public class ClientMain {
     }
 
     private ClientEngine engine;
+    private ClientConfig config;
+    private final GLFont font;
 
     public ClientMain(){
+        font = new GLFont("C:/Windows/Fonts/Candaraz.ttf", 64);
         engine = new ClientEngine();
 
         instance = this;
+        config = new ClientConfig();
+        System.out.println(Text.translatable("a"));
 
-        engine.run();
+        engine.start();
     }
 }

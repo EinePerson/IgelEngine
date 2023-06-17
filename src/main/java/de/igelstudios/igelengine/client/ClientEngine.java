@@ -7,6 +7,7 @@ import de.igelstudios.igelengine.client.keys.HIDInput;
 import de.igelstudios.igelengine.common.Engine;
 import de.igelstudios.igelengine.common.networking.client.Client;
 import de.igelstudios.igelengine.common.scene.SceneObject;
+import de.igelstudios.igelengine.common.util.Test;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
@@ -21,6 +22,10 @@ public class ClientEngine extends Engine {
     private Renderer renderer;
     private ClientScene scene;
     int fps = 0;
+    @Test
+    int o = 0;
+    @Test
+    SceneObject object;
 
     public ClientEngine(){
         window = new Window();
@@ -30,8 +35,8 @@ public class ClientEngine extends Engine {
         GL11.glClearColor(1.0f,1.0f,1.0f,1.0f);
         scene = new ClientScene();
 
-
-        scene.addObject(new SceneObject().setPos(new Vector2f(0f,0f)).setTex(0).setUv(0,15));
+        object = new SceneObject().setPos(new Vector2f(0f,0f)).setTex(0).setUv(0,15);
+        scene.addObject(object);
         scene.addObject(new SceneObject().setPos(new Vector2f(0f,1f)).setTex(0).setUv(0,0));
         //scene.addObject(new SceneObject().setPos(new Vector2f(79f,44f)).setCol(new Vector4f(0.0f,1.0f,0.0f,0.0f)));
         //lmn;lnm;mnl;mln;nlm;nml;
@@ -58,6 +63,8 @@ public class ClientEngine extends Engine {
     @Override
     public void tick(long deltat) {
         input.invokeContinuous();
+        if(o == 1000)object.setPos(new Vector2f(15.0f,15.0f));
+        o++;
         //scene.getCam().getPos().x -= 1.0f;
         //scene.getCam().getPos().y -= 0.5625f;
     }

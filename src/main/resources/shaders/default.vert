@@ -1,6 +1,6 @@
 #version 450
 
-layout(location = 0) in vec3 pos;
+layout(location = 0) in vec2 pos;
 layout(location = 1) in vec3 color;
 //in vec2 uv;
 
@@ -13,6 +13,6 @@ layout(location = 0) out vec3 outColor;
 void main() {
     //inUV = uv;
     outColor = color;
-    gl_Position = projMat * viewMat * vec4(pos,1.0f);
+    gl_Position = projMat * viewMat * vec4(pos,0.0f,1.0f);
     //gl_Position = vec4(pos,1.0f);
 }
