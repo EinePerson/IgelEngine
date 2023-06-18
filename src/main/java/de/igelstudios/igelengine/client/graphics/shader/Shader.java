@@ -85,6 +85,12 @@ public class Shader {
         glUniform1i(loc,i);
     }
 
+    public void pitInt(String varName, int[] arr) {
+        int pos = glGetUniformLocation(program, varName);
+        use();
+        glUniform1iv(pos, arr);
+    }
+
     public void use(){
         if(used)return;
         glUseProgram(program);

@@ -73,7 +73,7 @@ public class Texture {
             byteBuffer.put(bytes);
             byteBuffer.rewind();
             ByteBuffer img = STBImage.stbi_load_from_memory(byteBuffer, info.ip0, info.ip1, info.ip2, 4);
-            if(img == null)throw new RuntimeException("Could not load image" + stbi_failure_reason());
+            if(img == null)throw new RuntimeException("Could not load image " + name + " " + stbi_failure_reason());
             return img;
         }catch (IOException e){
             throw new RuntimeException(e);
@@ -92,6 +92,10 @@ public class Texture {
         return path;
     }
 
+    public static int getID(String name){
+        return get(name).getID();
+    }
+
     public int getID() {
         return texIDs.get(path);
     }
@@ -101,6 +105,10 @@ public class Texture {
     }
     public static void unbind(String path){
         textures.get(texIDs.get(path)).unbind();
+    }
+
+    public static Map<Integer, Texture> getTextures() {
+        return textures;
     }
 
     public record TextureInfo(IntBuffer ip0, IntBuffer ip1, IntBuffer ip2){

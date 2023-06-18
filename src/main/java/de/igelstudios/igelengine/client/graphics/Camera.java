@@ -34,6 +34,11 @@ public class Camera {
         return projMat;
     }
 
+    public void move(Vector2f pos){
+        this.pos.add(pos);
+        adjust();
+    }
+
     public Vector2f getPos() {
         return pos;
     }

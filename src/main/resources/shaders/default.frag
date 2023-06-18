@@ -7,7 +7,10 @@ uniform sampler2D tex[8];
 layout(location = 0) out vec4 color;
 
 void main() {
-    color = texture(tex[int(inColor.x)],vec2(inColor.y,inColor.z));
+    int id = int(inColor.x);
+    color = texture(tex[id],vec2(inColor.y,inColor.z));
+    //color = vec4(id,0.0f,1.0f,1.0f);
+    //color = vec4(inColor,1.0f);
     //color = vec4(inColor.x,inColor.y,0.0f,0.0f);
    // color = texture(tex,inUV);
 }

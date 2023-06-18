@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.common.scene;
 
+import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
 import de.igelstudios.igelengine.common.util.Test;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -9,7 +10,7 @@ import org.joml.Vector4f;
  * This class is an Object in the Scene
  * if anything changes the Object has to be {@link #markDirty()} to make the changes be reflected on the clients
  */
-public class SceneObject {
+public class SceneObject implements BatchContent {
     protected Vector2f pos;
     protected Vector2i uv;
 
@@ -63,5 +64,10 @@ public class SceneObject {
 
     public boolean isDirty() {
         return dirty;
+    }
+
+    @Override
+    public int getLength() {
+        return 1;
     }
 }
