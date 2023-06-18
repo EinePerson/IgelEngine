@@ -38,8 +38,8 @@ public class Renderer {
     }
 
     public void render(){
-        textBatch.render(textSupplier);
         objectBatch.render(objectSupplier);
+        textBatch.render(textSupplier);
     }
 
     public class TextSupplier implements BatchSupplier<Text>{
