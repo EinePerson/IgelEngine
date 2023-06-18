@@ -38,7 +38,6 @@ public class TextBatch extends Batch<Text> {
 
                 j += 8;
             }
-            System.out.println(j);
             x += chat.getWith() * scale;
         }
     }
