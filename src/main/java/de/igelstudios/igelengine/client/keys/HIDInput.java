@@ -1,7 +1,9 @@
 package de.igelstudios.igelengine.client.keys;
 
 import de.igelstudios.game.Test;
-import org.lwjgl.glfw.GLFW;
+import de.igelstudios.igelengine.client.Window;
+import de.igelstudios.igelengine.client.graphics.Camera;
+import de.igelstudios.igelengine.client.gui.GUIManager;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
@@ -138,14 +140,22 @@ public class HIDInput {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 if (!keys[key] && action == GLFW_PRESS){
-                    if(listeners.containsKey(keyConfig.get(key))) {
-                        listeners.get(keyConfig.get(key)).keySet().forEach(method -> {
-                            try {
-                                method.invoke(listeners.get(keyConfig.get(key)).get(method), true);
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
+                    if(GUIManager.getInstance().hasSelText()){
+                        int keyS = key;
+                        if((mods & GLFW_MOD_SHIFT) == 0) keyS = Character.toLowerCase(key);
+                        else if(key == 46)keyS = 58;
+                    GUIManager.getInstance().addText((char) keyS);
+
+                    }else {
+                        if (listeners.containsKey(keyConfig.get(key))) {
+                            listeners.get(keyConfig.get(key)).keySet().forEach(method -> {
+                                try {
+                                    method.invoke(listeners.get(keyConfig.get(key)).get(method), true);
+                                } catch (IllegalAccessException | InvocationTargetException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                        }
                     }
                 }else if(keys[key] && action == GLFW_RELEASE) {
                     if(listeners.containsKey(keyConfig.get(key))) {
@@ -165,15 +175,20 @@ public class HIDInput {
         mousePos = new GLFWCursorPosCallback() {
             @Override
             public void invoke(long window, double xPos, double yPos) {
-                dragListeners.forEach((name,map) -> map.forEach(((method, listener) -> {
+                xPos /= Window.getWidth();
+                yPos = Window.getHeight() / 2.0f - yPos + (Window.getHeight() / 2.0f);
+                yPos /= Window.getHeight();
+                double finalXPos = xPos * Camera.SIZE_X;
+                double finalYPos = yPos * Camera.SIZE_Y;
+                dragListeners.forEach((name, map) -> map.forEach(((method, listener) -> {
                     try {
                         if(keys[keyConfig.get(name)])
-                            method.invoke(listener,xPos - mouseX,yPos - mouseY,xPos,yPos);
+                            method.invoke(listener, finalXPos - mouseX, finalYPos - mouseY, finalXPos, finalYPos);
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
                 })));
-                mouseMove.forEach(listeners -> listeners.mouseMove(xPos,yPos));
+                mouseMove.forEach(listeners -> listeners.mouseMove(finalXPos,finalYPos));
                 mouseX = xPos;
                 mouseY = yPos;
             }
@@ -182,8 +197,8 @@ public class HIDInput {
         mouseKeys = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int key, int action, int mods) {
-                if (keys[key]){
-                    if(listeners.containsKey(keyConfig.get(key))) {
+                if (keys[key]) {
+                    if (listeners.containsKey(keyConfig.get(key))) {
                         listeners.get(keyConfig.get(key)).keySet().forEach(method -> {
                             try {
                                 method.invoke(listeners.get(keyConfig.get(key)).get(method), false);
@@ -228,12 +243,17 @@ public class HIDInput {
     private void registerKeys() {
         registerKey(GLFW_KEY_D,"right");
         registerKey(GLFW_KEY_A,"left");
+        registerKey(GLFW_MOUSE_BUTTON_1,"LMB");
+        registerKey(GLFW_MOUSE_BUTTON_2,"RMB");
+        registerKey(GLFW_MOUSE_BUTTON_3,"MMB");
     }
 
     /**
      * called when the {@link HIDInput} is created<br> should be used to {@link #registerKeyListener(KeyListener)} all Key Listeners
      */
     private void registerListeners() {
+        registerKeyListener(GUIManager.getInstance());
+        registerMoveListener(GUIManager.getInstance());
         registerKeyListener(new Test());
     }
 

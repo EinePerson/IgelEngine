@@ -1,6 +1,5 @@
 package de.igelstudios.igelengine.client.graphics.text;
 
-import ch.qos.logback.core.util.FileUtil;
 import com.google.gson.Gson;
 import org.lwjgl.BufferUtils;
 
@@ -9,7 +8,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -26,9 +24,9 @@ public class GLFontGen {
     private Map<Integer,Char> chars;
     private int tex;
 
-    public GLFontGen(String name, int fontSize){
+    public GLFontGen(String name){
         this.name = name;
-        this.fontSize = fontSize;
+        this.fontSize = 128;
         generate();
     }
 
@@ -39,7 +37,6 @@ public class GLFontGen {
     private Font create(){
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         try {
-            //Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream(name))
             Font font = Font.createFont(Font.TRUETYPE_FONT, new File(name));
             env.registerFont(font);
             return new Font(font.getName(),Font.PLAIN,fontSize);

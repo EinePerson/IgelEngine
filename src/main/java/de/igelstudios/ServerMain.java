@@ -1,8 +1,8 @@
 package de.igelstudios;
 
 import de.igelstudios.igelengine.client.Window;
-import de.igelstudios.igelengine.common.networking.server.JoinHandler;
 import de.igelstudios.igelengine.common.networking.server.Server;
+import de.igelstudios.igelengine.server.ServerEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,22 +12,25 @@ public class ServerMain {
     private static ServerMain instance;
 
     public static void main(String[] args) {
-        new ServerMain().start();
+        new ServerMain();
     }
 
     public  static synchronized ServerMain getInstance(){
         return instance;
     }
 
-    private Server server;
+    private ServerEngine engine;
 
     public ServerMain(){
         instance = this;
-        server = new Server();
-        Server.registerClient2ServerHandler("Login", JoinHandler::receive);
+        engine = new ServerEngine();
     }
 
     public void start(){
-        server.start();
+        engine.start();
+    }
+
+    public ServerEngine getEngine() {
+        return engine;
     }
 }

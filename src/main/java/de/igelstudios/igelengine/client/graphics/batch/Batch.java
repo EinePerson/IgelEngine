@@ -2,9 +2,8 @@ package de.igelstudios.igelengine.client.graphics.batch;
 
 import de.igelstudios.igelengine.client.graphics.shader.Shader;
 import de.igelstudios.igelengine.client.graphics.texture.Texture;
+import de.igelstudios.igelengine.client.graphics.texture.TexturePool;
 
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL15.*;
@@ -66,6 +65,23 @@ public abstract class Batch<T extends BatchContent> {
 
     public abstract boolean dirtyCheck(List<T> objs);
 
+    protected void clear(int i,List<T> objs){
+        int k = 0;
+        for (int j = 0; j < objs.size() && j < i; j++) {
+            k += objs.get(j).getLength();
+        }
+        int l = k * totalInBits + totalInBits * objs.get(i).getLength();
+        for (int j = k * totalInBits; j < l; j++) {
+            vertices[j] = 0;
+        }
+
+        float[] nverticies = new float[vertices.length];
+        System.arraycopy(vertices,l,nverticies,k * totalInBits,vertices.length - l);
+        System.arraycopy(vertices,0,nverticies,0,k * totalInBits);
+        vertices = nverticies;
+        gi -= objs.get(i).getLength() * totalInBits;
+    }
+
     public void render(BatchSupplier<T> supplier){
         this.supplier = supplier;
         supplier.getSize();
@@ -82,7 +98,7 @@ public abstract class Batch<T extends BatchContent> {
             shader.putMat("viewMat", supplier.getViewMat());
         }
 
-        for (Texture texture : Texture.get()) {
+        for (Texture texture : getTexs().get()) {
             glActiveTexture(GL_TEXTURE0 + texture.getID());
             texture.bind();
         }
@@ -102,6 +118,8 @@ public abstract class Batch<T extends BatchContent> {
 
         shader.unUse();
     }
+
+    protected abstract TexturePool getTexs();
 
     private void loadIndices(int[] i, int j) {
         int k = 6 * j;
@@ -134,35 +152,6 @@ public abstract class Batch<T extends BatchContent> {
         addP(j,obj);
         dirty = true;
         gi += totalInBits * obj.getLength();
-    }
-
-    /*public void add(int i,SceneObject obj){
-        int j = i * 20;
-        if(j >= vertices.length)widen();
-
-        float k = 1.0f;
-        float l = 1.0f;
-        for (int m = 0; m < 4; m++) {
-            switch (m) {
-                case 1 -> l = 0.0f;
-                case 2 -> k = 0.0f;
-                case 3 -> l = 1.0f;
-            }
-
-
-            vertices[j] = obj.getPos().x + k;
-            vertices[j + 1] = obj.getPos().y + l;
-            vertices[j + 2] = obj.getTex();
-            vertices[j + 3] = (Texture.TEX_COORDS[m].x + obj.getUv().x)  / Texture.SPRITE_PER_TEXTURE;
-            vertices[j + 4] = (Texture.TEX_COORDS[m].y + obj.getUv().y)  / Texture.SPRITE_PER_TEXTURE;
-
-            j += 5;
-        }
-        obj.unMarkDirty();
-    }*/
-
-    public int getSize() {
-        return size;
     }
 
     private void widen(){

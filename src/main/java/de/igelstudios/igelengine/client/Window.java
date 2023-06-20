@@ -1,30 +1,30 @@
 package de.igelstudios.igelengine.client;
 
-import de.igelstudios.ClientMain;
-import de.igelstudios.ServerMain;
 import de.igelstudios.igelengine.client.graphics.texture.Texture;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
-import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBImage.stbi_load;
-import static org.lwjgl.system.MemoryStack.stackPush;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window{
+    private static Window instance;
     public static final String TITLE = "Test";
     private String title;
     private int width, height;
+
+    public static int getWidth(){
+        return instance.width;
+    }
+    public static int getHeight(){
+        return instance.height;
+    }
     private final long window;
     private boolean resized;
 
@@ -77,6 +77,7 @@ public class Window{
         GL.createCapabilities();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
+        instance = this;
     }
 
     public Window() {

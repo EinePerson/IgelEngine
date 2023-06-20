@@ -1,9 +1,9 @@
 package de.igelstudios.igelengine.common.networking.server;
 
-import de.igelstudios.igelengine.common.entity.Player;
 import de.igelstudios.igelengine.common.networking.*;
 import de.igelstudios.igelengine.common.networking.Package;
 import de.igelstudios.igelengine.common.networking.client.Client;
+import de.igelstudios.igelengine.common.networking.client.ClientNet;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -13,6 +13,7 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class Server{
     private static final Map<String, ServerHandler> serverHandlers = new HashMap<>();
@@ -26,7 +27,7 @@ public class Server{
         serverHandlers.putIfAbsent(id,handler);
     }
 
-    public static void handle(Player player,Package p){
+    public static void handle(ClientNet player, Package p){
         serverHandlers.get(p.id()).receive(player,p.buf());
     }
     private static Server instance;
@@ -37,7 +38,7 @@ public class Server{
      * @param id the name of the packet
      * @param buf the buffer containing the message data
      */
-    public static void send2Client(Player player, String id, PacketByteBuf buf){
+    public static void send2Client(ClientNet player, String id, PacketByteBuf buf){
         instance.handler.channels.find(instance.handler.get(player)).writeAndFlush(new Package(id,buf));
     }
 
@@ -46,15 +47,16 @@ public class Server{
     private EventLoopGroup workerGroup;
     private ServerMessageHandler handler;
 
-    public Server(){
-        this(Client.DEFAULT_PORT);
+    public Server(Map<UUID, ClientNet> map){
+        this(Client.DEFAULT_PORT,map);
     }
 
-    public Server(int port){
+    public Server(int port,Map<UUID, ClientNet> map){
         this.port = port;
         this.boosGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
         this.handler = new ServerMessageHandler();
+        handler.setPlayers(map);
         instance = this;
     }
 

@@ -5,8 +5,8 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class Camera {
-    public static final int TILES_X = 40;
-    public static final int TILES_Y = 23;
+    public static final int SIZE_X = 80;
+    public static final int SIZE_Y = 45;
     private Matrix4f projMat, viewMat;
     private Vector2f pos;
 

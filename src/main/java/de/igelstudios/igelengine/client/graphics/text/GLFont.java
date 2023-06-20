@@ -2,6 +2,7 @@ package de.igelstudios.igelengine.client.graphics.text;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import de.igelstudios.igelengine.client.graphics.batch.TextBatch;
 import de.igelstudios.igelengine.client.graphics.texture.Texture;
 
 import java.io.InputStreamReader;
@@ -14,7 +15,7 @@ public class GLFont {
 
     public GLFont(String name){
         chars = new Gson().fromJson(new InputStreamReader(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("fonts/" + name + ".json"))),new TypeToken<Map<Integer, Char>>(){}.getType());
-        tex = Texture.get("fonts/" + name + ".png").getID();
+        tex = TextBatch.pool.get("fonts/" + name + ".png").getID();
     }
 
     public Char get(int c){

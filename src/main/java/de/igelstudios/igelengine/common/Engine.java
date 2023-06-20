@@ -1,8 +1,17 @@
 package de.igelstudios.igelengine.common;
 
-public abstract class Engine {
+import de.igelstudios.igelengine.common.util.Tickable;
 
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class Engine {
+    private final List<Tickable> tickables;
     private boolean running;
+
+    public Engine(){
+        tickables = new ArrayList<>();
+    }
     public void start(){
         running = true;
         run();
@@ -22,7 +31,8 @@ public abstract class Engine {
                 sTimer += deltat;
                 org = t;
                 --delta;
-                tick(deltat);
+                tick();
+                tickables.forEach(Tickable::tick);
             }
 
             if(sTimer >= 1000000000){
@@ -52,10 +62,9 @@ public abstract class Engine {
 
     /**
      * Called Every Time a tick occurs
-     * @param deltat the time passed since the last tick
      */
 
-    public abstract void tick(long deltat);
+    public abstract void tick();
 
     /**
      * called every iteration of the loop
@@ -66,5 +75,13 @@ public abstract class Engine {
 
     public final void stop(){
         running = false;
+    }
+
+    public void addTickable(Tickable tickable){
+        tickables.add(tickable);
+    }
+
+    public void removeTickable(Tickable tickable){
+        tickables.remove(tickable);
     }
 }

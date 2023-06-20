@@ -1,7 +1,5 @@
 package de.igelstudios.igelengine.common.scene;
 
-import de.igelstudios.igelengine.common.entity.Entity;
-
 import java.util.ArrayList;
 import java.util.List;
 

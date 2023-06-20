@@ -1,4 +1,4 @@
-package de.igelstudios.game.config;
+package de.igelstudios.igelengine.client.lang;
 
 import de.igelstudios.igelengine.client.lang.Text;
 import de.igelstudios.igelengine.common.io.Config;

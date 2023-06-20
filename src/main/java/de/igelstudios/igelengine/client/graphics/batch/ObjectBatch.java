@@ -2,11 +2,13 @@ package de.igelstudios.igelengine.client.graphics.batch;
 
 import de.igelstudios.igelengine.client.graphics.shader.Shader;
 import de.igelstudios.igelengine.client.graphics.texture.Texture;
+import de.igelstudios.igelengine.client.graphics.texture.TexturePool;
 import de.igelstudios.igelengine.common.scene.SceneObject;
 
 import java.util.List;
 
 public class ObjectBatch extends Batch<SceneObject>{
+    public static final TexturePool pool = new TexturePool();
 
     public ObjectBatch(int size) {
         super(size, new Shader("default"),true,2,3);
@@ -22,6 +24,11 @@ public class ObjectBatch extends Batch<SceneObject>{
             }
         }
         return dirty;
+    }
+
+    @Override
+    protected TexturePool getTexs() {
+        return pool;
     }
 
     @Override

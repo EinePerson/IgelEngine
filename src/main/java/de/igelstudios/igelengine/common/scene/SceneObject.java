@@ -1,10 +1,8 @@
 package de.igelstudios.igelengine.common.scene;
 
 import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
-import de.igelstudios.igelengine.common.util.Test;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.joml.Vector4f;
 
 /**
  * This class is an Object in the Scene

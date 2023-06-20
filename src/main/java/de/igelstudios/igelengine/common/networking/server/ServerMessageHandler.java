@@ -1,7 +1,8 @@
 package de.igelstudios.igelengine.common.networking.server;
 
-import de.igelstudios.igelengine.common.entity.Player;
 import de.igelstudios.igelengine.common.networking.Package;
+import de.igelstudios.igelengine.common.networking.client.ClientNet;
+import de.igelstudios.igelengine.common.util.PlayerFactory;
 import io.netty.channel.*;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
@@ -15,10 +16,10 @@ import java.util.UUID;
 @ChannelHandler.Sharable
 public class ServerMessageHandler extends SimpleChannelInboundHandler<Package> {
     private Map<ChannelId, UUID> playerIds;
-    private Map<UUID,Player> players;
+    private Map<UUID, ClientNet> players;
     ChannelGroup channels;
 
-    ChannelId get(Player player){
+    ChannelId get(ClientNet player){
         UUID id = null;
         for (UUID uuid : players.keySet()) {
             if(players.get(uuid).equals(player)){
@@ -43,23 +44,13 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<Package> {
         Server.handle(players.get(ctx.channel().id()),msg);
     }
 
-    /*@Override
-    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        handlers.put(ctx.channel(),handlers.values().stream().max(Comparator.comparingInt(Integer::intValue)).get());
-    }
-
-    @Override
-    public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-        handlers.remove(ctx.channel());
-    }*/
-
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("User connected");
         channels.add(ctx.channel());
         UUID uuid = UUID.randomUUID();
         playerIds.put(ctx.channel().id(),uuid);
-        players.put(uuid,new Player(uuid));
+        players.put(uuid, PlayerFactory.get(uuid));
     }
 
     @Override
@@ -75,5 +66,9 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<Package> {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         if(cause instanceof SocketException);
         else cause.printStackTrace();
+    }
+
+    public void setPlayers(Map<UUID, ClientNet> players) {
+        this.players = players;
     }
 }
