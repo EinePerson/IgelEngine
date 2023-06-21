@@ -8,7 +8,7 @@ plugins {
 sourceCompatibility = project.java_version
 targetCompatibility = project.java_version
 group = 'de.igelstudios'
-version = project.game_version
+version = "v$game_version"
 
 switch (OperatingSystem.current()) {
     case OperatingSystem.LINUX:
@@ -66,11 +66,11 @@ test {
 }
 
 jar {
-    manifest {
+    /*manifest {
         attributes(
                 'Main-Class': 'de.igelstudios.ClientMain'
         )
-    }
+    }*/
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
@@ -86,6 +86,26 @@ tasks.register('fatJar', Jar) {
         exclude "META-INF/*.RSA"
     }
     with jar
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = "https://maven.pkg.github.com/EinePerson/IgelEngine"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+
+
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
 }
 
 
