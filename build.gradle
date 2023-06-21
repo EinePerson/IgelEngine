@@ -116,3 +116,4 @@ tasks.withType(Jar).all {
 artifacts {
     archives fatJar
 }
+//
