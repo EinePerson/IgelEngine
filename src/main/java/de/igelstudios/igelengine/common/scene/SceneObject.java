@@ -15,6 +15,11 @@ public class SceneObject implements BatchContent {
     protected int tex;
     private boolean dirty;
 
+    public SceneObject setPos(float x,float y) {
+        setPos(new Vector2f(x,y));
+        return this;
+    }
+
     public SceneObject setPos(Vector2f pos) {
         this.pos = pos;
         markDirty();

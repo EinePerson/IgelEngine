@@ -32,16 +32,7 @@ public class Renderer {
         textSupplier = new TextSupplier();
         objectSupplier = new ObjectSupplier();
         renderer = this;
-    }
-
-    private void add(Text text){
-        textBatch.add(textSupplier.texts.size(),text);
-        textSupplier.texts.add(text);
-    }
-
-    private void add(SceneObject object){
-        objectBatch.add(scene.getObjects().size(),object);
-        objectSupplier.objs.add(object);
+        render();
     }
 
     public void render(Text text,float x,float y){
@@ -49,13 +40,16 @@ public class Renderer {
     }
 
     public void render(Text text,float x,float y,int lifetime){
-        add(text.setPos(new Vector2f(x,y)).setLifeTime(lifetime).setColor(1.0f,0.0f,0.0f));
+        text.setPos(new Vector2f(x,y)).setLifeTime(lifetime).setColor(1.0f,0.0f,0.0f);
+        textBatch.add(textSupplier.texts.size(),text);
+        textSupplier.texts.add(text);
     }
 
     public void render(SceneObject obj,float x,float y){
         obj.setPos(new Vector2f(x,y));
         objectBatch.add(scene.getObjects().size(),obj);
         objectSupplier.objs.add(obj);
+        scene.addObject(obj);
     }
 
     public void render(){

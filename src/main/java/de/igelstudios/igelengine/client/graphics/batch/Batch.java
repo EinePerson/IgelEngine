@@ -116,6 +116,10 @@ public abstract class Batch<T extends BatchContent> {
         }
         glBindVertexArray(0);
 
+        for (Texture texture : getTexs().get()) {
+            glActiveTexture(GL_TEXTURE0 + texture.getID());
+            texture.unbind();
+        }
         shader.unUse();
     }
 

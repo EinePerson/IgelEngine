@@ -1,12 +1,17 @@
 package de.igelstudios.igelengine.client;
 
 import de.igelstudios.ClientMain;
+import de.igelstudios.igelengine.client.graphics.Renderer;
 import de.igelstudios.igelengine.client.graphics.text.GLFont;
 import de.igelstudios.igelengine.client.keys.HIDInput;
 import de.igelstudios.igelengine.common.Engine;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
+
+/**
+ * This class has to be initialised before anything else should be done on the client side
+ */
 public class ClientEngine extends Engine {
 
     private Window window;
@@ -44,7 +49,7 @@ public class ClientEngine extends Engine {
     @Override
     public void loop() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        scene.render();
+        Renderer.get().render();
         GLFW.glfwSwapBuffers(window.getWindow());
         window.pollEvents();
         fps++;

@@ -12,12 +12,10 @@ import java.util.List;
 
 public class ClientScene extends Scene implements BatchSupplier<SceneObject> {
     private Camera cam;
-    private Renderer renderer;
 
     public ClientScene(){
-        cam = new Camera(new Vector2f());;
-        renderer = new Renderer(this);
-        renderer.render();
+        cam = new Camera(new Vector2f());
+        new Renderer(this);
     }
     public Camera getCam() {
         return cam;
@@ -25,12 +23,7 @@ public class ClientScene extends Scene implements BatchSupplier<SceneObject> {
 
     @Override
     public void addObject(SceneObject obj) {
-        renderer.render(obj,obj.getPos().x,obj.getPos().y);
         super.addObject(obj);
-    }
-
-    public void render(){
-        renderer.render();
     }
 
     @Override
@@ -56,9 +49,5 @@ public class ClientScene extends Scene implements BatchSupplier<SceneObject> {
     @Override
     public int getSize(int i) {
         return i;
-    }
-
-    public Renderer getRenderer() {
-        return renderer;
     }
 }
