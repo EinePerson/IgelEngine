@@ -112,6 +112,8 @@ wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
+generateMetadataFileForMavenPublication.dependsOn('fatJar')
+
 artifacts {
     archives fatJar
 }
