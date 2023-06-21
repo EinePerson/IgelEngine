@@ -3,6 +3,7 @@ import org.gradle.internal.os.OperatingSystem
 
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
 sourceCompatibility = project.java_version
@@ -34,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.jitpack:gradle-simple:1.0'
+    implementation 'com.github.jitpack:gradle-simple:2.0'
     implementation "com.google.code.gson:gson:$gson_version"
     testImplementation platform("org.junit:junit-bom:$junit_version")
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -93,6 +94,14 @@ tasks.register('fatJar', Jar) {
 
 tasks.withType(Jar).all {
     duplicatesStrategy 'exclude'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
 }
 
 artifacts {
