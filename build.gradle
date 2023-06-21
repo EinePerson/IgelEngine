@@ -1,10 +1,8 @@
 import org.codehaus.groovy.runtime.GStringImpl
 import org.gradle.internal.os.OperatingSystem
 
-plugins {
-    id 'java'
-    id 'maven-publish'
-}
+apply plugin: 'java'
+apply plugin: 'maven-publish'
 
 sourceCompatibility = project.java_version
 targetCompatibility = project.java_version
@@ -79,6 +77,11 @@ jar {
     }
 }
 
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
 tasks.register('fatJar', Jar) {
     manifest.from jar.manifest
     from {
@@ -102,6 +105,11 @@ publishing {
             from components.java
         }
     }
+}
+
+wrapper {
+    gradleVersion = "7.3.3"
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 artifacts {
