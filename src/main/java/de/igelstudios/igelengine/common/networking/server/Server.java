@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Server{
+public class Server extends Thread{
     private static final Map<String, ServerHandler> serverHandlers = new HashMap<>();
 
     /**
@@ -46,21 +46,24 @@ public class Server{
     private EventLoopGroup boosGroup;
     private EventLoopGroup workerGroup;
     private ServerMessageHandler handler;
+    private ErrorHandler errorHandler;
 
-    public Server(Map<UUID, ClientNet> map){
-        this(Client.DEFAULT_PORT,map);
+    public Server(Map<UUID, ClientNet> map,ErrorHandler handler){
+        this(Client.DEFAULT_PORT,map,handler);
     }
 
-    public Server(int port,Map<UUID, ClientNet> map){
+    public Server(int port,Map<UUID, ClientNet> map,ErrorHandler errorHandler){
         this.port = port;
         this.boosGroup = new NioEventLoopGroup();
         this.workerGroup = new NioEventLoopGroup();
-        this.handler = new ServerMessageHandler();
+        this.handler = new ServerMessageHandler(errorHandler);
         handler.setPlayers(map);
+        this.errorHandler = errorHandler;
         instance = this;
     }
 
-    public void start(){
+    @Override
+    public void run(){
         try {
             System.out.println("Started Server");
             ServerBootstrap bootstrap = new ServerBootstrap().group(boosGroup, workerGroup).channel(NioServerSocketChannel.class).option(ChannelOption.SO_BACKLOG, 1024).option(ChannelOption.AUTO_CLOSE, true)
@@ -71,11 +74,11 @@ public class Server{
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            stop();
+            stopServer();
         }
     }
 
-    public void stop(){
+    public void stopServer(){
         boosGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
     }
@@ -83,7 +86,7 @@ public class Server{
     public ChannelInitializer<SocketChannel> createChannel(){
         return new ChannelInitializer<>() {
             @Override
-            protected void initChannel(SocketChannel ch) throws Exception {
+            protected void initChannel(SocketChannel ch) {
                 ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast("encoder", new Encoder());
                 pipeline.addLast("decoder",new Decoder());

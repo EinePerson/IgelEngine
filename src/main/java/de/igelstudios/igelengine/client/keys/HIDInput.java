@@ -1,6 +1,5 @@
 package de.igelstudios.igelengine.client.keys;
 
-import de.igelstudios.game.Test;
 import de.igelstudios.igelengine.client.Window;
 import de.igelstudios.igelengine.client.graphics.Camera;
 import de.igelstudios.igelengine.client.gui.GUIManager;
@@ -18,12 +17,13 @@ import java.util.Map;
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
- * This class is responsible for every input that is physically given through a HID<br>
+ * This class is responsible for every input that is physically given through a HID(Mouse,Keyboard , etc)<br>
  * Keys that are to be used have to be registered in {@link #registerKeys()}<br>
  * Key listeners to be used have to implement {@link KeyListener} with every method using the {@link KeyHandler} annotation and registered using {@link #registerKeyListener(KeyListener)}<br>
  * Key drags to be used have to implement {@link MouseDragListener} with every method using the {@link DragHandler} annotation and registered using
  * {@link #registerDragListener(MouseDragListener)}<br>
- * Mouse move listeners to be used have to implement {@link MouseMoveListener} and registered using {@link #registerMoveListener(MouseMoveListener)}
+ * Mouse move listeners to be used have to implement {@link MouseMoveListener} and registered using {@link #registerMoveListener(MouseMoveListener)}<br>
+ * The standard Mouse buttons LMB,MMB and RMB are always registered
  */
 public class HIDInput {
     private final Map<String, Map<Method,KeyListener>> listeners;
@@ -43,7 +43,7 @@ public class HIDInput {
      * @param listener The listener class to be used<br> Every method being registered has to be annotated with {@link  KeyHandler} annotation
      * @see KeyHandler
      */
-    private void registerKeyListener(KeyListener listener){
+    public void registerKeyListener(KeyListener listener){
         for (Method method : listener.getClass().getMethods()) {
             if(!method.isAnnotationPresent(KeyHandler.class))continue;
             if(method.getParameters().length == 1 && method.getParameters()[0].getType().equals(boolean.class)) {
@@ -121,7 +121,7 @@ public class HIDInput {
      * @param defaultKey the default Key bind
      * @param name The name under which this key is referenced
      */
-    private void registerKey(int defaultKey,String name){
+    public void registerKey(int defaultKey,String name){
         if(defaultKeys.containsKey(defaultKey) && defaultKeys.get(defaultKey).equals(name))
             throw new IllegalArgumentException("The key: " + ((char) defaultKey) + " already is defined as " + defaultKeys.get(defaultKey));
         defaultKeys.put(defaultKey,name);
@@ -237,24 +237,17 @@ public class HIDInput {
         }
     }
 
-    /**
-     * called when the {@link HIDInput} is created<br> should be used to register a key for usage by a {@link KeyListener}
-     */
     private void registerKeys() {
-        registerKey(GLFW_KEY_D,"right");
-        registerKey(GLFW_KEY_A,"left");
+        //registerKey(GLFW_KEY_D,"right");
+        //registerKey(GLFW_KEY_A,"left");
         registerKey(GLFW_MOUSE_BUTTON_1,"LMB");
         registerKey(GLFW_MOUSE_BUTTON_2,"RMB");
         registerKey(GLFW_MOUSE_BUTTON_3,"MMB");
     }
 
-    /**
-     * called when the {@link HIDInput} is created<br> should be used to {@link #registerKeyListener(KeyListener)} all Key Listeners
-     */
     private void registerListeners() {
         registerKeyListener(GUIManager.getInstance());
         registerMoveListener(GUIManager.getInstance());
-        registerKeyListener(new Test());
     }
 
     public void close() {

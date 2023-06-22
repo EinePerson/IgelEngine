@@ -110,25 +110,6 @@ public class Texture {
         return tex;
     }
 
-    /*public static int getID(String name){
-        return get(name).getID();
-    }
-
-    public int getID() {
-        return texIDs.get(path);
-    }
-
-    public static void bind(String path){
-        textures.get(texIDs.get(path)).bind();
-    }
-    public static void unbind(String path){
-        textures.get(texIDs.get(path)).unbind();
-    }
-
-    public static Map<Integer, Texture> getTextures() {
-        return textures;
-    }*/
-
     public record TextureInfo(IntBuffer ip0, IntBuffer ip1, IntBuffer ip2){
 
         public TextureInfo(){

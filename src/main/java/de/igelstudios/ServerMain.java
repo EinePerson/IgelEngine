@@ -1,7 +1,7 @@
 package de.igelstudios;
 
 import de.igelstudios.igelengine.client.Window;
-import de.igelstudios.igelengine.common.networking.server.Server;
+import de.igelstudios.igelengine.common.networking.ErrorHandler;
 import de.igelstudios.igelengine.server.ServerEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,9 +10,10 @@ public class ServerMain {
     public static final Logger LOGGER = LoggerFactory.getLogger(Window.TITLE + ":Server");
 
     private static ServerMain instance;
+    private final ErrorHandler handler;
 
     public static void main(String[] args) {
-        new ServerMain();
+        new ServerMain(Throwable::printStackTrace);
     }
 
     public  static synchronized ServerMain getInstance(){
@@ -21,9 +22,10 @@ public class ServerMain {
 
     private ServerEngine engine;
 
-    public ServerMain(){
+    public ServerMain(ErrorHandler handler){
         instance = this;
-        engine = new ServerEngine();
+        this.handler = handler;
+        engine = new ServerEngine(handler);
     }
 
     public void start(){
