@@ -41,6 +41,7 @@ public abstract class Engine {
             }
             loop();
         }
+        stopSub();
     }
 
 
@@ -70,6 +71,10 @@ public abstract class Engine {
      * called every iteration of the loop
      */
     public void loop(){
+
+    }
+
+    public void stopSub(){
 
     }
 

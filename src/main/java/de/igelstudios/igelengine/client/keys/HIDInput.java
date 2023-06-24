@@ -178,8 +178,8 @@ public class HIDInput {
                 xPos /= Window.getWidth();
                 yPos = Window.getHeight() / 2.0f - yPos + (Window.getHeight() / 2.0f);
                 yPos /= Window.getHeight();
-                double finalXPos = xPos * Camera.SIZE_X;
-                double finalYPos = yPos * Camera.SIZE_Y;
+                double finalXPos = xPos * Camera.getX();
+                double finalYPos = yPos * Camera.getY();
                 dragListeners.forEach((name, map) -> map.forEach(((method, listener) -> {
                     try {
                         if(keys[keyConfig.get(name)])

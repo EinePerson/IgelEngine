@@ -61,6 +61,11 @@ public class ClientEngine extends Engine {
         fps = 0;
     }
 
+    @Override
+    public void stopSub() {
+        window.close();
+    }
+
     public ClientScene getScene() {
         return scene;
     }

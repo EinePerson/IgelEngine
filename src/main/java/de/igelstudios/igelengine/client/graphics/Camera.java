@@ -4,23 +4,55 @@ import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
+import static org.lwjgl.openal.AL10.*;
+
 public class Camera {
-    public static final int SIZE_X = 80;
-    public static final int SIZE_Y = 45;
+    private static int x = 80;
+    private static int y = 45;
     private Matrix4f projMat, viewMat;
     private Vector2f pos;
+    private static Camera instance;
+
+    public static int getX() {
+        return x;
+    }
+
+    public static int getY() {
+        return y;
+    }
+
+    public static void setSize(int x, int y){
+        Camera.x = x;
+        Camera.y = y;
+        instance.adjust();
+    }
 
     public Camera(Vector2f pos){
         this.pos = pos;
         projMat = new Matrix4f();
         viewMat = new Matrix4f();
         adjust();
+        instance = this;
+
+        alListener3f(AL_POSITION, pos.x, pos.y, 0.0f);
+        alListener3f(AL_VELOCITY, 0, 0, 0);
     }
 
     public void adjust(){
         projMat.identity();
-        //INFO 80,45
-        projMat.ortho(0.0f,SIZE_X,0.0f,SIZE_Y,0.0f,100f);
+        projMat.ortho(0.0f, x,0.0f, y,0.0f,100.0f);
+        alListener3f(AL_POSITION, pos.x, pos.y, 0.0f);
+        Vector3f up = new Vector3f(0.0f,1.0f,0.0f);
+        Vector3f at = new Vector3f(0.0f,0.0f,-1.0f);
+        at.add(pos.x,pos.y,0.0f);
+        float[] data = new float[6];
+        data[0] = at.x;
+        data[1] = at.y;
+        data[2] = at.z;
+        data[3] = up.x;
+        data[4] = up.y;
+        data[5] = up.z;
+        alListenerfv(AL_ORIENTATION, data);
     }
 
     public Matrix4f getViewMat() {
