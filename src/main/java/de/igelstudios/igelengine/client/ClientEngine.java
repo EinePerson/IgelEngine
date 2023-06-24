@@ -73,4 +73,12 @@ public class ClientEngine extends Engine {
     public void setScene(ClientScene scene) {
         this.scene = scene;
     }
+
+    public Window getWindow() {
+        return window;
+    }
+
+    public HIDInput getInput() {
+        return input;
+    }
 }
