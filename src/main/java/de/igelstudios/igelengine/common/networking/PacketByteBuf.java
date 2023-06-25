@@ -4,6 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.netty.util.ByteProcessor;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +17,7 @@ import java.nio.channels.GatheringByteChannel;
 import java.nio.channels.ScatteringByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 public class PacketByteBuf extends ByteBuf {
     public static PacketByteBuf create(){
@@ -958,6 +961,41 @@ public class PacketByteBuf extends ByteBuf {
 
     public void writeId(String id){
         this.writeString(id);
+    }
+
+    public void writeUUID(UUID uuid){
+        supper.writeLong(uuid.getMostSignificantBits());
+        supper.writeLong(uuid.getLeastSignificantBits());
+    }
+
+    public UUID readUUID(){
+        return new UUID(supper.readLong(),supper.readLong());
+    }
+
+    public void writeVec2f(Vector2f vec){
+        supper.writeFloat(vec.x);
+        supper.writeFloat(vec.y);
+    }
+
+    public Vector2f readVec2f(){
+        Vector2f vec = new Vector2f();
+        vec.x = supper.readFloat();
+        vec.y = supper.readFloat();
+        return vec;
+    }
+
+    public void writeVec3f(Vector3f vec){
+        supper.writeFloat(vec.x);
+        supper.writeFloat(vec.y);
+        supper.writeFloat(vec.z);
+    }
+
+    public Vector3f readVec3f(){
+        Vector3f vec = new Vector3f();
+        vec.x = supper.readFloat();
+        vec.y = supper.readFloat();
+        vec.z = supper.readFloat();
+        return vec;
     }
 
     public String readId(){
