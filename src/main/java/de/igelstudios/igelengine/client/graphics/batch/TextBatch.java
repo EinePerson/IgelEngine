@@ -52,7 +52,7 @@ public class TextBatch extends Batch<Text> {
                 vertices[j + 1] = obj.getPos().y + (Texture.TEX_COORDS[m].y * chat.getHeight() * scale);
                 vertices[j + 2] = ((float) obj.getFont().getTex());
                 vertices[j + 3] = chat.getTexCords()[(int) Texture.TEX_COORDS[m].x].x;
-                vertices[j + 4] = chat.getTexCords()[(int) Texture.TEX_COORDS[m].y].y;
+                vertices[j + 4] = chat.getTexCords()[(int) Texture.TEX_COORDS[m].y].y * 1.125f;
 
                 vertices[j + 5] = obj.getR();
                 vertices[j + 6] = obj.getG();

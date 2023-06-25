@@ -67,7 +67,7 @@ public class Texture {
     }
 
     public static ByteBuffer read(String name,TextureInfo info){
-        try (InputStream stream = ClientMain.getInstance().getClazz().getClassLoader().getResourceAsStream(name)){
+        try (InputStream stream = ClientMain.class.getClassLoader().getResourceAsStream(name)){
             byte[] bytes = Objects.requireNonNull(stream).readAllBytes();
             ByteBuffer byteBuffer = BufferUtils.createByteBuffer(bytes.length);
             byteBuffer.put(bytes);

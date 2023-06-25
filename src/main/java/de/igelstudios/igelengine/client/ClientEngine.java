@@ -5,6 +5,7 @@ import de.igelstudios.igelengine.client.graphics.Renderer;
 import de.igelstudios.igelengine.client.graphics.text.GLFont;
 import de.igelstudios.igelengine.client.keys.HIDInput;
 import de.igelstudios.igelengine.common.Engine;
+import de.igelstudios.igelengine.common.startup.EngineInitializer;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
@@ -23,12 +24,14 @@ public class ClientEngine extends Engine {
     public static GLFont getDefaultFont() {
         return defaultFont;
     }
+    private EngineInitializer initializer;
 
     int fps = 0;
 
-    public ClientEngine(){
+    public ClientEngine(EngineInitializer initializer){
+        this.initializer = initializer;
         window = new Window();
-        input = new HIDInput();
+        input = new HIDInput(initializer);
         input.registerGLFWListeners(window.getWindow());
         GL11.glClearColor(1.0f,1.0f,1.0f,1.0f);
         scene = new ClientScene();
@@ -63,7 +66,9 @@ public class ClientEngine extends Engine {
 
     @Override
     public void stopSub() {
-        window.close();
+        this.initializer.onEnd();
+        this.window.close();
+        this.input.close();
     }
 
     public ClientScene getScene() {

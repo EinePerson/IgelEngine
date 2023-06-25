@@ -3,6 +3,8 @@ package de.igelstudios.igelengine.client.keys;
 import de.igelstudios.igelengine.client.Window;
 import de.igelstudios.igelengine.client.graphics.Camera;
 import de.igelstudios.igelengine.client.gui.GUIManager;
+import de.igelstudios.igelengine.common.startup.EngineInitializer;
+import de.igelstudios.igelengine.common.startup.KeyInitializer;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
@@ -127,12 +129,15 @@ public class HIDInput {
         defaultKeys.put(defaultKey,name);
     }
 
-    public HIDInput(){
+    public HIDInput(EngineInitializer initializer){
         defaultKeys = new HashMap<>();
         listeners = new HashMap<>();
         mouseMove = new ArrayList<>();
         dragListeners = new HashMap<>();
         continousListeners = new HashMap<>();
+        KeyInitializer keyInit = new KeyInitializer();
+        initializer.registerKeys(keyInit);
+        keyInit.register(this);
         registerKeys();
         registerListeners();
         keyConfig = new KeyConfig(defaultKeys);

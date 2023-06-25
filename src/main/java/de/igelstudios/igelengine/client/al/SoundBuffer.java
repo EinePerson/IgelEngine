@@ -20,7 +20,7 @@ public class SoundBuffer {
 
     private int audId;
     private SoundBuffer(String file){
-        try(InputStream stream = Objects.requireNonNull(ClientMain.getInstance().getClazz().getClassLoader().getResourceAsStream(file))) {
+        try(InputStream stream = Objects.requireNonNull(ClientMain.class.getClassLoader().getResourceAsStream(file))) {
             byte[] bytes = stream.readAllBytes();
             ByteBuffer bp = BufferUtils.createByteBuffer(bytes.length);
             bp.put(bytes);

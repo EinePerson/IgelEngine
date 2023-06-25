@@ -35,7 +35,7 @@ public final class Text implements BatchContent {
     }
 
     public static void init(String lang){
-        translatable = new Gson().fromJson(new InputStreamReader(Objects.requireNonNull(ClientMain.getInstance().getClazz().getClassLoader().getResourceAsStream("lang/" + lang + ".json"))),new TypeToken<Map<String, String>>(){}.getType());
+        translatable = new Gson().fromJson(new InputStreamReader(Objects.requireNonNull(ClientMain.class.getClassLoader().getResourceAsStream("lang/" + lang + ".json"))),new TypeToken<Map<String, String>>(){}.getType());
         init = true;
     }
 
