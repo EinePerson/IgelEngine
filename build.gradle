@@ -67,11 +67,11 @@ test {
 }
 
 jar {
-    /*manifest {
-        attributes(
-                'Main-Class': 'de.igelstudios.ClientMain'
-        )
-    }*/
+    jar {
+        manifest {
+            from 'src/main/resources/META-INF/MANIFEST.MF'
+        }
+    }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
