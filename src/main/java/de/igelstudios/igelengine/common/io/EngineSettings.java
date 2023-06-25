@@ -15,6 +15,7 @@ public class EngineSettings {
     private String name;
 
     private String build;
+    private String player;
 
     public static EngineSettingsParser parser(String fileName) {
         return new EngineSettingsParser(fileName);
@@ -30,6 +31,10 @@ public class EngineSettings {
 
     public String getMain() {
         return this.main;
+    }
+
+    public String getPlayer() {
+        return player;
     }
 
     public static class EngineSettingsParser {

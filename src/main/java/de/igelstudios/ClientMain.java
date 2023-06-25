@@ -38,10 +38,10 @@ public class ClientMain {
         } catch (ClassCastException e) {
             throw new IllegalArgumentException("The Main class specified in info.json has to implement EngineInitializer");
         }
-        this.main.onInitialize();
         instance = this;
         config = new ClientConfig();
         engine = new ClientEngine(main);
+        this.main.onInitialize();
     }
 
     public void start(){
