@@ -45,4 +45,8 @@ public class ServerEngine extends Engine {
     public void add(ClientNet net){
         players.put(net.getUUID(),net);
     }
+
+    public Map<UUID, ClientNet> getPlayers() {
+        return new HashMap<>(players);
+    }
 }

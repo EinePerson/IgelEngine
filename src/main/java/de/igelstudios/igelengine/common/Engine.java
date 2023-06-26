@@ -42,6 +42,7 @@ public abstract class Engine {
             loop();
         }
         stopSub();
+        System.exit(0);
     }
 
 
