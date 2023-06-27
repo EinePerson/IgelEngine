@@ -3,8 +3,7 @@ This is a Small Java Game "Engine"
 
 Example buid.gradle
 
-Replace your package name with the name of you company e.g. example.com
-Replace game_version with the version you want to use.
+Replace engine_version with the version of the engine you want to use(Every version can be found as package)
 ```gradle
 import org.codehaus.groovy.runtime.GStringImpl
 
@@ -14,8 +13,6 @@ plugins {
 
 sourceCompatibility = project.java_version
 targetCompatibility = project.java_version
-group = your package name
-version = game_version
 
 repositories {
     mavenCentral()
@@ -41,7 +38,7 @@ switch (org.gradle.internal.os.OperatingSystem.current()) {
 }
 
 dependencies {
-    implementation "com.github.EinePerson:IgelEngine:v$engine_version"
+    implementation "com.github.EinePerson:IgelEngine:engine_version"
 
     implementation platform("org.lwjgl:lwjgl-bom:3.3.2")
     implementation "org.lwjgl:lwjgl"
