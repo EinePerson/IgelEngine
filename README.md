@@ -11,9 +11,6 @@ plugins {
     id 'java'
 }
 
-sourceCompatibility = project.java_version
-targetCompatibility = project.java_version
-
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
