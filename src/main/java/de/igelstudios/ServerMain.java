@@ -31,7 +31,6 @@ public class ServerMain {
     private ServerInitializer main;
 
     public ServerMain(ErrorHandler handler){
-        new game.ServerMain.Player();
         this.settings = EngineSettings.parser("info.json").read();
         try {
             PlayerFactory.setPlayerClass((Class<? extends ClientNet>) Class.forName(settings.getPlayer()),false);
