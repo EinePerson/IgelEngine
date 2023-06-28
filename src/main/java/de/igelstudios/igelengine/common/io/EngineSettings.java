@@ -11,6 +11,7 @@ import java.util.Objects;
 
 public class EngineSettings {
     private String main;
+    private String server_main;
 
     private String name;
 
@@ -35,6 +36,10 @@ public class EngineSettings {
 
     public String getPlayer() {
         return player;
+    }
+
+    public String getServerMain() {
+        return server_main;
     }
 
     public static class EngineSettingsParser {

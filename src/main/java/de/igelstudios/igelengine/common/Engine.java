@@ -19,7 +19,7 @@ public abstract class Engine {
 
     public final void run() {
         running = true;
-        double ticks = 1000000000d / 20;
+        double ticks = 4000000000d;
         double delta = 0d;
         long org = System.nanoTime();
         long sTimer = 0;

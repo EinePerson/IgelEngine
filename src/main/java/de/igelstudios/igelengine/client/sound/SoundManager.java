@@ -12,7 +12,7 @@ import java.util.Map;
  * This class is used to play sounds
  * It is a utility class and thus has a private Constructor
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class SoundManager {
     private SoundManager(){
 

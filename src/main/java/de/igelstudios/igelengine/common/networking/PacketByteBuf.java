@@ -998,6 +998,14 @@ public class PacketByteBuf extends ByteBuf {
         return vec;
     }
 
+    public void writeEnum(Enum<?> e){
+        writeByte(e.ordinal() + Byte.MIN_VALUE);
+    }
+
+    public <T extends Enum<T>> T readEnum(Class<T> enumClass) {
+        return enumClass.getEnumConstants()[readByte() - Byte.MIN_VALUE];
+    }
+
     public String readId(){
         return this.readString();
     }

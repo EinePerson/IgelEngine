@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * This class is used to play sounds using {@link SoundManager}
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class Sound {
     private AudioInputStream stream;
 

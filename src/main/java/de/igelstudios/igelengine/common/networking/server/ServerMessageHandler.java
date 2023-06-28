@@ -44,7 +44,7 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<Package> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Package msg) throws Exception {
-        Server.handle(players.get(ctx.channel().id()),msg);
+        Server.handle(players.get(playerIds.get(ctx.channel().id())),msg);
     }
 
     @Override

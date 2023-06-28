@@ -29,13 +29,16 @@ public class Client extends Thread{
         clientHandlers.putIfAbsent(id,handler);
     }
 
+    private static Map<String,PacketByteBuf> queuedPackets = new HashMap<>();
+
     /**
      * this method sends a message to the server
      * @param id the name of the packet
      * @param buf the buffer containing the message data
      */
-    public static void send2Server(String id, PacketByteBuf buf){
-        instance.channel.writeAndFlush(new Package(id,buf));
+    public synchronized static void send2Server(String id, PacketByteBuf buf){
+        if(instance.channel == null)queuedPackets.put(id,buf);
+        else instance.channel.writeAndFlush(new Package(id,buf));
     }
 
     private Channel channel;
@@ -66,22 +69,12 @@ public class Client extends Thread{
         try {
             Bootstrap bootstrap = new Bootstrap().group(workGroup).channel(NioSocketChannel.class).option(ChannelOption.SO_KEEPALIVE, true).handler(createChannel());
             ChannelFuture future = bootstrap.connect(host, port).sync();
-            //channel = future.sync().channel();
-            /*future.addListener((FutureListener<Void>) future1 -> {
-                //if(!future1.isSuccess())System.out.println("A       A");
-                //if(!future1.isSuccess())errorHandler.handle(future1.cause());
-                errorHandler.handle(future1.cause());
-            });*/
             channel = future.channel();
-            PacketByteBuf buf = PacketByteBuf.create();
-            buf.writeString("Amogus");
-            send2Server("SUS",buf);
+            queuedPackets.forEach(Client::send2Server);
+            queuedPackets.clear();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        } /*finally {
-            errorHandler.handle(new ConnectException("Disconnected from " + host + ":" + port));
-            stopClient();
-        }*/
+        }
     }
 
     public void stopClient(){
