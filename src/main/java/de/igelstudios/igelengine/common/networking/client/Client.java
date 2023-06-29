@@ -1,7 +1,9 @@
 package de.igelstudios.igelengine.common.networking.client;
 
+import de.igelstudios.ClientMain;
 import de.igelstudios.igelengine.common.networking.*;
 import de.igelstudios.igelengine.common.networking.Package;
+import de.igelstudios.igelengine.common.util.Tickable;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -9,14 +11,21 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.net.ConnectException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class Client extends Thread{
+public class Client extends Thread implements Tickable {
     static Client instance;
     private static Map<String, ClientHandler> clientHandlers = new HashMap<>();
 
+    private static List<Package> queueHandling = new ArrayList<>();
     public static void handle(Package p){
+        queueHandling.add(p);
+    }
+
+    private static void handleSelf(Package p){
         clientHandlers.get(p.id()).receive(instance,p.buf());
     }
 
@@ -54,6 +63,7 @@ public class Client extends Thread{
         workGroup = new NioEventLoopGroup();
         instance = this;
         errorHandler = handler;
+        ClientMain.getInstance().getEngine().addTickable(this);
     }
 
     public Client(String[] v,ErrorHandler handler){
@@ -92,5 +102,11 @@ public class Client extends Thread{
                 pipeline.addLast(new ClientMessageHandler(errorHandler));
             }
         };
+    }
+
+    @Override
+    public void tick() {
+        queueHandling.forEach(Client::handleSelf);
+        queueHandling.clear();
     }
 }

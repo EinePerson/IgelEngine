@@ -4,6 +4,7 @@ import de.igelstudios.igelengine.common.networking.*;
 import de.igelstudios.igelengine.common.networking.Package;
 import de.igelstudios.igelengine.common.networking.client.Client;
 import de.igelstudios.igelengine.common.networking.client.ClientNet;
+import de.igelstudios.igelengine.common.util.Tickable;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -15,7 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Server extends Thread{
+public class Server extends Thread implements Tickable {
+    private static Map<ClientNet,Package> queueHandling = new HashMap<>();
     private static final Map<String, ServerHandler> serverHandlers = new HashMap<>();
 
     /**
@@ -28,6 +30,10 @@ public class Server extends Thread{
     }
 
     public static void handle(ClientNet player, Package p){
+        queueHandling.put(player,p);
+    }
+
+    private static void handleSelf(ClientNet player, Package p){
         serverHandlers.get(p.id()).receive(player,p.buf());
     }
     private static Server instance;
@@ -93,5 +99,11 @@ public class Server extends Thread{
                 pipeline.addLast(new DefaultEventExecutorGroup(Runtime.getRuntime().availableProcessors()),"handler",handler);
             }
         };
+    }
+
+    @Override
+    public void tick() {
+        queueHandling.forEach(Server::handleSelf);
+        queueHandling.clear();
     }
 }

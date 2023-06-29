@@ -2,6 +2,7 @@ package de.igelstudios.igelengine.server;
 
 import de.igelstudios.igelengine.common.Engine;
 import de.igelstudios.igelengine.common.networking.ErrorHandler;
+import de.igelstudios.igelengine.common.networking.client.Client;
 import de.igelstudios.igelengine.common.networking.client.ClientNet;
 import de.igelstudios.igelengine.common.networking.server.Server;
 import de.igelstudios.igelengine.common.networking.server.ServerMessageHandler;
@@ -16,15 +17,14 @@ public class ServerEngine extends Engine {
     private ErrorHandler handler;
 
     public ServerEngine(ErrorHandler handler){
-        this.handler = handler;
-        players = new HashMap<>();
-        server = new Server(players,handler);
+        this(Client.DEFAULT_PORT,handler);
     }
 
     public ServerEngine(int port,ErrorHandler handler){
         this.handler = handler;
         players = new HashMap<>();
         server = new Server(port,players,handler);
+        addTickable(server);
     }
 
     @Override
