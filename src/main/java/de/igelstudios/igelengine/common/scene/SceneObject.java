@@ -11,7 +11,8 @@ import org.joml.Vector2i;
 public class SceneObject implements BatchContent {
     protected Vector2f pos;
     protected Vector2i uv;
-
+    protected Vector2f size;
+    private Vector2f texSize;
     protected int tex;
     private boolean dirty;
 
@@ -32,6 +33,15 @@ public class SceneObject implements BatchContent {
         return this;
     }
 
+    public SceneObject setTexSize(Vector2f texSize) {
+        this.texSize = texSize;
+        return this;
+    }
+
+    public Vector2f getTexSize() {
+        return texSize;
+    }
+
     public SceneObject setUv(Vector2i uv) {
         this.uv = uv;
         markDirty();
@@ -42,6 +52,15 @@ public class SceneObject implements BatchContent {
         this.uv = new Vector2i(u,v);
         markDirty();
         return this;
+    }
+
+    public SceneObject setSize(Vector2f size) {
+        this.size = size;
+        return this;
+    }
+
+    public Vector2f getSize() {
+        return size;
     }
 
     public int getTex() {
