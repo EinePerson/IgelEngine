@@ -9,10 +9,10 @@ import org.joml.Vector2i;
  * if anything changes the Object has to be {@link #markDirty()} to make the changes be reflected on the clients
  */
 public class SceneObject implements BatchContent {
-    protected Vector2f pos;
-    protected Vector2i uv;
-    protected Vector2f size;
-    private Vector2f texSize;
+    protected Vector2f pos = new Vector2f();
+    protected Vector2i uv = new Vector2i();
+    protected Vector2f size = new Vector2f();
+    private Vector2f texSize = new Vector2f();
     protected int tex;
     private boolean dirty;
 
