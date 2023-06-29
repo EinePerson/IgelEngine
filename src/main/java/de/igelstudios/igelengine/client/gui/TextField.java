@@ -15,6 +15,10 @@ public class TextField {
     private Vector2f size;
     private final Text text;
 
+    public TextField(Vector2f pos,Vector2f size){
+        this(pos,new Vector2f(0,0),size);
+    }
+
     public TextField(Vector2f pos,Vector2f textOffset,Vector2f size){
         this.pos = pos;
         this.size = size;
@@ -23,6 +27,7 @@ public class TextField {
     }
 
     public void add(char c){
+        if(content.length() > 998)throw new IllegalArgumentException("Text size is limited to 1000 characters");
         content += c;
         text.content(content);
     }
