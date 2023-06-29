@@ -11,8 +11,8 @@ import org.joml.Vector2i;
 public class SceneObject implements BatchContent {
     protected Vector2f pos = new Vector2f();
     protected Vector2i uv = new Vector2i();
-    protected Vector2f size = new Vector2f();
-    private Vector2f texSize = new Vector2f();
+    protected Vector2f size = new Vector2f(1.0f,1.0f);
+    private Vector2f texSize = new Vector2f(1.0f,1.0f);
     protected int tex;
     private boolean dirty;
 
