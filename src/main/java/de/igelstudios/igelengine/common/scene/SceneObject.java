@@ -15,6 +15,7 @@ public class SceneObject implements BatchContent {
     private Vector2f texSize = new Vector2f();
     protected int tex;
     private boolean dirty;
+    private boolean remove;
 
     public SceneObject setPos(float x,float y) {
         setPos(new Vector2f(x,y));
@@ -59,6 +60,10 @@ public class SceneObject implements BatchContent {
         return this;
     }
 
+    public void remove(){
+        remove = true;
+    }
+
     public Vector2f getSize() {
         return size;
     }
@@ -86,6 +91,10 @@ public class SceneObject implements BatchContent {
 
     public boolean isDirty() {
         return dirty;
+    }
+
+    public boolean toRemove() {
+        return remove;
     }
 
     @Override

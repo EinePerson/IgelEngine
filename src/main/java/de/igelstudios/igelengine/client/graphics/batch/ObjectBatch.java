@@ -18,6 +18,11 @@ public class ObjectBatch extends Batch<SceneObject>{
     public boolean dirtyCheck(List<SceneObject> objects) {
         boolean dirty = false;
         for (int i = 0; i < objects.size(); i++) {
+            if(objects.get(i).toRemove()){
+                clear(i,objects);
+                dirty = true;
+                continue;
+            }
             if(objects.get(i).isDirty()){
                 add(i,objects.get(i));
                 dirty = true;
