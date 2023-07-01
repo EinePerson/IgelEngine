@@ -19,17 +19,16 @@ public abstract class Engine {
 
     public final void run() {
         running = true;
-        double ticks = 4000000000d;
+        double ticks = 1000000000d / 20d;
         double delta = 0d;
         long org = System.nanoTime();
         long sTimer = 0;
         while (running && shouldRun()){
             long t = System.nanoTime();
             delta += (t - org) / ticks;
+            sTimer += t - org;
+            org = t;
             if(delta >= 1){
-                long deltat = t - org;
-                sTimer += deltat;
-                org = t;
                 --delta;
                 tick();
                 tickables.forEach(Tickable::tick);
