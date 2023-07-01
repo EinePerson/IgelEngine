@@ -57,6 +57,10 @@ public class Renderer {
         textBatch.render(textSupplier);
     }
 
+    public ClientScene getScene() {
+        return scene;
+    }
+
     public class TextSupplier implements BatchSupplier<Text>{
         private List<Text> texts;
 

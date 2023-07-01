@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.client.graphics.batch;
 
+import de.igelstudios.igelengine.client.graphics.Renderer;
 import de.igelstudios.igelengine.client.graphics.shader.Shader;
 import de.igelstudios.igelengine.client.graphics.texture.Texture;
 import de.igelstudios.igelengine.client.graphics.texture.TexturePool;
@@ -21,6 +22,8 @@ public class ObjectBatch extends Batch<SceneObject>{
             if(objects.get(i).toRemove()){
                 clear(i,objects);
                 objects.get(i).removed();
+                Renderer.get().getScene().removeObject(objects.get(i));
+                objects.remove(i);
                 dirty = true;
                 continue;
             }
