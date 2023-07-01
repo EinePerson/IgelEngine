@@ -20,6 +20,7 @@ public class ObjectBatch extends Batch<SceneObject>{
         for (int i = 0; i < objects.size(); i++) {
             if(objects.get(i).toRemove()){
                 clear(i,objects);
+                objects.get(i).removed();
                 dirty = true;
                 continue;
             }

@@ -29,7 +29,7 @@ public class TextBatch extends Batch<Text> {
                 clear(i,objs);
                 add(i,obj);
                 dirty = true;
-                //obj.applied();
+                obj.applied();
             }
         }
         return dirty;

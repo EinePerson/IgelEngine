@@ -64,6 +64,10 @@ public class SceneObject implements BatchContent {
         remove = true;
     }
 
+    public void removed(){
+        remove = false;
+    }
+
     public Vector2f getSize() {
         return size;
     }
