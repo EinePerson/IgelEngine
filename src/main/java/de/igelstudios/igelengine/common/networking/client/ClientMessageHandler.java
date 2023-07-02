@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.common.networking.client;
 
+import de.igelstudios.ClientMain;
 import de.igelstudios.igelengine.common.networking.ErrorHandler;
 import de.igelstudios.igelengine.common.networking.Package;
 import io.netty.channel.ChannelHandlerContext;
@@ -22,5 +23,15 @@ public class ClientMessageHandler extends SimpleChannelInboundHandler<Package> {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         handler.handle(cause);
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ClientMain.getInstance().getListener().playerConnect();
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        ClientMain.getInstance().getListener().playerDisConnect();
     }
 }

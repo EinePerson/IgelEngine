@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.common.networking.server;
 
+import de.igelstudios.ServerMain;
 import de.igelstudios.igelengine.common.networking.ErrorHandler;
 import de.igelstudios.igelengine.common.networking.Package;
 import de.igelstudios.igelengine.common.networking.client.ClientNet;
@@ -54,6 +55,7 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<Package> {
         UUID uuid = UUID.randomUUID();
         playerIds.put(ctx.channel().id(),uuid);
         players.put(uuid, PlayerFactory.get(uuid));
+        ServerMain.getInstance().getListener().playerConnect(players.get(uuid));
     }
 
     @Override
@@ -61,6 +63,7 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<Package> {
         System.out.println("User disconnected");
         channels.remove(ctx.channel());
         UUID uuid = playerIds.get(ctx.channel().id());
+        ServerMain.getInstance().getListener().playerDisConnect(players.get(uuid));
         playerIds.remove(ctx.channel().id());
         players.remove(uuid);
     }

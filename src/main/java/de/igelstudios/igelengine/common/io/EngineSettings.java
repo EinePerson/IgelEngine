@@ -17,6 +17,9 @@ public class EngineSettings {
 
     private String build;
     private String player;
+    private String server_error_handler;
+    private String server_event_listener;
+    private String client_event_listener;
 
     public static EngineSettingsParser parser(String fileName) {
         return new EngineSettingsParser(fileName);
@@ -40,6 +43,18 @@ public class EngineSettings {
 
     public String getServerMain() {
         return server_main;
+    }
+
+    public String getServerErrorHandler() {
+        return server_error_handler;
+    }
+
+    public String getClientEventListener() {
+        return client_event_listener;
+    }
+
+    public String getServerEventListener() {
+        return server_event_listener;
     }
 
     public static class EngineSettingsParser {
