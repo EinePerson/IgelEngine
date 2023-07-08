@@ -44,4 +44,8 @@ public class TextField {
     public Vector2f getPos() {
         return pos;
     }
+
+    Text getText() {
+        return text;
+    }
 }

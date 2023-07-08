@@ -16,6 +16,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
 
     @KeyHandler("LMB")
     public void lmb(boolean pressed){
+        if(!pressed)return;
         if(gui == null)return;
         gui.getButtons().forEach(button -> {
             if(button.getPos().x <= x && button.getPos().x + button.getSize().x > x && button.getPos().y <= y && button.getPos().y + button.getSize().y > y){
@@ -36,6 +37,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
 
     @KeyHandler("RMB")
     public void rmb(boolean pressed){
+        if(!pressed)return;
         if(gui == null)return;
         gui.getButtons().forEach(button -> {
             if(button.getPos().x <= x && button.getPos().x + button.getSize().x > x && button.getPos().y <= y && button.getPos().y + button.getSize().y > y){
@@ -46,6 +48,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
 
     @KeyHandler("MMB")
     public void mmb(boolean pressed){
+        if(!pressed)return;
         if(gui == null)return;
         gui.getButtons().forEach(button -> {
             if(button.getPos().x <= x && button.getPos().x + button.getSize().x > x && button.getPos().y <= y && button.getPos().y + button.getSize().y > y){
@@ -78,10 +81,13 @@ public class GUIManager implements KeyListener, MouseMoveListener {
     }
 
     public void setGui(GUI gui) {
+        removeGUI();
         this.gui = gui;
     }
 
     public void removeGUI(){
+        gui.getTextFields().forEach(textfield -> textfield.getText().setLifeTime(0));
+        gui.getTexts().forEach(text -> text.setLifeTime(0));
         this.gui = null;
     }
 }
