@@ -3,6 +3,7 @@ package de.igelstudios.igelengine.client.gui;
 import de.igelstudios.igelengine.client.keys.KeyHandler;
 import de.igelstudios.igelengine.client.keys.KeyListener;
 import de.igelstudios.igelengine.client.keys.MouseMoveListener;
+import de.igelstudios.igelengine.common.scene.SceneObject;
 
 public class GUIManager implements KeyListener, MouseMoveListener {
     private static GUIManager instance;
@@ -88,6 +89,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
     public void removeGUI(){
         gui.getTextFields().forEach(textfield -> textfield.getText().setLifeTime(0));
         gui.getTexts().forEach(text -> text.setLifeTime(0));
+        gui.getObjects().forEach(SceneObject::remove);
         this.gui = null;
     }
 }
