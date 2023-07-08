@@ -81,7 +81,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
     }
 
     public void setGui(GUI gui) {
-        if(gui != null) removeGUI();
+        if(this.gui != null) removeGUI();
         this.gui = gui;
     }
 
