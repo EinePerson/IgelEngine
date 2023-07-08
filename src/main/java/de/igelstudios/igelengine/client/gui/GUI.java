@@ -15,6 +15,7 @@ public class GUI {
     public GUI(){
         buttons = new ArrayList<>();
         textFields = new ArrayList<>();
+        texts = new ArrayList<>();
 
         //instance = this;
     }
