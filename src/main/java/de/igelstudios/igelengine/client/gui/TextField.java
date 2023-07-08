@@ -48,4 +48,8 @@ public class TextField {
     Text getText() {
         return text;
     }
+
+    public String getContent() {
+        return content;
+    }
 }
