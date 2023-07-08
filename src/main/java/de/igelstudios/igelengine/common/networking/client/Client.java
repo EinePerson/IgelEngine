@@ -92,6 +92,10 @@ public class Client extends Thread implements Tickable {
         workGroup.shutdownGracefully();
     }
 
+    public static void disconnect(){
+        instance.stopClient();
+    }
+
     public ChannelInitializer<SocketChannel> createChannel(){
         return new ChannelInitializer<>() {
             @Override

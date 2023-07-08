@@ -89,6 +89,10 @@ public class Server extends Thread implements Tickable {
         workerGroup.shutdownGracefully();
     }
 
+    public static void terminate(){
+        instance.stopServer();
+    }
+
     public ChannelInitializer<SocketChannel> createChannel(){
         return new ChannelInitializer<>() {
             @Override
