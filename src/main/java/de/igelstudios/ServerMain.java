@@ -3,6 +3,7 @@ package de.igelstudios;
 import de.igelstudios.igelengine.client.Window;
 import de.igelstudios.igelengine.common.io.EngineSettings;
 import de.igelstudios.igelengine.common.networking.ErrorHandler;
+import de.igelstudios.igelengine.common.networking.client.Client;
 import de.igelstudios.igelengine.common.networking.client.ClientNet;
 import de.igelstudios.igelengine.common.networking.server.ConnectionListener;
 import de.igelstudios.igelengine.common.startup.ServerInitializer;
@@ -20,9 +21,16 @@ public class ServerMain {
     private final ErrorHandler handler;
 
     public static void main(String[] args) {
-        new ServerMain().start();
+        new ServerMain(Client.DEFAULT_PORT).start();
     }
 
+    public static void createServer(int port){
+        new ServerMain(port).start();
+    }
+
+    public static void createServer(){
+        new ServerMain(Client.DEFAULT_PORT).start();
+    }
     public  static synchronized ServerMain getInstance(){
         return instance;
     }
@@ -32,7 +40,7 @@ public class ServerMain {
     private ServerInitializer main;
     private ConnectionListener listener;
 
-    public ServerMain(){
+    public ServerMain(int port){
         this.settings = EngineSettings.parser("info.json").read();
         try {
             PlayerFactory.setPlayerClass((Class<? extends ClientNet>) Class.forName(settings.getPlayer()),false);
@@ -87,7 +95,7 @@ public class ServerMain {
             };
         }
         instance = this;
-        engine = new ServerEngine(handler);
+        engine = new ServerEngine(port,handler);
         this.main.onInitialize();
     }
 
