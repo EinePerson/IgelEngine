@@ -56,7 +56,7 @@ public class Renderer {
      * if this is used in a gui {@link de.igelstudios.igelengine.client.gui.GUI#render(Text, float, float,int)} should be used
      */
     public void render(Text text,float x,float y,int lifetime){
-        text.setPos(new Vector2f(x,y)).setLifeTime(lifetime).setColor(1.0f,0.0f,0.0f);
+        text.setPos(new Vector2f(x,y)).setLifeTime(lifetime);
         textBatch.add(textSupplier.texts.size(),text);
         textSupplier.texts.add(text);
     }

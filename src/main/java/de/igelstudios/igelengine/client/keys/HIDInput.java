@@ -145,7 +145,10 @@ public class HIDInput {
                 if (!keys[key] && action == GLFW_PRESS){
                     if(GUIManager.getInstance().hasSelText()){
                         int keyS = key;
-                        if((mods & GLFW_MOD_SHIFT) == 0) keyS = Character.toLowerCase(key);
+                        if((mods & GLFW_MOD_SHIFT) == 0){
+                            keyS = Character.toLowerCase(key);
+                        }
+                        else if(key == 47)keyS = 95;
                         else if(key == 46)keyS = 58;
                     GUIManager.getInstance().addText(keyS);
 

@@ -28,9 +28,9 @@ public final class Text implements BatchContent {
     private Text(String content){
         this.content = content;
         font = ClientEngine.getDefaultFont();
-        r = 1;
-        g = 1;
-        b = 1;
+        r = 0;
+        g = 0;
+        b = 0;
         scale = 1.0f;
     }
 

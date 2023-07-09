@@ -20,6 +20,7 @@ public class EngineSettings {
     private String server_error_handler;
     private String server_event_listener;
     private String client_event_listener;
+    private String default_lang;
 
     public static EngineSettingsParser parser(String fileName) {
         return new EngineSettingsParser(fileName);
@@ -55,6 +56,10 @@ public class EngineSettings {
 
     public String getServerEventListener() {
         return server_event_listener;
+    }
+
+    public String getDefaultLang() {
+        return default_lang;
     }
 
     public static class EngineSettingsParser {
