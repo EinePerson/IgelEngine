@@ -25,6 +25,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
                 button.invoke(MouseButton.LMB);
             }
         });
+        if(gui == null)return;
         boolean set = false;
         for (int i = 0; i < gui.getTextFields().size(); i++) {
             TextField field = gui.getTextFields().get(i);
