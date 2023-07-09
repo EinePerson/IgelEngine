@@ -4,6 +4,7 @@ import de.igelstudios.igelengine.client.graphics.shader.Shader;
 import de.igelstudios.igelengine.client.graphics.texture.Texture;
 import de.igelstudios.igelengine.client.graphics.texture.TexturePool;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL15.*;
@@ -66,6 +67,7 @@ public abstract class Batch<T extends BatchContent> {
     public abstract boolean dirtyCheck(List<T> objs);
 
     protected void clear(int i,List<T> objs){
+        //System.out.println("A     A\n" + Arrays.toString(vertices) + "A     A");
         int k = 0;
         for (int j = 0; j < objs.size() && j < i; j++) {
             k += objs.get(j).getLength();
@@ -74,7 +76,13 @@ public abstract class Batch<T extends BatchContent> {
         for (int j = k * totalInBits; j < l; j++) {
             vertices[j] = 0;
         }
-    }
+        //System.out.println("B     B\n" + Arrays.toString(vertices) + "B     B");
+        float[] nvertecies = new float[vertices.length];
+        System.arraycopy(vertices,0,nvertecies,0,k * totalInBits);
+        System.arraycopy(vertices,l,nvertecies,k * totalInBits,vertices.length - l);
+        //System.out.println("C     C\n" + Arrays.toString(nvertecies) + "C     C");
+        vertices = nvertecies;
+     }
 
     public void render(BatchSupplier<T> supplier){
         this.supplier = supplier;

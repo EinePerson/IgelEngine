@@ -35,11 +35,26 @@ public class Renderer {
         render();
     }
 
+    /**
+     * Displays a text
+     * @param text the text to be displayed
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * if this is used in a gui {@link de.igelstudios.igelengine.client.gui.GUI#render(Text, float, float)} should be used
+     */
     public void render(Text text,float x,float y){
         if(!text.life())text.setLifeTime(-1);
         render(text,x,y,text.getLifeTime());
     }
 
+    /**
+     * Displays a text
+     * @param text the text to be displayed
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param lifetime the amount of ticks this should be displayed(default/infinite is -1)
+     * if this is used in a gui {@link de.igelstudios.igelengine.client.gui.GUI#render(Text, float, float,int)} should be used
+     */
     public void render(Text text,float x,float y,int lifetime){
         text.setPos(new Vector2f(x,y)).setLifeTime(lifetime).setColor(1.0f,0.0f,0.0f);
         textBatch.add(textSupplier.texts.size(),text);

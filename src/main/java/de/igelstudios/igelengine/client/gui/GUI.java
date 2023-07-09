@@ -28,6 +28,12 @@ public abstract class GUI {
         texts.add(text);
     }
 
+
+    public void render(Text text,float x,float y,int lifetime){
+        Renderer.get().render(text,x,y,lifetime);
+        texts.add(text);
+    }
+
     public void render(SceneObject object,float x,float y){
         Renderer.get().render(object,x,y);
         objects.add(object);
