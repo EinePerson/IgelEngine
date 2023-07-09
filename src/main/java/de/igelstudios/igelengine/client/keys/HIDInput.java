@@ -5,9 +5,7 @@ import de.igelstudios.igelengine.client.graphics.Camera;
 import de.igelstudios.igelengine.client.gui.GUIManager;
 import de.igelstudios.igelengine.common.startup.EngineInitializer;
 import de.igelstudios.igelengine.common.startup.KeyInitializer;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
-import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -149,7 +147,7 @@ public class HIDInput {
                         int keyS = key;
                         if((mods & GLFW_MOD_SHIFT) == 0) keyS = Character.toLowerCase(key);
                         else if(key == 46)keyS = 58;
-                    GUIManager.getInstance().addText((char) keyS);
+                    GUIManager.getInstance().addText(keyS);
 
                     }else {
                         if (listeners.containsKey(keyConfig.get(key))) {

@@ -22,12 +22,11 @@ public class TextField {
     public TextField(Vector2f pos,Vector2f textOffset,Vector2f size){
         this.pos = pos;
         this.size = size;
-        text = Text.literal(" ".repeat(1000));
+        text = Text.literal("");
         Renderer.get().render(text,textOffset.x + pos.x,textOffset.y + pos.y);
     }
 
     public void add(char c){
-        if(content.length() > 998)throw new IllegalArgumentException("Text size is limited to 1000 characters");
         content += c;
         text.content(content);
     }

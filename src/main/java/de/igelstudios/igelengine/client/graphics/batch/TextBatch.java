@@ -6,6 +6,7 @@ import de.igelstudios.igelengine.client.graphics.texture.Texture;
 import de.igelstudios.igelengine.client.graphics.texture.TexturePool;
 import de.igelstudios.igelengine.client.lang.Text;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TextBatch extends Batch<Text> {
@@ -15,23 +16,29 @@ public class TextBatch extends Batch<Text> {
     }
 
     @Override
-    public boolean dirtyCheck(List<Text> objs) {
+    public boolean dirtyCheck(List<Text> objs){
         boolean dirty = false;
+        List<Text> objsCop = new ArrayList<>(objs);
         for (int i = 0; i < objs.size(); i++) {
-            Text obj = objs.get(i);
+            Text obj = objsCop.get(i);
             obj.decrement();
             if(!obj.life()){
-                clear(i,objs);
-                objs.remove(i);
+                clear(i,objsCop);
+                objsCop.remove(i);
                 dirty = true;
             }
             if(obj.hasChanged()){
-                clear(i,objs);
+                clear(i,objsCop);
+                objsCop.remove(i);
                 add(i,obj);
+                objsCop.add(obj);
                 dirty = true;
                 obj.applied();
             }
         }
+        objs.clear();
+        objs.addAll(objsCop);
+
         return dirty;
     }
 

@@ -85,7 +85,7 @@ public class Renderer {
         @Override
         public int getSize(int i) {
             int j = 0;
-            for (int k = 0; k < texts.size() && k <= i; k++) {
+            for (int k = 0; k < texts.size() && k < i; k++) {
                 j += texts.get(k).getContent().length();
             }
             return j;

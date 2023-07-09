@@ -7,7 +7,7 @@ import de.igelstudios.igelengine.common.scene.SceneObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GUI {
+public abstract class GUI {
     //static GUI instance;
     private List<Button> buttons;
     private List<TextField> textFields;
