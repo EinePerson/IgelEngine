@@ -59,7 +59,8 @@ public final class Config {
 
     public void write(String key,Object value){
         try {
-            properties.store(new FileOutputStream(name),value.toString());
+            properties.setProperty(key,value.toString());
+            properties.store(new FileOutputStream(name),null);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
