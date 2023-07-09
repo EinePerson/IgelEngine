@@ -22,18 +22,22 @@ public class TextField {
     public TextField(Vector2f pos,Vector2f textOffset,Vector2f size){
         this.pos = pos;
         this.size = size;
-        text = Text.literal("");
+        text = Text.literal(" ".repeat(1000));
         Renderer.get().render(text,textOffset.x + pos.x,textOffset.y + pos.y);
     }
 
     public void add(char c){
         content += c;
-        text.content(content);
+        text.content(content + " ".repeat(1000 - content.length()));
+    }
+
+    public int getLength(){
+        return content.length();
     }
 
     public void remove(){
         content = content.substring(0,content.length() -1);
-        text.content(content);
+        text.content(content + " ".repeat(1000 - content.length()));
     }
 
     public Vector2f getSize() {

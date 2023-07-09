@@ -36,7 +36,8 @@ public class Renderer {
     }
 
     public void render(Text text,float x,float y){
-        render(text,x,y,-1);
+        if(!text.life())text.setLifeTime(-1);
+        render(text,x,y,text.getLifeTime());
     }
 
     public void render(Text text,float x,float y,int lifetime){
@@ -133,5 +134,13 @@ public class Renderer {
         public Matrix4f getViewMat() {
             return Renderer.this.scene.getViewMat();
         }
+    }
+
+    public TextBatch getTextBatch() {
+        return textBatch;
+    }
+
+    public TextSupplier getTextSupplier() {
+        return textSupplier;
     }
 }

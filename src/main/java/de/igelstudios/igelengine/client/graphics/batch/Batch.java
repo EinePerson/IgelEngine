@@ -74,11 +74,6 @@ public abstract class Batch<T extends BatchContent> {
         for (int j = k * totalInBits; j < l; j++) {
             vertices[j] = 0;
         }
-
-        float[] nverticies = new float[vertices.length];
-        System.arraycopy(vertices,l,nverticies,k * totalInBits,vertices.length - l);
-        System.arraycopy(vertices,0,nverticies,0,k * totalInBits);
-        vertices = nverticies;
         gi -= objs.get(i).getLength() * totalInBits;
     }
 
@@ -141,7 +136,7 @@ public abstract class Batch<T extends BatchContent> {
 
     public void add(int i,T obj){
         int j = supplier.getSize(i) * totalInBits;
-        if(j + obj.getLength() * totalInBits > vertices.length)widen();
+        while (j + obj.getLength() * totalInBits > vertices.length)widen();
 
         addP(j,obj);
         dirty  = true;
@@ -150,7 +145,7 @@ public abstract class Batch<T extends BatchContent> {
 
     public void add(T obj){
         int j = gi * totalInBits;
-        if(j + obj.getLength() * totalInBits > vertices.length)widen();
+        while (j + obj.getLength() * totalInBits > vertices.length)widen();
 
 
         addP(j,obj);

@@ -35,7 +35,7 @@ public class ClientEngine extends Engine {
         input.registerGLFWListeners(window.getWindow());
         GL11.glClearColor(1.0f,1.0f,1.0f,1.0f);
         scene = new ClientScene();
-
+        addTickable(Renderer.get().getTextBatch());
         if(defaultFont == null) defaultFont = new GLFont("calibri");
     }
 
@@ -60,7 +60,6 @@ public class ClientEngine extends Engine {
 
     @Override
     public void second() {
-        ClientMain.LOGGER.info("FPS:" + fps);
         fps = 0;
     }
 
@@ -85,5 +84,9 @@ public class ClientEngine extends Engine {
 
     public HIDInput getInput() {
         return input;
+    }
+
+    public int getFPS() {
+        return fps;
     }
 }

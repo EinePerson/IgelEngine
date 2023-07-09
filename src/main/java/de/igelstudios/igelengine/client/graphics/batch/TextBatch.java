@@ -1,15 +1,17 @@
 package de.igelstudios.igelengine.client.graphics.batch;
 
+import de.igelstudios.igelengine.client.graphics.Renderer;
 import de.igelstudios.igelengine.client.graphics.shader.Shader;
 import de.igelstudios.igelengine.client.graphics.text.Char;
 import de.igelstudios.igelengine.client.graphics.texture.Texture;
 import de.igelstudios.igelengine.client.graphics.texture.TexturePool;
 import de.igelstudios.igelengine.client.lang.Text;
+import de.igelstudios.igelengine.common.util.Tickable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextBatch extends Batch<Text> {
+public class TextBatch extends Batch<Text>implements Tickable {
     public static final TexturePool pool = new TexturePool();
     public TextBatch(int size) {
         super(size, new Shader("text"), true,2,3,3);
@@ -21,7 +23,6 @@ public class TextBatch extends Batch<Text> {
         List<Text> objsCop = new ArrayList<>(objs);
         for (int i = 0; i < objs.size(); i++) {
             Text obj = objsCop.get(i);
-            obj.decrement();
             if(!obj.life()){
                 clear(i,objsCop);
                 objsCop.remove(i);
@@ -29,16 +30,13 @@ public class TextBatch extends Batch<Text> {
             }
             if(obj.hasChanged()){
                 clear(i,objsCop);
-                objsCop.remove(i);
                 add(i,obj);
-                objsCop.add(obj);
                 dirty = true;
                 obj.applied();
             }
         }
         objs.clear();
         objs.addAll(objsCop);
-
         return dirty;
     }
 
@@ -69,5 +67,10 @@ public class TextBatch extends Batch<Text> {
             }
             x += chat.getWith() * scale;
         }
+    }
+
+    @Override
+    public void tick() {
+        Renderer.get().getTextSupplier().getT().forEach(Text::decrement);
     }
 }
