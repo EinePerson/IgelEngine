@@ -22,7 +22,7 @@ public class TextBatch extends Batch<Text>implements Tickable {
         boolean dirty = false;
         List<Text> objsCop = new ArrayList<>(objs);
         for (int i = 0; i < objs.size(); i++) {
-            Text obj = objsCop.get(i);
+            Text obj = objs.get(i);
             if(!obj.life()){
                 clear(i,objsCop);
                 objsCop.remove(i);
