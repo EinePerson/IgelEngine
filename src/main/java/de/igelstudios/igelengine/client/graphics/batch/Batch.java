@@ -74,7 +74,6 @@ public abstract class Batch<T extends BatchContent> {
         for (int j = k * totalInBits; j < l; j++) {
             vertices[j] = 0;
         }
-        gi -= objs.get(i).getLength() * totalInBits;
     }
 
     public void render(BatchSupplier<T> supplier){
