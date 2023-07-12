@@ -143,16 +143,7 @@ public class HIDInput {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 if (!keys[key] && action == GLFW_PRESS){
-                    if(GUIManager.getInstance().hasSelText()){
-                        int keyS = key;
-                        if((mods & GLFW_MOD_SHIFT) == 0){
-                            keyS = Character.toLowerCase(key);
-                        }
-                        else if(key == 47)keyS = 95;
-                        else if(key == 46)keyS = 58;
-                    GUIManager.getInstance().addText(keyS);
-
-                    }else {
+                    if(!GUIManager.handle(mods,key)) {
                         if (listeners.containsKey(keyConfig.get(key))) {
                             listeners.get(keyConfig.get(key)).keySet().forEach(method -> {
                                 try {
@@ -252,8 +243,7 @@ public class HIDInput {
     }
 
     private void registerListeners() {
-        registerKeyListener(GUIManager.getInstance());
-        registerMoveListener(GUIManager.getInstance());
+        GUIManager.register(this);
     }
 
     public void close() {

@@ -1,10 +1,13 @@
 package de.igelstudios.igelengine.client.gui;
 
+import de.igelstudios.igelengine.client.keys.HIDInput;
 import de.igelstudios.igelengine.client.keys.KeyHandler;
 import de.igelstudios.igelengine.client.keys.KeyListener;
 import de.igelstudios.igelengine.client.keys.MouseMoveListener;
 import de.igelstudios.igelengine.common.scene.SceneObject;
 import org.lwjgl.glfw.GLFW;
+
+import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 
 public class GUIManager implements KeyListener, MouseMoveListener {
     private static GUIManager instance;
@@ -66,14 +69,10 @@ public class GUIManager implements KeyListener, MouseMoveListener {
         this.y = y;
     }
 
-    @Deprecated
-    public static GUIManager getInstance() {
-        if(instance == null)instance = new GUIManager();
-        return instance;
-    }
+
 
     public static void setGUI(GUI gui){
-        getInstance().setGui(gui);
+        instance.setGui(gui);
     }
 
     public void addText(int c){
@@ -88,15 +87,39 @@ public class GUIManager implements KeyListener, MouseMoveListener {
         return selText != -1;
     }
 
-    public void setGui(GUI gui) {
+    private void setGui(GUI gui) {
+        selText = -1;
         if(this.gui != null) removeGUI();
         this.gui = gui;
     }
 
-    public void removeGUI(){
+    public static void removeGui(){
+        if(instance.gui != null)instance.removeGUI();
+    }
+
+    private void removeGUI(){
         gui.getTextFields().forEach(textfield -> textfield.getText().setLifeTime(0));
         gui.getTexts().forEach(text -> text.setLifeTime(0));
         gui.getObjects().forEach(SceneObject::remove);
         this.gui = null;
+    }
+
+    public static boolean handle(int mods,int key) {
+        if (instance.hasSelText()) {
+            int keyS = key;
+            if ((mods & GLFW_MOD_SHIFT) == 0) {
+                keyS = Character.toLowerCase(key);
+            } else if (key == 47) keyS = 95;
+            else if (key == 46) keyS = 58;
+            instance.addText(keyS);
+            return true;
+        }
+        return false;
+    }
+
+    public static void register(HIDInput input){
+        new GUIManager();
+        input.registerKeyListener(instance);
+        input.registerMoveListener(instance);
     }
 }

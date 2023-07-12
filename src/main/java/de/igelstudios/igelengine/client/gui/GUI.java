@@ -39,18 +39,15 @@ public abstract class GUI {
         objects.add(object);
     }
 
-    @Deprecated
-    public List<Button> getButtons() {
+    List<Button> getButtons() {
         return buttons;
     }
 
-    @Deprecated
-    public List<TextField> getTextFields() {
+    List<TextField> getTextFields() {
         return textFields;
     }
 
-    @Deprecated
-    public List<Text> getTexts() {
+    List<Text> getTexts() {
         return texts;
     }
 

@@ -8,6 +8,7 @@ import de.igelstudios.igelengine.common.networking.client.ClientNet;
 import de.igelstudios.igelengine.common.networking.server.ConnectionListener;
 import de.igelstudios.igelengine.common.startup.ServerInitializer;
 import de.igelstudios.igelengine.common.util.PlayerFactory;
+import de.igelstudios.igelengine.server.ServerConfig;
 import de.igelstudios.igelengine.server.ServerEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,15 +22,7 @@ public class ServerMain {
     private final ErrorHandler handler;
 
     public static void main(String[] args) {
-        new ServerMain(Client.DEFAULT_PORT).start();
-    }
-
-    public static void createServer(int port){
-        new ServerMain(port).start();
-    }
-
-    public static void createServer(){
-        new ServerMain(Client.DEFAULT_PORT).start();
+        new ServerMain(ServerConfig.getPort()).start();
     }
     public  static synchronized ServerMain getInstance(){
         return instance;

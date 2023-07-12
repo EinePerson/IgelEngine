@@ -26,6 +26,10 @@ public class TextField {
         Renderer.get().render(text,textOffset.x + pos.x,textOffset.y + pos.y);
     }
 
+    public void setTextCol(int r,int g,int b){
+        text.setColor(r,g,b);
+    }
+
     public void add(char c){
         content += c;
         text.content(content + " ".repeat(1000 - content.length()));
