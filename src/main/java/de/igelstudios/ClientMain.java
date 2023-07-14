@@ -67,7 +67,7 @@ public class ClientMain {
         }
         instance = this;
         config = new ClientConfig();
-        engine = new ClientEngine(main);
+        engine = new ClientEngine(main,settings.getName());
         this.main.onInitialize();
     }
 

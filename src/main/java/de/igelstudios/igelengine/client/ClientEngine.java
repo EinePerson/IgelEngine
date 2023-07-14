@@ -28,9 +28,9 @@ public class ClientEngine extends Engine {
 
     int fps = 0;
 
-    public ClientEngine(EngineInitializer initializer){
+    public ClientEngine(EngineInitializer initializer,String title){
         this.initializer = initializer;
-        window = new Window();
+        window = new Window(title);
         input = new HIDInput(initializer);
         input.registerGLFWListeners(window.getWindow());
         GL11.glClearColor(1.0f,1.0f,1.0f,1.0f);

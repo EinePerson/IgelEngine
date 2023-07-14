@@ -4,8 +4,8 @@ import org.gradle.internal.os.OperatingSystem
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
-sourceCompatibility = project.java_version
-targetCompatibility = project.java_version
+//sourceCompatibility = project.java_version
+//targetCompatibility = project.java_version
 group = 'de.igelstudios'
 version = "v$game_version"
 

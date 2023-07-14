@@ -36,8 +36,8 @@ public class Window{
     private long audioContext;
     private List<String> audioDevices;
 
-    public Window(int width, int height, boolean windowed) {
-        title = TITLE;
+    public Window(int width, int height,String title ,boolean windowed) {
+        this.title = title;
 
         GLFWErrorCallback.createPrint(System.err).set();
         /*GLFWErrorCallback.create(new GLFWErrorCallback() {
@@ -90,8 +90,8 @@ public class Window{
         instance = this;
     }
 
-    public Window() {
-        this(1,1,false);
+    public Window(String title) {
+        this(1,1,title,false);
     }
 
     public void pollEvents(){
