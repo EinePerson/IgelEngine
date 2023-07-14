@@ -1,7 +1,7 @@
 import org.codehaus.groovy.runtime.GStringImpl
 import org.gradle.internal.os.OperatingSystem
 
-apply plugin: 'java'
+apply plugin: 'application'
 apply plugin: 'maven-publish'
 
 //sourceCompatibility = project.java_version
@@ -137,26 +137,11 @@ jar {
             from 'src/main/resources/META-INF/MANIFEST.MF'
         }
     }
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
 }
 
 java {
     withSourcesJar()
     withJavadocJar()
-}
-
-tasks.register('fatJar', Jar) {
-    manifest.from jar.manifest
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    } {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-    }
-    with jar
 }
 
 
@@ -175,10 +160,4 @@ publishing {
 wrapper {
     gradleVersion = "8.1"
     distributionType = Wrapper.DistributionType.ALL
-}
-
-generateMetadataFileForMavenPublication.dependsOn('fatJar')
-
-artifacts {
-    archives fatJar
 }
