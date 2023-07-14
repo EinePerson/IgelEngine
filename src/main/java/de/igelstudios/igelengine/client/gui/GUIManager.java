@@ -79,7 +79,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
         if(gui == null)return;
         if(selText != -1){
             if(c == 259 && gui.getTextFields().get(selText).getLength() > 0)gui.getTextFields().get(selText).remove();
-            if(c >= GLFW.GLFW_KEY_0 && c <= 122) gui.getTextFields().get(selText).add((char) c);
+            if(c >= 46 && c <= 122) gui.getTextFields().get(selText).add((char) c);
         }
     }
 

@@ -105,4 +105,9 @@ public class SceneObject implements BatchContent {
     public int getLength() {
         return 1;
     }
+
+    @Override
+    public int formerLength() {
+        return 1;
+    }
 }

@@ -4,6 +4,7 @@ import de.igelstudios.igelengine.client.ClientScene;
 import de.igelstudios.igelengine.client.graphics.batch.BatchSupplier;
 import de.igelstudios.igelengine.client.graphics.batch.ObjectBatch;
 import de.igelstudios.igelengine.client.graphics.batch.TextBatch;
+import de.igelstudios.igelengine.client.lang.GraphChar;
 import de.igelstudios.igelengine.client.lang.Text;
 import de.igelstudios.igelengine.common.scene.SceneObject;
 import org.joml.Matrix4f;
@@ -57,11 +58,20 @@ public class Renderer {
      */
     public void render(Text text,float x,float y,int lifetime){
         text.setPos(new Vector2f(x,y)).setLifeTime(lifetime);
-        textBatch.add(textSupplier.texts.size(),text);
-        textSupplier.texts.add(text);
+        text.update();
+        text.getChars().forEach(graphChar -> {
+            textBatch.add(textSupplier.texts.size(),graphChar);
+            textSupplier.texts.add(graphChar);
+        });
+    }
+
+    public void render(GraphChar graphChar){
+        textBatch.add(textSupplier.texts.size(),graphChar);
+        textSupplier.texts.add(graphChar);
     }
 
     public void render(SceneObject obj,float x,float y){
+        obj.removed();
         obj.setPos(new Vector2f(x,y));
         objectBatch.add(scene.getObjects().size(),obj);
         objectSupplier.objs.add(obj);
@@ -77,34 +87,26 @@ public class Renderer {
         return scene;
     }
 
-    public class TextSupplier implements BatchSupplier<Text>{
-        private List<Text> texts;
+    public class TextSupplier implements BatchSupplier<GraphChar>{
+        private List<GraphChar> texts;
 
         public TextSupplier(){
             texts = new ArrayList<>();
         }
 
         @Override
-        public List<Text> getT() {
+        public List<GraphChar> getT() {
             return texts;
         }
 
         @Override
         public int getSize() {
-            int i = 0;
-            for (Text text : texts) {
-                i += text.getContent().length();
-            }
-            return i;
+            return texts.size();
         }
 
         @Override
         public int getSize(int i) {
-            int j = 0;
-            for (int k = 0; k < texts.size() && k < i; k++) {
-                j += texts.get(k).getContent().length();
-            }
-            return j;
+            return i;
         }
 
         @Override

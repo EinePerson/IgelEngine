@@ -70,16 +70,17 @@ public abstract class Batch<T extends BatchContent> {
         //System.out.println("A     A\n" + Arrays.toString(vertices) + "A     A");
         int k = 0;
         for (int j = 0; j < objs.size() && j < i; j++) {
-            k += objs.get(j).getLength();
+            k += objs.get(j).formerLength();
         }
-        int l = k * totalInBits + totalInBits * objs.get(i).getLength();
-        for (int j = k * totalInBits; j < l; j++) {
+        k *= totalInBits;
+        int l = k + totalInBits * objs.get(i).formerLength();
+        for (int j = k; j < l; j++) {
             vertices[j] = 0;
         }
         //System.out.println("B     B\n" + Arrays.toString(vertices) + "B     B");
         float[] nvertecies = new float[vertices.length];
-        System.arraycopy(vertices,0,nvertecies,0,k * totalInBits);
-        System.arraycopy(vertices,l,nvertecies,k * totalInBits,vertices.length - l);
+        System.arraycopy(vertices,0,nvertecies,0,k);
+        System.arraycopy(vertices,l,nvertecies,k,vertices.length - l);
         //System.out.println("C     C\n" + Arrays.toString(nvertecies) + "C     C");
         vertices = nvertecies;
      }
@@ -150,14 +151,16 @@ public abstract class Batch<T extends BatchContent> {
         gi += totalInBits * obj.getLength();
     }
 
-    public void add(T obj){
+    public int add(T obj){
         int j = gi * totalInBits;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
 
 
         addP(j,obj);
         dirty = true;
+        int i = gi;
         gi += totalInBits * obj.getLength();
+        return i;
     }
 
     private void widen(){

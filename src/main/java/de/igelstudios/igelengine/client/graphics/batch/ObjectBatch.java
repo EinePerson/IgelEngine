@@ -21,7 +21,7 @@ public class ObjectBatch extends Batch<SceneObject>{
         for (int i = 0; i < objects.size(); i++) {
             if(objects.get(i).toRemove()){
                 clear(i,objects);
-                objects.get(i).removed();
+                //objects.get(i).removed();
                 Renderer.get().getScene().removeObject(objects.get(i));
                 objects.remove(i);
                 dirty = true;

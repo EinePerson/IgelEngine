@@ -22,7 +22,7 @@ public class TextField {
     public TextField(Vector2f pos,Vector2f textOffset,Vector2f size){
         this.pos = pos;
         this.size = size;
-        text = Text.literal(" ".repeat(1000));
+        text = Text.literal("");
         Renderer.get().render(text,textOffset.x + pos.x,textOffset.y + pos.y);
     }
 
@@ -32,7 +32,7 @@ public class TextField {
 
     public void add(char c){
         content += c;
-        text.content(content + " ".repeat(1000 - content.length()));
+        text.add(c);
     }
 
     public int getLength(){
@@ -41,7 +41,7 @@ public class TextField {
 
     public void remove(){
         content = content.substring(0,content.length() -1);
-        text.content(content + " ".repeat(1000 - content.length()));
+        text.remove();
     }
 
     public Vector2f getSize() {
