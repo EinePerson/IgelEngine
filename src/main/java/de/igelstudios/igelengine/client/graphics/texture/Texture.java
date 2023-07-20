@@ -17,11 +17,31 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
     public static final int SPRITE_PER_TEXTURE = 16;
-    public static final Vector2f[] TEX_COORDS = {
-            new Vector2f(1, 0),
-            new Vector2f(1, 1),
-            new Vector2f(0, 1),
-            new Vector2f(0, 0),
+    public static final Vector2f[][] TEX_COORDS = {
+            new Vector2f[]{
+                    new Vector2f(1, 0),
+                    new Vector2f(1, 1),
+                    new Vector2f(0, 1),
+                    new Vector2f(0, 0),
+            },
+            new Vector2f[]{
+                    new Vector2f(1, 1),
+                    new Vector2f(0, 1),
+                    new Vector2f(0, 0),
+                    new Vector2f(1, 0),
+            },
+            new Vector2f[]{
+                    new Vector2f(0, 1),
+                    new Vector2f(0, 0),
+                    new Vector2f(1, 0),
+                    new Vector2f(1, 1),
+            },
+            new Vector2f[]{
+                    new Vector2f(0, 0),
+                    new Vector2f(1, 0),
+                    new Vector2f(1, 1),
+                    new Vector2f(0, 1),
+            }
     };
     //private static final Map<Integer, Texture> textures = new HashMap<>();
     //private static final Map<String,Integer> texIDs = new HashMap<>();

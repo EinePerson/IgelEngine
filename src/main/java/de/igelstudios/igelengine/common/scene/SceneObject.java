@@ -16,6 +16,7 @@ public class SceneObject implements BatchContent {
     protected int tex;
     private boolean dirty;
     private boolean remove;
+    protected int rotation = 0;
 
     public SceneObject setPos(float x,float y) {
         setPos(new Vector2f(x,y));
@@ -51,6 +52,17 @@ public class SceneObject implements BatchContent {
 
     public SceneObject setUv(int u,int v) {
         this.uv = new Vector2i(u,v);
+        markDirty();
+        return this;
+    }
+
+    /**
+     * This method sets the rotation
+     * @param rot the cyclable rotation 90° leftwards
+     * @return this
+     */
+    public SceneObject setRotation(int rot){
+        rotation = rot % 4;
         markDirty();
         return this;
     }
@@ -109,5 +121,9 @@ public class SceneObject implements BatchContent {
     @Override
     public int formerLength() {
         return 1;
+    }
+
+    public int getRotation() {
+        return rotation;
     }
 }

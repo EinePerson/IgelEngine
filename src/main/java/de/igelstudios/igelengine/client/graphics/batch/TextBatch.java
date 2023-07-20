@@ -44,11 +44,11 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
             int k = j;
             for (int m = 0; m < 4; m++) {
 
-                vertices[j] = obj.getPos().x + (Texture.TEX_COORDS[m].x * chat.getWith() * obj.getScale());
-                vertices[j + 1] = obj.getPos().y + (Texture.TEX_COORDS[m].y * chat.getHeight() * obj.getScale());
+                vertices[j] = obj.getPos().x + (Texture.TEX_COORDS[0][m].x * chat.getWith() * obj.getScale());
+                vertices[j + 1] = obj.getPos().y + (Texture.TEX_COORDS[0][m].y * chat.getHeight() * obj.getScale());
                 vertices[j + 2] = ((float) obj.getFont().getTex());
-                vertices[j + 3] = chat.getTexCords()[(int) Texture.TEX_COORDS[m].x].x;
-                vertices[j + 4] = chat.getTexCords()[(int) Texture.TEX_COORDS[m].y].y * 1.125f;
+                vertices[j + 3] = chat.getTexCords()[(int) Texture.TEX_COORDS[0][m].x].x;
+                vertices[j + 4] = chat.getTexCords()[(int) Texture.TEX_COORDS[0][m].y].y * 1.125f;
 
                 vertices[j + 5] = obj.getR();
                 vertices[j + 6] = obj.getG();

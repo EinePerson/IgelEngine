@@ -55,8 +55,8 @@ public class ObjectBatch extends Batch<SceneObject>{
             vertices[j] = obj.getPos().x + (k * obj.getSize().x);
             vertices[j + 1] = obj.getPos().y + (l * obj.getSize().y);
             vertices[j + 2] = ((float) obj.getTex());
-            vertices[j + 3] = (Texture.TEX_COORDS[m].x * obj.getTexSize().x + obj.getUv().x)  / Texture.SPRITE_PER_TEXTURE;
-            vertices[j + 4] = (Texture.TEX_COORDS[m].y * obj.getTexSize().y + obj.getUv().y)  / Texture.SPRITE_PER_TEXTURE;
+            vertices[j + 3] = (Texture.TEX_COORDS[obj.getRotation()][m].x * obj.getTexSize().x + obj.getUv().x)  / Texture.SPRITE_PER_TEXTURE;
+            vertices[j + 4] = (Texture.TEX_COORDS[obj.getRotation()][m].y * obj.getTexSize().y + obj.getUv().y)  / Texture.SPRITE_PER_TEXTURE;
 
             j += 5;
         }
