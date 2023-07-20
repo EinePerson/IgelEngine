@@ -9,7 +9,9 @@ public class Encoder extends MessageToByteEncoder<Package> {
     @Override
     protected void encode(ChannelHandlerContext ctx, Package msg, ByteBuf out) throws Exception {
         PacketByteBuf buf = new PacketByteBuf(out);
-        buf.writeId(msg.id());
+        buf.writeInt(msg.id().getBytes().length + msg.buf().writerIndex() + 5);
+        buf.writeBytes(msg.id().getBytes());
+        buf.writeByte(0);
         buf.writeBytes(msg.buf().copy());
     }
 }

@@ -161,3 +161,9 @@ wrapper {
     gradleVersion = "8.1"
     distributionType = Wrapper.DistributionType.ALL
 }
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}

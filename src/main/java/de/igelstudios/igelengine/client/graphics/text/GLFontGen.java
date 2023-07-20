@@ -98,7 +98,6 @@ public class GLFontGen {
             ImageIO.write(img,"png",new FileOutputStream("src/main/resources/fonts/" + png));
             Files.writeString(Path.of("src/main/resources/fonts/" + json),new Gson().toJson(chars));
         } catch (IOException e) {
-            System.out.println(new File("src/main/resources/fonts/" + new File(name).getName()).getAbsolutePath());
             throw new RuntimeException(e);
         }
 
