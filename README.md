@@ -10,4 +10,4 @@ dependencies {
     implementation "com.github.EinePerson:IgelEngine:engine_version"
 }
 ```
-Replace engine_version with the version of the engine you want to use(Every version can be found as package)
+Replace engine_version with the version of the engine you want to use(Every version can be found as Release)
