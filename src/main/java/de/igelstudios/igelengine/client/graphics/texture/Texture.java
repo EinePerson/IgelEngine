@@ -16,7 +16,7 @@ import java.util.*;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
-    public static final int SPRITE_PER_TEXTURE = 16;
+    public static final int SPRITE_PER_TEXTURE = 1;
     public static final Vector2f[][] TEX_COORDS = {
             new Vector2f[]{
                     new Vector2f(1, 0),
@@ -43,15 +43,13 @@ public class Texture {
                     new Vector2f(0, 1),
             }
     };
-    //private static final Map<Integer, Texture> textures = new HashMap<>();
-    //private static final Map<String,Integer> texIDs = new HashMap<>();
     private String path;
     private int tex;
 
-    Texture(String path){
+    Texture(String path,int tex){
         this.path = path;
 
-        tex = GL40.glGenTextures();
+        this.tex = tex;
         GL40.glBindTexture(GL11.GL_TEXTURE_2D, tex);
         GL40.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
         GL40.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
@@ -64,7 +62,7 @@ public class Texture {
             else if(info.ip2.get(0) == 4)GL40.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, info.ip0.get(0), info.ip1.get(0), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, img);
             stbi_image_free(img);
         }
-        else ClientMain.LOGGER.error("Could not load image:" + this.path);
+        //else ClientMain.LOGGER.error("Could not load image:" + this.path);
     }
 
     Texture(String path,boolean b){
@@ -83,7 +81,7 @@ public class Texture {
             else if(info.ip2.get(0) == 4)GL40.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, info.ip0.get(0), info.ip1.get(0), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, img);
             stbi_image_free(img);
         }
-        else ClientMain.LOGGER.error("Could not load image:" + this.path);
+        //else ClientMain.LOGGER.error("Could not load image:" + this.path);
     }
 
     public static ByteBuffer read(String name,TextureInfo info){

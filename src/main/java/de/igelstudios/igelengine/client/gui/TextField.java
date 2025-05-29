@@ -35,6 +35,14 @@ public class TextField {
         text.add(c);
     }
 
+    public void hide(){
+        text.setLifeTime(0);
+    }
+
+    public void show(){
+        text.setLifeTime(-1);
+    }
+
     public int getLength(){
         return content.length();
     }
@@ -52,7 +60,7 @@ public class TextField {
         return pos;
     }
 
-    Text getText() {
+    public Text getText() {
         return text;
     }
 

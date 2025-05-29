@@ -79,7 +79,7 @@ public class Window{
         glfwSetFramebufferSizeCallback(window, ((handle1, width1, height1) -> resize(width1,height1)));
 
         updateSoundDevices();
-        createAudio(audioDevices.get(0));
+        //createAudio(audioDevices.get(0));
 
         glfwShowWindow(window);
         glfwMakeContextCurrent(window);
@@ -101,8 +101,8 @@ public class Window{
     public void createAudio(String device){
         if(audioDevice != MemoryUtil.NULL)closeAudio();
         updateSoundDevices();
-        if(!device.contains("OpenAL Soft on "))device = "OpenAL Soft on " + device;
-        if(!audioDevices.contains(device))throw new RuntimeException("The Audio Device " + device + " could not be found");
+        //if(!device.contains("OpenAL Soft on "))device = "OpenAL Soft on " + device;
+        if(!audioDevices.contains(device) && (!device.contains("OpenAL Soft on ") && !audioDevices.contains("OpenAL Soft on " + device)))throw new RuntimeException("The Audio Device " + device + " could not be found");
 
         audioDevice = ALC11.alcOpenDevice(device);
         if (audioDevice == NULL) throw new IllegalStateException("Failed to open an OpenAL device.");

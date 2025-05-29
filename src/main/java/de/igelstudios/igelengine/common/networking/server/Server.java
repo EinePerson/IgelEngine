@@ -10,6 +10,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 
 import java.util.HashMap;
@@ -71,7 +72,7 @@ public class Server extends Thread implements Tickable {
     @Override
     public void run(){
         try {
-            System.out.println("Started Server");
+            System.out.println("Started Server on " + port);
             ServerBootstrap bootstrap = new ServerBootstrap().group(boosGroup, workerGroup).channel(NioServerSocketChannel.class).option(ChannelOption.SO_BACKLOG, 1024).option(ChannelOption.AUTO_CLOSE, true)
                     .option(ChannelOption.SO_REUSEADDR, true).childOption(ChannelOption.SO_KEEPALIVE, true).childOption(ChannelOption.TCP_NODELAY, true);
 

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 
 public class ClientMain {
-    public static final Logger LOGGER = LoggerFactory.getLogger(Window.TITLE + ":Client");
+    //public static final Logger LOGGER = LoggerFactory.getLogger(Window.TITLE + ":Client");
     private static ClientMain instance;
 
     public static synchronized ClientMain getInstance() {

@@ -32,7 +32,7 @@ public class Shader {
         glLinkProgram(program);
 
         int i = glGetProgrami(program, GL_LINK_STATUS);
-        if (i == GL_FALSE) ClientMain.LOGGER.error(data + " Linking of shaders failed." + glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH)));
+        //if (i == GL_FALSE) ClientMain.LOGGER.error(data + " Linking of shaders failed." + glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH)));
 
     }
     private static int load(int type,String name){
@@ -41,7 +41,7 @@ public class Shader {
             glShaderSource(id,new String(stream.readAllBytes()));
             glCompileShader(id);
             int i = glGetShaderi(id, GL_COMPILE_STATUS);
-            if (i == GL_FALSE) ClientMain.LOGGER.error(name + " Shader compilation failed." + glGetShaderInfoLog(id, glGetShaderi(id, GL_INFO_LOG_LENGTH)));
+            //if (i == GL_FALSE) ClientMain.LOGGER.error(name + " Shader compilation failed." + glGetShaderInfoLog(id, glGetShaderi(id, GL_INFO_LOG_LENGTH)));
 
             return id;
         } catch (IOException | NullPointerException e) {

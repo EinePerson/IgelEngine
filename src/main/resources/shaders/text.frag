@@ -11,7 +11,8 @@ void main() {
     //color = vec4(inColor,1.0f);
     int id = int(inTex.x);
     color = texture(tex[id],vec2(inTex.y,inTex.z));
-    color = vec4(inColor,color.a);
+    if(color.a == 1)color = vec4(inColor,1.0);
+    else color = vec4(0.0);
     //color = vec4(1.0f,1.0f,1.0f,c) * vec4(1.0f,0.0f,1.0f,1.0f);
     //color = vec4(acolor.a);
     //color = vec4(c); //* vec4(1.0f,0.0f,0.0f,1.0f);

@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TextBatch extends Batch<GraphChar>implements Tickable {
-    public static final TexturePool pool = new TexturePool();
     public TextBatch(int size) {
         super(size, new Shader("text"), true,2,3,3);
     }
@@ -33,10 +32,6 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
         return dirty;
     }
 
-    @Override
-    protected TexturePool getTexs() {
-        return pool;
-    }
 
     @Override
     public void addP(int j, GraphChar obj) {

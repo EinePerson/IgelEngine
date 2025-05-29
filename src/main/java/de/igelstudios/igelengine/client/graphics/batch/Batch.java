@@ -101,7 +101,7 @@ public abstract class Batch<T extends BatchContent> {
             shader.putMat("viewMat", supplier.getViewMat());
         }
 
-        for (Texture texture : getTexs().get()) {
+        for (Texture texture : TexturePool.get()) {
             glActiveTexture(GL_TEXTURE0 + texture.getID());
             texture.bind();
         }
@@ -119,14 +119,12 @@ public abstract class Batch<T extends BatchContent> {
         }
         glBindVertexArray(0);
 
-        for (Texture texture : getTexs().get()) {
+        for (Texture texture : TexturePool.get()) {
             glActiveTexture(GL_TEXTURE0 + texture.getID());
             texture.unbind();
         }
         shader.unUse();
     }
-
-    protected abstract TexturePool getTexs();
 
     private void loadIndices(int[] i, int j) {
         int k = 6 * j;

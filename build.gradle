@@ -1,8 +1,13 @@
 import org.codehaus.groovy.runtime.GStringImpl
 import org.gradle.internal.os.OperatingSystem
 
+plugins {
+    id 'org.graalvm.buildtools.native' version '0.9.23'
+}
+
 apply plugin: 'application'
 apply plugin: 'maven-publish'
+
 
 //sourceCompatibility = project.java_version
 //targetCompatibility = project.java_version
@@ -29,6 +34,7 @@ switch (OperatingSystem.current()) {
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
     maven { url "https://jitpack.io" }
 }
 
@@ -132,6 +138,7 @@ test {
 }
 
 jar {
+    mainClassName "de.igelstudios.ClientMain"
     jar {
         manifest {
             from 'src/main/resources/META-INF/MANIFEST.MF'
@@ -162,8 +169,8 @@ wrapper {
     distributionType = Wrapper.DistributionType.ALL
 }
 
-java {
+/*java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(20))
     }
-}
+}*/

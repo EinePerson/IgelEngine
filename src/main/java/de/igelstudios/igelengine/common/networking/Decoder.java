@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class Decoder extends MessageToMessageDecoder<ByteBuf> {
@@ -21,12 +22,17 @@ public class Decoder extends MessageToMessageDecoder<ByteBuf> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        k = in.readableBytes();
+        byte[] b = new byte[in.readableBytes()];
+        for (int o = 0; o < in.readableBytes(); o++) {
+            b[o] = in.readByte();
+        }
+        System.out.println(Arrays.toString(b));
+        /*k = in.readableBytes();
         n = 0;
         while (n < k){
             Package p = read(in);
             if(p != null)out.add(p);
-        }
+        }*/
     }
 
     private Package read(ByteBuf in){

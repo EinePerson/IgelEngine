@@ -34,14 +34,14 @@ public class Camera {
         adjust();
         instance = this;
 
-        alListener3f(AL_POSITION, pos.x, pos.y, 0.0f);
-        alListener3f(AL_VELOCITY, 0, 0, 0);
+        //alListener3f(AL_POSITION, pos.x, pos.y, 0.0f);
+        //alListener3f(AL_VELOCITY, 0, 0, 0);
     }
 
     public void adjust(){
         projMat.identity();
         projMat.ortho(0.0f, x,0.0f, y,0.0f,100.0f);
-        alListener3f(AL_POSITION, pos.x, pos.y, 0.0f);
+        //alListener3f(AL_POSITION, pos.x, pos.y, 0.0f);
         Vector3f up = new Vector3f(0.0f,1.0f,0.0f);
         Vector3f at = new Vector3f(0.0f,0.0f,-1.0f);
         at.add(pos.x,pos.y,0.0f);
@@ -52,7 +52,7 @@ public class Camera {
         data[3] = up.x;
         data[4] = up.y;
         data[5] = up.z;
-        alListenerfv(AL_ORIENTATION, data);
+        //alListenerfv(AL_ORIENTATION, data);
     }
 
     public Matrix4f getViewMat() {

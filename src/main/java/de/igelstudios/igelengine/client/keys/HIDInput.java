@@ -133,10 +133,10 @@ public class HIDInput {
         mouseMove = new ArrayList<>();
         dragListeners = new HashMap<>();
         continousListeners = new HashMap<>();
+        registerKeys();
         KeyInitializer keyInit = new KeyInitializer();
         initializer.registerKeys(keyInit);
         keyInit.register(this);
-        registerKeys();
         registerListeners();
         keyConfig = new KeyConfig(defaultKeys);
         keyboard = new GLFWKeyCallback() {
@@ -194,6 +194,7 @@ public class HIDInput {
         mouseKeys = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int key, int action, int mods) {
+                System.out.println("Button:" + key);
                 if (keys[key]) {
                     if (listeners.containsKey(keyConfig.get(key))) {
                         listeners.get(keyConfig.get(key)).keySet().forEach(method -> {
