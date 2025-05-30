@@ -155,22 +155,3 @@ java {
 tasks.withType(Jar).all {
     duplicatesStrategy 'exclude'
 }
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-        }
-    }
-}
-
-wrapper {
-    gradleVersion = "8.1"
-    distributionType = Wrapper.DistributionType.ALL
-}
-
-/*java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
-}*/
