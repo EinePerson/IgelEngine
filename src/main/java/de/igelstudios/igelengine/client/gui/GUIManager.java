@@ -1,17 +1,14 @@
 package de.igelstudios.igelengine.client.gui;
 
-import de.igelstudios.igelengine.client.keys.HIDInput;
-import de.igelstudios.igelengine.client.keys.KeyHandler;
-import de.igelstudios.igelengine.client.keys.KeyListener;
-import de.igelstudios.igelengine.client.keys.MouseMoveListener;
+import de.igelstudios.igelengine.client.keys.*;
 import de.igelstudios.igelengine.common.scene.SceneObject;
 import org.lwjgl.glfw.GLFW;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 
-public class GUIManager implements KeyListener, MouseMoveListener {
+public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     private static GUIManager instance;
-    private double x,y;
+    //private double x,y;
     private int selText;
     private GUI gui;
 
@@ -20,7 +17,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
     }
 
     @KeyHandler("LMB")
-    public void lmb(boolean pressed){
+    public void lmb(boolean pressed,double x,double y){
         if(!pressed)return;
         if(gui == null)return;
         gui.getButtons().forEach(button -> {
@@ -42,7 +39,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
     }
 
     @KeyHandler("RMB")
-    public void rmb(boolean pressed){
+    public void rmb(boolean pressed,double x,double y){
         if(!pressed)return;
         if(gui == null)return;
         gui.getButtons().forEach(button -> {
@@ -53,7 +50,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
     }
 
     @KeyHandler("MMB")
-    public void mmb(boolean pressed){
+    public void mmb(boolean pressed,double x,double y){
         if(!pressed)return;
         if(gui == null)return;
         gui.getButtons().forEach(button -> {
@@ -63,11 +60,11 @@ public class GUIManager implements KeyListener, MouseMoveListener {
         });
     }
 
-    @Override
+    /*@Override
     public void mouseMove(double x, double y) {
         this.x = x;
         this.y = y;
-    }
+    }*/
 
 
 
@@ -90,6 +87,8 @@ public class GUIManager implements KeyListener, MouseMoveListener {
     private void setGui(GUI gui) {
         selText = -1;
         if(this.gui != null) removeGUI();
+        if(gui == null)HIDInput.deactivateListener(this);
+        else HIDInput.activateListener(this);
         this.gui = gui;
     }
 
@@ -119,7 +118,7 @@ public class GUIManager implements KeyListener, MouseMoveListener {
 
     public static void register(HIDInput input){
         new GUIManager();
-        input.registerKeyListener(instance);
-        input.registerMoveListener(instance);
+        input.registerMouseClickListener(instance);
+        //input.registerMoveListener(instance);
     }
 }

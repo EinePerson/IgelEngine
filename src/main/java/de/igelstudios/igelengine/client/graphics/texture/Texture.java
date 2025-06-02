@@ -16,7 +16,9 @@ import java.util.*;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
-    public static final int SPRITE_PER_TEXTURE = 1;
+    private static int SPRITE_PER_TEXTURE_X = 1;
+    private static int SPRITE_PER_TEXTURE_Y = 1;
+    //public static final int SPRITE_PER_TEXTURE = 1;
     public static final Vector2f[][] TEX_COORDS = {
             new Vector2f[]{
                     new Vector2f(1, 0),
@@ -45,6 +47,22 @@ public class Texture {
     };
     private String path;
     private int tex;
+
+    public static int getSpritePerTextureX(){
+        return SPRITE_PER_TEXTURE_X;
+    }
+
+    public static int getSpritePerTextureY(){
+        return SPRITE_PER_TEXTURE_Y;
+    }
+
+    public static void setSpritePerTextureX(int textureX){
+        SPRITE_PER_TEXTURE_X = textureX;
+    }
+
+    public static void setSpritePerTextureY(int textureY){
+        SPRITE_PER_TEXTURE_Y = textureY;
+    }
 
     Texture(String path,int tex){
         this.path = path;
