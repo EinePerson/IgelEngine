@@ -66,7 +66,7 @@ public abstract class Batch<T extends BatchContent> {
 
     public abstract boolean dirtyCheck(List<T> objs);
 
-    protected void clear(int i,List<T> objs){
+    protected void clear(int i, List<T> objs){
         //System.out.println("A     A\n" + Arrays.toString(vertices) + "A     A");
         int k = 0;
         for (int j = 0; j < objs.size() && j < i; j++) {
@@ -83,7 +83,12 @@ public abstract class Batch<T extends BatchContent> {
         System.arraycopy(vertices,l,nvertecies,k,vertices.length - l);
         //System.out.println("C     C\n" + Arrays.toString(nvertecies) + "C     C");
         vertices = nvertecies;
-     }
+    }
+
+    public void clearBatch(){
+        Arrays.fill(vertices,0);
+    }
+
 
     public void render(BatchSupplier<T> supplier){
         this.supplier = supplier;

@@ -104,7 +104,10 @@ public final class Text{
         this.g = g;
         this.b = b;
 
-        chars.forEach(graphChar -> graphChar.setColor(r,g,b));
+        chars.forEach(graphChar -> {
+            graphChar.setColor(r,g,b);
+            graphChar.markDirty();
+        });
 
         return this;
     }

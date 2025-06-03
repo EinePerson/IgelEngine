@@ -21,4 +21,8 @@ public class Scene {
     public void removeObject(SceneObject obj){
         objects.remove(obj);
     }
+
+    public void clearObjects(){
+        objects.clear();
+    }
 }

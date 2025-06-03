@@ -27,6 +27,11 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
                 clear(i,objs);
                 objs.remove(i);
                 dirty = true;
+                continue;
+            }
+            if(obj.isDirty()){
+                add(i,obj);
+                dirty = true;
             }
         }
         return dirty;

@@ -47,7 +47,7 @@ public class GraphChar implements BatchContent {
         dirty = true;
     }
 
-    public boolean hasChanged() {
+    public boolean isDirty() {
         return dirty;
     }
 

@@ -83,6 +83,14 @@ public class Renderer {
         textBatch.render(textSupplier);
     }
 
+    public void clear(){
+        objectBatch.clearBatch();
+        textBatch.clearBatch();
+        objectSupplier.objs.clear();
+        textSupplier.texts.clear();
+        scene.clearObjects();
+    }
+
     public ClientScene getScene() {
         return scene;
     }
