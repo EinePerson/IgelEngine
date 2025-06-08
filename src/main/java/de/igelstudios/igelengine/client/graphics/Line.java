@@ -9,7 +9,7 @@ public class Line implements BatchContent {
     private Vector2f end;
     private Vector2f endUp;
     private float length;
-    private float incline;
+    private float angle;
     private float thickness;
     private float r,g,b,a;
     private boolean dirty;
@@ -19,13 +19,13 @@ public class Line implements BatchContent {
         this(start,(end.x - start.x) / (end.y - start.y),(float) Math.sqrt(Math.pow(end.x - start.x,2) + Math.pow(end.y - start.y,2)),thickness);
     }
 
-    public Line(Vector2f start,float incline,float length,float thickness) {
+    public Line(Vector2f start,float angleD,float length,float thickness) {
         this.start = start;
-        this.incline = incline;
+        this.angle = (float) Math.toRadians(angleD);
         this.length = length;
         this.thickness = thickness;
 
-        double angle = Math.tanh(incline);
+        //double angle = Math.tanh(incline);
         double deltaX = length * Math.cos(angle);
         double deltaY = length * Math.sin(angle);
         end = new Vector2f((float) (start.x + deltaX), (float) (start.y + deltaY));
@@ -75,10 +75,9 @@ public class Line implements BatchContent {
         return this;
     }
 
-    public Line setIncline(float incline) {
-        this.incline = incline;
+    public Line setIncline(float angleD) {
+        this.angle = (float) Math.toRadians(angleD);
 
-        double angle = Math.tanh(incline);
         double deltaX = length * Math.cos(angle);
         double deltaY = length * Math.sin(angle);
         end = new Vector2f((float) (start.x + deltaX), (float) (start.y + deltaY));
