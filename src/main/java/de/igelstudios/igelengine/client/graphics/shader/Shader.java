@@ -19,6 +19,16 @@ public class Shader {
     private int[] shaders;
     private int program;
     private boolean used = false;
+    private boolean usesTexture = true;
+
+    public Shader noTexture() {
+        usesTexture = false;
+        return this;
+    }
+
+    public boolean usesTexture() {
+        return usesTexture;
+    }
 
     public Shader(ShaderData[] data){
         shaders = new int[data.length];

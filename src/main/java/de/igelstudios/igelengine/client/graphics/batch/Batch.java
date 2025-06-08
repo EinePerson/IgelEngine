@@ -106,11 +106,13 @@ public abstract class Batch<T extends BatchContent> {
             shader.putMat("viewMat", supplier.getViewMat());
         }
 
-        for (Texture texture : TexturePool.get()) {
-            glActiveTexture(GL_TEXTURE0 + texture.getID());
-            texture.bind();
+        if(shader.usesTexture()) {
+            for (Texture texture : TexturePool.get()) {
+                glActiveTexture(GL_TEXTURE0 + texture.getID());
+                texture.bind();
+            }
+            shader.pitInt("tex", new int[]{0, 1, 2, 3, 4, 5, 6, 7});
         }
-        shader.pitInt("tex", new int[]{0, 1, 2, 3, 4, 5, 6, 7});
 
         glBindVertexArray(vao);
         for (int i = 0; i < attrs.length; i++) {
@@ -124,9 +126,11 @@ public abstract class Batch<T extends BatchContent> {
         }
         glBindVertexArray(0);
 
-        for (Texture texture : TexturePool.get()) {
-            glActiveTexture(GL_TEXTURE0 + texture.getID());
-            texture.unbind();
+        if(shader.usesTexture()) {
+            for (Texture texture : TexturePool.get()) {
+                glActiveTexture(GL_TEXTURE0 + texture.getID());
+                texture.unbind();
+            }
         }
         shader.unUse();
     }

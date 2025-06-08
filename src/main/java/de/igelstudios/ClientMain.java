@@ -19,7 +19,7 @@ public class ClientMain {
         return instance;
     }
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         new ClientMain().start();
     }
 

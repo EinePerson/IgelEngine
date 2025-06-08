@@ -2,6 +2,7 @@ package de.igelstudios.igelengine.client.graphics;
 
 import de.igelstudios.igelengine.client.ClientScene;
 import de.igelstudios.igelengine.client.graphics.batch.BatchSupplier;
+import de.igelstudios.igelengine.client.graphics.batch.LineBatch;
 import de.igelstudios.igelengine.client.graphics.batch.ObjectBatch;
 import de.igelstudios.igelengine.client.graphics.batch.TextBatch;
 import de.igelstudios.igelengine.client.lang.GraphChar;
@@ -22,16 +23,20 @@ public class Renderer {
 
     private TextBatch textBatch;
     private ObjectBatch objectBatch;
+    private LineBatch lineBatch;
     private ClientScene scene;
     private TextSupplier textSupplier;
     private ObjectSupplier objectSupplier;
+    private LineSupplier lineSupplier;
 
     public Renderer(ClientScene scene){
         textBatch = new TextBatch(80 * 45);
         objectBatch = new ObjectBatch(80 * 45);
+        lineBatch = new LineBatch(80 * 45);
         this.scene = scene;
         textSupplier = new TextSupplier();
         objectSupplier = new ObjectSupplier();
+        lineSupplier = new LineSupplier();
         renderer = this;
         render();
     }
@@ -65,6 +70,12 @@ public class Renderer {
         });
     }
 
+    public void render(Line line){
+        line.removed();
+        lineBatch.add(lineSupplier.lines.size(),line);
+        lineSupplier.lines.add(line);
+    }
+
     public void render(GraphChar graphChar){
         textBatch.add(textSupplier.texts.size(),graphChar);
         textSupplier.texts.add(graphChar);
@@ -81,6 +92,7 @@ public class Renderer {
     public void render(){
         objectBatch.render(objectSupplier);
         textBatch.render(textSupplier);
+        lineBatch.render(lineSupplier);
     }
 
     public void clear(){
@@ -89,6 +101,8 @@ public class Renderer {
         objectSupplier.objs.clear();
         textSupplier.texts.clear();
         scene.clearObjects();
+        lineSupplier.lines.clear();
+        lineBatch.clearBatch();
     }
 
     public ClientScene getScene() {
@@ -143,6 +157,41 @@ public class Renderer {
         @Override
         public int getSize() {
             return objs.size();
+        }
+
+        @Override
+        public int getSize(int i) {
+            return i;
+        }
+
+        @Override
+        public Matrix4f getProjMat() {
+            return Renderer.this.scene.getProjMat();
+        }
+
+        @Override
+        public Matrix4f getViewMat() {
+            return Renderer.this.scene.getViewMat();
+        }
+    }
+
+    public class LineSupplier implements BatchSupplier<Line>{
+        private List<Line> lines;
+        //private List<SceneObject> objs;
+
+        public LineSupplier(){
+            lines = new ArrayList<>();
+            //objs = new ArrayList<>();
+        }
+
+        @Override
+        public List<Line> getT() {
+            return lines;
+        }
+
+        @Override
+        public int getSize() {
+            return lines.size();
         }
 
         @Override
