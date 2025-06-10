@@ -22,7 +22,7 @@ public class Line implements BatchContent {
     }
 
     public Line(Vector2f start, Vector2f end,float thickness) {
-        this(start,(end.x - start.x) / (end.y - start.y),(float) Math.sqrt(Math.pow(end.x - start.x,2) + Math.pow(end.y - start.y,2)),thickness,
+        this(start, (float) Math.toDegrees(new Vector2f(end).sub(start).angle(new Vector2f(1,0))),(float) Math.sqrt(Math.pow(end.x - start.x,2) + Math.pow(end.y - start.y,2)),thickness,
                 false,0,0,0,1);
     }
 
@@ -31,7 +31,7 @@ public class Line implements BatchContent {
     }
 
     public Line(Vector2f start,float angleD,float length,float thickness,boolean mirror,float r,float g,float b,float a) {
-        this.start = start;
+        this.start = new Vector2f(start);
         this.angle = (float) Math.toRadians(angleD);
         this.length = length;
         this.thickness = thickness;
