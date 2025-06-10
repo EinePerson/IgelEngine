@@ -4,7 +4,13 @@ import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
 import org.joml.Vector2f;
 
 public class Line implements BatchContent {
-    private final Vector2f start;
+    public enum Type{
+        RIGHT,
+        CENTER,
+        LEFT;
+    }
+    private final Vector2f org;
+    private Vector2f start;
     private Vector2f startUp;
     private Vector2f end;
     private Vector2f endUp;
@@ -14,24 +20,24 @@ public class Line implements BatchContent {
     private float r,g,b,a;
     private boolean dirty;
     private boolean remove;
-    private boolean mirror;
+    private Type mirror;
 
     private Line(Vector2f start){
-        this.start = start;
+        this.org = start;
         dirty = true;
     }
 
     public Line(Vector2f start, Vector2f end,float thickness) {
         this(start, (float) Math.toDegrees(new Vector2f(end).sub(start).angle(new Vector2f(1,0))),(float) Math.sqrt(Math.pow(end.x - start.x,2) + Math.pow(end.y - start.y,2)),thickness,
-                false,0,0,0,1);
+                Type.CENTER,0,0,0,1);
     }
 
-    public Line(Vector2f start,float angleD,float length,float thickness,boolean mirror){
+    public Line(Vector2f start,float angleD,float length,float thickness,Type mirror){
         this(start,angleD,length,thickness,mirror,0,0,0,1);
     }
 
-    public Line(Vector2f start,float angleD,float length,float thickness,boolean mirror,float r,float g,float b,float a) {
-        this.start = new Vector2f(start);
+    public Line(Vector2f start,float angleD,float length,float thickness,Type mirror,float r,float g,float b,float a) {
+        this.org = new Vector2f(start);
         this.angle = (float) Math.toRadians(angleD);
         this.length = length;
         this.thickness = thickness;
@@ -48,7 +54,7 @@ public class Line implements BatchContent {
         dirty = true;
     }
 
-    public Line cloneFromEnd(float angleD,float length,float thickness,boolean mirror){
+    public Line cloneFromEnd(float angleD,float length,float thickness,Type mirror){
         Line clone = new Line(new Vector2f(end));
         clone.endUp = new Vector2f(endUp);
         clone.end = new Vector2f(end);
@@ -83,6 +89,8 @@ public class Line implements BatchContent {
 
     public Line cloneMoved(float deltaX, float deltaY){
         Line clone = clone();
+        clone.org.x += deltaX;
+        clone.org.y += deltaY;
         clone.start.x += deltaX;
         clone.start.y += deltaY;
         clone.end.x += deltaX;
@@ -122,16 +130,22 @@ public class Line implements BatchContent {
     private void recalculate(){
         double deltaX = length * Math.cos(angle);
         double deltaY = length * Math.sin(angle);
+        if(mirror != Type.CENTER){
+            start = new Vector2f(org);
+        }else{
+            Vector2f directional = new Vector2f((float) deltaY, (float) -deltaX).normalize().mul(0.5f);
+            start = directional.mul(thickness).add(org);
+        }
         end = new Vector2f((float) (start.x + deltaX), (float) (start.y + deltaY));
 
-        Vector2f directional = (mirror ?new Vector2f((float) deltaY, (float) -deltaX):new Vector2f((float) -deltaY, (float) deltaX)).normalize().mul(thickness);
+        Vector2f directional = (mirror == Type.RIGHT ? new Vector2f((float) deltaY, (float) -deltaX) : new Vector2f((float) -deltaY, (float) deltaX)).normalize().mul(thickness);
         startUp = directional.add(start);
         endUp = new Vector2f(startUp).add(end).sub(start);
 
         dirty = true;
     }
 
-    public Line mirror(boolean mirror) {
+    public Line setType(Type mirror) {
         if(this.mirror == mirror)return this;
         this.mirror = mirror;
 
