@@ -40,7 +40,7 @@ public class PolygonBatch extends Batch<Polygon>{
     @Override
     protected void loadIndicesP(int[] indices, int startID,int startVertices,Polygon obj) {
         for (int i = 2; i < obj.getCoords().length; i++) {
-            indices[startID] = 0 + startVertices;
+            indices[startID] = startVertices;
             indices[startID + 1] = i - 1 + startVertices;
             indices[startID + 2] = i + startVertices;
             startID += 3;

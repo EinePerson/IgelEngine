@@ -166,7 +166,8 @@ public abstract class Batch<T extends BatchContent> {
     protected abstract void addP(int j,T obj);
 
     public void add(int i,T obj){
-        int j = supplier.getSize(i) * totalInBits / 4;
+        int j = supplier.getSize(i) * totalInBits;
+        if(dynamic)j /= 4;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
 
         addP(j,obj);
@@ -176,7 +177,8 @@ public abstract class Batch<T extends BatchContent> {
     }
 
     public int add(T obj){
-        int j = gi * totalInBits / 4;
+        int j = gi * totalInBits;
+        if(dynamic)j /= 4;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
 
 

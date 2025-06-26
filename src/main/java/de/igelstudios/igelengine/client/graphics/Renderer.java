@@ -153,7 +153,7 @@ public class Renderer {
 
         @Override
         public int getVertexCount() {
-            return getSize() * 3;
+            return getSize() * 6;
         }
 
         @Override
@@ -201,7 +201,7 @@ public class Renderer {
 
         @Override
         public int getVertexCount() {
-            return getSize() * 3;
+            return getSize() * 6;
         }
 
         @Override

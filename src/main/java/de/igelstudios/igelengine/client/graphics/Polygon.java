@@ -16,8 +16,45 @@ public class Polygon implements BatchContent {
         this.a = a;
     }
 
+    public Polygon(Polygon polygon){
+        coords = new  Vector2f[polygon.coords.length];
+        System.arraycopy(polygon.coords, 0, coords, 0, polygon.coords.length);
+        r = polygon.r;
+        g = polygon.g;
+        b = polygon.b;
+        a = polygon.a;
+    }
+
     public Polygon(Vector2f ... coords){
         this(coords,0f,0f,0f,1.0f);
+    }
+
+    public void setColor(float r,float g,float b,float a){
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+        markDirty();
+    }
+
+    public void setA(float a) {
+        this.a = a;
+        markDirty();
+    }
+
+    public void setR(float r) {
+        this.r = r;
+        markDirty();
+    }
+
+    public void setG(float g) {
+        this.g = g;
+        markDirty();
+    }
+
+    public void setB(float b) {
+        this.b = b;
+        markDirty();
     }
 
     public boolean isDirty() {
@@ -60,5 +97,26 @@ public class Polygon implements BatchContent {
     @Override
     public int formerLength() {
         return coords.length;
+    }
+
+    public static Polygon fromLines(Line ... lines){
+        Vector2f[] coords = new Vector2f[lines.length];
+        if(!lines[0].getStart().equals(lines[lines.length - 1].getEnd()))throw new IllegalArgumentException("Lines in a polygon must connect");
+        coords[0] = new Vector2f(lines[0].getEnd());
+        for (int i = 1; i < lines.length; i++) {
+            if(!coords[i - 1].equals(lines[i].getStart()))throw new IllegalArgumentException("Lines in a polygon must connect");
+            coords[i] = new Vector2f(lines[i].getEnd());
+        }
+
+        return new Polygon(coords);
+    }
+
+    public Polygon getAtDelta(float x,float y){
+        Polygon copy = new Polygon(this);
+        for (Vector2f coord : copy.coords) {
+            coord.x += x;
+            coord.y += y;
+        }
+        return copy;
     }
 }

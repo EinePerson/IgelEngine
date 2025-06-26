@@ -3,6 +3,8 @@ package de.igelstudios.igelengine.client.graphics;
 import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
 import org.joml.Vector2f;
 
+import java.text.DecimalFormat;
+
 public class Line implements BatchContent {
     public enum Type{
         RIGHT,
@@ -21,6 +23,7 @@ public class Line implements BatchContent {
     private boolean dirty;
     private boolean remove;
     private Type mirror;
+    private static final DecimalFormat df = new DecimalFormat("#.#####");
 
     private Line(Vector2f start){
         this.org = start;
@@ -28,8 +31,8 @@ public class Line implements BatchContent {
     }
 
     public Line(Vector2f start, Vector2f end,float thickness) {
-        this(start, (float) Math.toDegrees(new Vector2f(end).sub(start).angle(new Vector2f(1,0))),(float) Math.sqrt(Math.pow(end.x - start.x,2) + Math.pow(end.y - start.y,2)),thickness,
-                Type.CENTER,0,0,0,1);
+        this(start, (float) -Math.toDegrees(new Vector2f(end).sub(start).angle(new Vector2f(1,0))),(float) Math.sqrt(Math.pow(end.x - start.x,2) +
+                        Math.pow(end.y - start.y,2)),thickness,Type.LEFT,0,0,0,1);
     }
 
     public Line(Vector2f start,float angleD,float length,float thickness,Type mirror){
@@ -52,6 +55,84 @@ public class Line implements BatchContent {
         recalculate();
 
         dirty = true;
+    }
+
+    public Line cloneFromStart(float angleD,float length,float thickness,Type mirror){
+        Line clone = new Line(new Vector2f(start));
+        clone.endUp = new Vector2f(endUp);
+        clone.end = new Vector2f(end);
+        clone.startUp = new Vector2f(startUp);
+        boolean rec = false;
+        if(this.angle != Math.toRadians(angleD)) rec = true;
+        clone.angle = (float) Math.toRadians(angleD);
+
+        if(this.length != length) rec = true;
+        clone.length = length;
+
+        if(this.thickness != thickness)rec = true;
+        clone.thickness = thickness;
+
+        if(this.mirror != mirror) rec = true;
+        clone.mirror = mirror;
+
+        clone.r = r;
+        clone.g = g;
+        clone.b = b;
+        clone.a = a;
+        if(rec){
+            clone.recalculate();
+        }
+
+        return clone;
+    }
+
+    public Line spanStartToEnd(Line other){
+        return spanHelper(this.start,this.startUp,other.end,other.endUp,this.org);
+    }
+
+    public Line spanStartToStart(Line other){
+        return spanHelper(this.start,this.startUp,other.start,other.startUp,this.org);
+    }
+
+    public Line spanEndToStart(Line other){
+        Vector2f org = switch (mirror) {
+            case CENTER -> new Vector2f(end).sub(endUp).normalize().mul(thickness / 2).add(endUp);
+            case LEFT,RIGHT -> new Vector2f(this.end);
+        };
+        return spanHelper(this.end,this.endUp,other.start,other.startUp,org);
+    }
+
+    public Line spanEndToEnd(Line other){
+        Vector2f org = switch (mirror) {
+            case CENTER -> new Vector2f(end).sub(endUp).normalize().mul(thickness / 2).add(endUp);
+            case LEFT,RIGHT -> new Vector2f(this.end);
+        };
+        return spanHelper(this.end,this.endUp,other.end,other.endUp,org);
+    }
+
+    private Line spanHelper(Vector2f start,Vector2f startUp,Vector2f end,Vector2f endUp,Vector2f org){
+        Line clone = new Line(new Vector2f(org));
+        clone.start = start;
+        clone.end = new Vector2f(end);
+
+        float angle = (float) -Math.toDegrees(new Vector2f(end).sub(start).angle(new Vector2f(1,0)));
+        clone.angle = angle;
+
+        clone.length = (float) Math.sqrt(Math.pow(end.x - start.x,2) +
+                Math.pow(end.y - start.y,2));
+
+        clone.thickness = thickness;
+
+        clone.mirror = mirror;
+
+        clone.r = r;
+        clone.g = g;
+        clone.b = b;
+        clone.a = a;
+
+        clone.recalculate();
+
+        return clone;
     }
 
     public Line cloneFromEnd(float angleD,float length,float thickness,Type mirror){
@@ -128,8 +209,8 @@ public class Line implements BatchContent {
     }
 
     private void recalculate(){
-        double deltaX = length * Math.cos(angle);
-        double deltaY = length * Math.sin(angle);
+        float deltaX = Float.parseFloat(df.format(length * (float) Math.cos(angle)));
+        float deltaY = Float.parseFloat(df.format(length * (float) Math.sin(angle)));
         if(mirror != Type.CENTER){
             start = new Vector2f(org);
         }else{
