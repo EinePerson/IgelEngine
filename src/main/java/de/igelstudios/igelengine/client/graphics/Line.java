@@ -112,10 +112,10 @@ public class Line implements BatchContent {
 
     private Line spanHelper(Vector2f start,Vector2f startUp,Vector2f end,Vector2f endUp,Vector2f org){
         Line clone = new Line(new Vector2f(org));
-        clone.start = start;
+        clone.start = new Vector2f(start);
         clone.end = new Vector2f(end);
 
-        float angle = (float) -Math.toDegrees(new Vector2f(end).sub(start).angle(new Vector2f(1,0)));
+        float angle = (float) -new Vector2f(end).sub(start).angle(new Vector2f(1,0));
         clone.angle = angle;
 
         clone.length = (float) Math.sqrt(Math.pow(end.x - start.x,2) +
@@ -335,5 +335,17 @@ public class Line implements BatchContent {
         clone.a = this.a;
 
         return clone;
+    }
+
+    public void mirror(){
+        Vector2f cpy = end;
+        end = start;
+        start = cpy;
+        angle *= -1;
+        recalculate();
+    }
+
+    public Line mirrored(){
+        return new Line(new Vector2f(end),(float) Math.toDegrees(-angle),length,thickness,mirror,r,g,b,a);
     }
 }

@@ -171,7 +171,7 @@ public abstract class Batch<T extends BatchContent> {
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
 
         addP(j,obj);
-        if(dynamic)loadIndicesP(indices,supplier.getIndicesSize(i),supplier.getSize(),obj);
+        if(dynamic)loadIndicesP(indices,supplier.getIndicesSize(i),supplier.getSize(i),obj);
         dirty  = true;
         gi += totalInBits * obj.getLength();
     }

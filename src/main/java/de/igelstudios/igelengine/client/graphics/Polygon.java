@@ -101,11 +101,13 @@ public class Polygon implements BatchContent {
 
     public static Polygon fromLines(Line ... lines){
         Vector2f[] coords = new Vector2f[lines.length];
-        if(!lines[0].getStart().equals(lines[lines.length - 1].getEnd()))throw new IllegalArgumentException("Lines in a polygon must connect");
+        //if(!(lines[0].getStart().equals(lines[lines.length - 1].getEnd()) || lines[0].getEnd().equals(lines[lines.length - 1].getStart())))throw new IllegalArgumentException("Lines in a polygon must connect");
         coords[0] = new Vector2f(lines[0].getEnd());
         for (int i = 1; i < lines.length; i++) {
-            if(!coords[i - 1].equals(lines[i].getStart()))throw new IllegalArgumentException("Lines in a polygon must connect");
             coords[i] = new Vector2f(lines[i].getEnd());
+            //if(coords[i - 1].equals(lines[i].getStart())) coords[i] = new Vector2f(lines[i].getEnd());
+            //else if(coords[i - 1].equals(lines[i].getEnd())) coords[i] = new Vector2f(lines[i].getStart());
+            //else throw new IllegalArgumentException("Lines in a polygon must connect");
         }
 
         return new Polygon(coords);

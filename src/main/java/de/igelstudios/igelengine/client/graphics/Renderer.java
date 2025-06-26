@@ -97,10 +97,10 @@ public class Renderer {
     }
 
     public void render(){
+        polygonBatch.render(polygonSupplier);
         objectBatch.render(objectSupplier);
         textBatch.render(textSupplier);
         lineBatch.render(lineSupplier);
-        polygonBatch.render(polygonSupplier);
     }
 
     public void clear(){
