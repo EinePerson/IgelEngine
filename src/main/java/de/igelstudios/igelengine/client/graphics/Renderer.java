@@ -1,10 +1,7 @@
 package de.igelstudios.igelengine.client.graphics;
 
 import de.igelstudios.igelengine.client.ClientScene;
-import de.igelstudios.igelengine.client.graphics.batch.BatchSupplier;
-import de.igelstudios.igelengine.client.graphics.batch.LineBatch;
-import de.igelstudios.igelengine.client.graphics.batch.ObjectBatch;
-import de.igelstudios.igelengine.client.graphics.batch.TextBatch;
+import de.igelstudios.igelengine.client.graphics.batch.*;
 import de.igelstudios.igelengine.client.lang.GraphChar;
 import de.igelstudios.igelengine.client.lang.Text;
 import de.igelstudios.igelengine.common.scene.SceneObject;
@@ -24,21 +21,31 @@ public class Renderer {
     private TextBatch textBatch;
     private ObjectBatch objectBatch;
     private LineBatch lineBatch;
+    private PolygonBatch polygonBatch;
     private ClientScene scene;
     private TextSupplier textSupplier;
     private ObjectSupplier objectSupplier;
     private LineSupplier lineSupplier;
+    private PolygonSupplier polygonSupplier;
 
     public Renderer(ClientScene scene){
         textBatch = new TextBatch(80 * 45);
         objectBatch = new ObjectBatch(80 * 45);
         lineBatch = new LineBatch(80 * 45);
+        polygonBatch = new PolygonBatch(80 * 45);
         this.scene = scene;
         textSupplier = new TextSupplier();
         objectSupplier = new ObjectSupplier();
         lineSupplier = new LineSupplier();
+        polygonSupplier = new PolygonSupplier();
         renderer = this;
         render();
+    }
+
+    public void render(Polygon polygon){
+        polygon.unMarkDirty();
+        polygonBatch.add(polygonSupplier.lines.size(),polygon);
+        polygonSupplier.lines.add(polygon);
     }
 
     /**
@@ -93,6 +100,7 @@ public class Renderer {
         objectBatch.render(objectSupplier);
         textBatch.render(textSupplier);
         lineBatch.render(lineSupplier);
+        polygonBatch.render(polygonSupplier);
     }
 
     public void clear(){
@@ -103,6 +111,8 @@ public class Renderer {
         scene.clearObjects();
         lineSupplier.lines.clear();
         lineBatch.clearBatch();
+        polygonSupplier.lines.clear();
+        polygonBatch.clearBatch();
     }
 
     public ClientScene getScene() {
@@ -129,6 +139,21 @@ public class Renderer {
         @Override
         public int getSize(int i) {
             return i;
+        }
+
+        @Override
+        public int getIndicesSize(int i) {
+            return 0;
+        }
+
+        @Override
+        public int getIndicesSize() {
+            return 0;
+        }
+
+        @Override
+        public int getVertexCount() {
+            return getSize() * 3;
         }
 
         @Override
@@ -165,6 +190,21 @@ public class Renderer {
         }
 
         @Override
+        public int getIndicesSize(int i) {
+            return 0;
+        }
+
+        @Override
+        public int getIndicesSize() {
+            return 0;
+        }
+
+        @Override
+        public int getVertexCount() {
+            return getSize() * 3;
+        }
+
+        @Override
         public Matrix4f getProjMat() {
             return Renderer.this.scene.getProjMat();
         }
@@ -197,6 +237,85 @@ public class Renderer {
         @Override
         public int getSize(int i) {
             return i;
+        }
+
+        @Override
+        public int getIndicesSize(int i) {
+            return 0;
+        }
+
+        @Override
+        public int getIndicesSize() {
+            return 0;
+        }
+
+        @Override
+        public int getVertexCount() {
+            return getSize() * 6;
+        }
+
+        @Override
+        public Matrix4f getProjMat() {
+            return Renderer.this.scene.getProjMat();
+        }
+
+        @Override
+        public Matrix4f getViewMat() {
+            return Renderer.this.scene.getViewMat();
+        }
+    }
+
+    private class PolygonSupplier implements BatchSupplier<Polygon>{
+        private List<Polygon> lines;
+
+        public PolygonSupplier(){
+            lines = new ArrayList<>();
+        }
+
+        @Override
+        public List<Polygon> getT() {
+            return lines;
+        }
+
+        @Override
+        public int getSize() {
+            int size = 0;
+            for (Polygon line : lines) {
+                size += line.getLength();
+            }
+            return size;
+        }
+
+        @Override
+        public int getSize(int i) {
+            int size = 0;
+            for(int j = 0;j < i;j++){
+                size += lines.get(j).getLength();
+            }
+            return size;
+        }
+
+        @Override
+        public int getIndicesSize(int i) {
+            int size = 0;
+            for (int j = 0; j < i; j++) {
+                size += lines.get(j).getLength() - 2;
+            }
+            return size * 3;
+        }
+
+        @Override
+        public int getIndicesSize() {
+            int size = 0;
+            for (Polygon line : lines) {
+                size += line.getLength() - 2;
+            }
+            return size * 3;
+        }
+
+        @Override
+        public int getVertexCount() {
+            return getIndicesSize() * 3;
         }
 
         @Override

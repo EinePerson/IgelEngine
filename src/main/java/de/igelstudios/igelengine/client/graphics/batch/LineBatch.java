@@ -8,7 +8,7 @@ import java.util.List;
 public class LineBatch extends Batch<Line>{
 
     public LineBatch(int size) {
-        super(size, new Shader("line").noTexture(),true,2,4);
+        super(size, new Shader("line").noTexture(),true,false,2,4);
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TextBatch extends Batch<GraphChar>implements Tickable {
     public TextBatch(int size) {
-        super(size, new Shader("text"), true,2,3,3);
+        super(size, new Shader("text"), true,false,2,3,3);
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.List;
 public class ObjectBatch extends Batch<SceneObject>{
 
     public ObjectBatch(int size) {
-        super(size, new Shader("default"),true,2,3);
+        super(size, new Shader("default"),true,false,2,3);
     }
 
     @Override

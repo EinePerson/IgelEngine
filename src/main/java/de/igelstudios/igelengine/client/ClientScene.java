@@ -50,4 +50,19 @@ public class ClientScene extends Scene implements BatchSupplier<SceneObject> {
     public int getSize(int i) {
         return i;
     }
+
+    @Override
+    public int getIndicesSize(int i) {
+        return 0;
+    }
+
+    @Override
+    public int getIndicesSize() {
+        return 0;
+    }
+
+    @Override
+    public int getVertexCount() {
+        return getSize() * 3;
+    }
 }

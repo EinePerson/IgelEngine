@@ -1,6 +1,5 @@
 package de.igelstudios.igelengine.client.graphics.batch;
 
-import de.igelstudios.igelengine.client.graphics.shader.Shader;
 import org.joml.Matrix4f;
 
 import java.util.List;
@@ -16,6 +15,12 @@ public interface BatchSupplier<T> {
     int getSize();
 
     int getSize(int i);
+
+    int getIndicesSize(int i);
+
+    int getIndicesSize();
+
+    int getVertexCount();
 
     /**
      * If the Batch to which this is supplied has {@link Batch#movable} set to false this will never be used and should return null;

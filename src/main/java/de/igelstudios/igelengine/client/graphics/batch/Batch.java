@@ -23,8 +23,11 @@ public abstract class Batch<T extends BatchContent> {
     private int[] attrs;
     private int totalInBits = 0;
     private int total = 0;
+    private int ebo;
+    private int[] indices;
+    private boolean dynamic;
     /**
-     * last parameter of {@link Batch#Batch(int, Shader, boolean, int...)}  Batch
+     * last parameter of {@link Batch#Batch(int, Shader, boolean,boolean, int...)}  Batch
      */
     private final boolean movable;
     private BatchSupplier<T> supplier;
@@ -36,11 +39,12 @@ public abstract class Batch<T extends BatchContent> {
      * @param attrs every attribute where the value is the size of the specific attribute
      * @param movable determent's weather objects rendered by this can be moved relative to the player
      */
-    public Batch(int size,Shader shader,boolean movable,int ... attrs){
+    public Batch(int size,Shader shader,boolean movable,boolean dynamic,int ... attrs){
         this.orgSize = size;
         this.shader = shader;
         this.size = size;
         this.attrs = attrs;
+        this.dynamic = dynamic;
 
         for (int attr : attrs) {
             total += attr;
@@ -48,7 +52,8 @@ public abstract class Batch<T extends BatchContent> {
 
         this.movable = movable;
 
-        totalInBits = total * 4;
+        /*if(dynamic)totalInBits = total;
+        else*/ totalInBits = total * 4;
 
 
         vertices = new float[size * totalInBits];
@@ -58,8 +63,10 @@ public abstract class Batch<T extends BatchContent> {
 
     private int[] genIndices() {
         int[] i = new int[size * 6];
-        for (int j = 0; j < size; j++) {
-            loadIndices(i,j);
+        if(!dynamic) {
+            for (int j = 0; j < size; j++) {
+                loadIndices(i, j);
+            }
         }
         return i;
     }
@@ -97,6 +104,11 @@ public abstract class Batch<T extends BatchContent> {
         if(dirty) {
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
+
+            if(dynamic){
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ebo);
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER,indices,GL_STATIC_DRAW);
+            }
             dirty = false;
         }
 
@@ -119,7 +131,7 @@ public abstract class Batch<T extends BatchContent> {
             glEnableVertexAttribArray(i);
         }
 
-        glDrawElements(GL_TRIANGLES,supplier.getSize() * 6,GL_UNSIGNED_INT,0);
+        glDrawElements(GL_TRIANGLES,supplier.getVertexCount(),GL_UNSIGNED_INT,0);
 
         for (int i = 0; i < attrs.length; i++) {
             glDisableVertexAttribArray(i);
@@ -147,23 +159,29 @@ public abstract class Batch<T extends BatchContent> {
         i[k + 5] = l + 1;
     }
 
+    protected void loadIndicesP(int[] indices,int startID,int vertexStart,T obj){
+
+    }
+
     protected abstract void addP(int j,T obj);
 
     public void add(int i,T obj){
-        int j = supplier.getSize(i) * totalInBits;
+        int j = supplier.getSize(i) * totalInBits / 4;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
 
         addP(j,obj);
+        if(dynamic)loadIndicesP(indices,supplier.getIndicesSize(i),supplier.getSize(),obj);
         dirty  = true;
         gi += totalInBits * obj.getLength();
     }
 
     public int add(T obj){
-        int j = gi * totalInBits;
+        int j = gi * totalInBits / 4;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
 
 
         addP(j,obj);
+        if(dynamic)loadIndicesP(indices,supplier.getIndicesSize(),gi,obj);
         dirty = true;
         int i = gi;
         gi += totalInBits * obj.getLength();
@@ -189,8 +207,8 @@ public abstract class Batch<T extends BatchContent> {
         glBindBuffer(GL_ARRAY_BUFFER,vbo);
         glBufferData(GL_ARRAY_BUFFER,vertices.length * 4L,GL_DYNAMIC_DRAW);
 
-        int ebo = glGenBuffers();
-        int[] indices = genIndices();
+        ebo = glGenBuffers();
+        indices = genIndices();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,indices,GL_STATIC_DRAW);
 
