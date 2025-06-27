@@ -269,9 +269,10 @@ public class HIDInput {
                     }
                 }else {
                     if(mouseClickListeners.containsKey(keyConfig.get(key))) {
+                        Map<Listener,Boolean> listener = new HashMap<>(activeListeners);
                         mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
                             try {
-                                if(activeListeners.get(mouseClickListeners.get(keyConfig.get(key)).get(method))) {
+                                if(listener.get(mouseClickListeners.get(keyConfig.get(key)).get(method))) {
                                     method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method), true, mouseX * Camera.getX(), mouseY * Camera.getY());
                                 }
                             } catch (IllegalAccessException | InvocationTargetException e) {

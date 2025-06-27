@@ -12,6 +12,7 @@ public class Line implements BatchContent {
         LEFT;
     }
     private final Vector2f org;
+    private Vector2f endOrg;
     private Vector2f start;
     private Vector2f startUp;
     private Vector2f end;
@@ -32,7 +33,7 @@ public class Line implements BatchContent {
 
     public Line(Vector2f start, Vector2f end,float thickness) {
         this(start, (float) -Math.toDegrees(new Vector2f(end).sub(start).angle(new Vector2f(1,0))),(float) Math.sqrt(Math.pow(end.x - start.x,2) +
-                        Math.pow(end.y - start.y,2)),thickness,Type.LEFT,0,0,0,1);
+                Math.pow(end.y - start.y,2)),thickness,Type.LEFT,0,0,0,1);
     }
 
     public Line(Vector2f start,float angleD,float length,float thickness,Type mirror){
@@ -58,7 +59,11 @@ public class Line implements BatchContent {
     }
 
     public Line cloneFromStart(float angleD,float length,float thickness,Type mirror){
-        Line clone = new Line(new Vector2f(start));
+        return cloneFromStart(angleD,length,thickness,mirror,0,0,0,1);
+    }
+
+    public Line cloneFromStart(float angleD,float length,float thickness,Type mirror,float r,float g,float b,float a) {
+        Line clone = new Line(new Vector2f(mirror == Type.CENTER?org:start));
         clone.endUp = new Vector2f(endUp);
         clone.end = new Vector2f(end);
         clone.startUp = new Vector2f(startUp);
@@ -87,11 +92,11 @@ public class Line implements BatchContent {
     }
 
     public Line spanStartToEnd(Line other){
-        return spanHelper(this.start,this.startUp,other.end,other.endUp,this.org);
+        return spanHelper(this.start,this.org,other.end,other.org);
     }
 
     public Line spanStartToStart(Line other){
-        return spanHelper(this.start,this.startUp,other.start,other.startUp,this.org);
+        return spanHelper(this.start,this.org,other.start,other.org);
     }
 
     public Line spanEndToStart(Line other){
@@ -99,7 +104,7 @@ public class Line implements BatchContent {
             case CENTER -> new Vector2f(end).sub(endUp).normalize().mul(thickness / 2).add(endUp);
             case LEFT,RIGHT -> new Vector2f(this.end);
         };
-        return spanHelper(this.end,this.endUp,other.start,other.startUp,org);
+        return spanHelper(this.end,this.endOrg,other.start,other.org);
     }
 
     public Line spanEndToEnd(Line other){
@@ -107,15 +112,13 @@ public class Line implements BatchContent {
             case CENTER -> new Vector2f(end).sub(endUp).normalize().mul(thickness / 2).add(endUp);
             case LEFT,RIGHT -> new Vector2f(this.end);
         };
-        return spanHelper(this.end,this.endUp,other.end,other.endUp,org);
+        return spanHelper(this.end,this.endOrg,other.end,other.endOrg);
     }
 
-    private Line spanHelper(Vector2f start,Vector2f startUp,Vector2f end,Vector2f endUp,Vector2f org){
+    private Line spanHelper(Vector2f start,Vector2f org,Vector2f end,Vector2f orgEnd){
         Line clone = new Line(new Vector2f(org));
-        clone.start = new Vector2f(start);
-        clone.end = new Vector2f(end);
 
-        float angle = (float) -new Vector2f(end).sub(start).angle(new Vector2f(1,0));
+        float angle = (float) -Math.toDegrees(new Vector2f(end).sub(start).angle(new Vector2f(1,0)));
         clone.angle = angle;
 
         clone.length = (float) Math.sqrt(Math.pow(end.x - start.x,2) +
@@ -136,7 +139,11 @@ public class Line implements BatchContent {
     }
 
     public Line cloneFromEnd(float angleD,float length,float thickness,Type mirror){
-        Line clone = new Line(new Vector2f(end));
+        return cloneFromEnd(angleD,length,thickness,mirror,0,0,0,1);
+    }
+
+    public Line cloneFromEnd(float angleD,float length,float thickness,Type mirror,float r,float g,float b,float a) {
+        Line clone = new Line(new Vector2f(mirror == Type.CENTER?endOrg:end));
         clone.endUp = new Vector2f(endUp);
         clone.end = new Vector2f(end);
         clone.startUp = new Vector2f(startUp);
@@ -218,6 +225,7 @@ public class Line implements BatchContent {
             start = directional.mul(thickness).add(org);
         }
         end = new Vector2f((float) (start.x + deltaX), (float) (start.y + deltaY));
+        endOrg = new Vector2f((float) (org.x + deltaX), (float) (org.y + deltaY));
 
         Vector2f directional = (mirror == Type.RIGHT ? new Vector2f((float) deltaY, (float) -deltaX) : new Vector2f((float) -deltaY, (float) deltaX)).normalize().mul(thickness);
         startUp = directional.add(start);
@@ -317,6 +325,10 @@ public class Line implements BatchContent {
         return startUp;
     }
 
+    public Vector2f getEndOrg() {
+        return endOrg;
+    }
+
     @Override
     public Line clone(){
         Line clone = new Line(new Vector2f(start));
@@ -335,14 +347,6 @@ public class Line implements BatchContent {
         clone.a = this.a;
 
         return clone;
-    }
-
-    public void mirror(){
-        Vector2f cpy = end;
-        end = start;
-        start = cpy;
-        angle *= -1;
-        recalculate();
     }
 
     public Line mirrored(){

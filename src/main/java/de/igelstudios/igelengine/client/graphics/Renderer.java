@@ -99,8 +99,8 @@ public class Renderer {
     public void render(){
         polygonBatch.render(polygonSupplier);
         objectBatch.render(objectSupplier);
-        textBatch.render(textSupplier);
         lineBatch.render(lineSupplier);
+        textBatch.render(textSupplier);
     }
 
     public void clear(){
