@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Engine {
+    public static final int maxLoops = 60;//this is basically max fps
     private final List<Tickable> tickables;
     private boolean running;
 
@@ -20,11 +21,14 @@ public abstract class Engine {
     public final void run() {
         running = true;
         double ticks = 1000000000d / 20d;
+        double loops = 1000000000d / maxLoops;
         double delta = 0d;
+        double loopDelta = 0d;
         long org = System.nanoTime();
         long sTimer = 0;
         while (running && shouldRun()){
             long t = System.nanoTime();
+            loopDelta += (t - org);
             delta += (t - org) / ticks;
             sTimer += t - org;
             org = t;
@@ -38,7 +42,10 @@ public abstract class Engine {
                 sTimer -= 1000000000;
                 second();
             }
-            loop();
+            if(loopDelta >= loops){
+                loopDelta = 0;
+                loop();
+            }
         }
         stopSub();
         System.exit(0);
@@ -68,7 +75,7 @@ public abstract class Engine {
     public abstract void tick();
 
     /**
-     * called every iteration of the loop
+     * called {@link #maxLoops} times per second
      */
     public void loop(){
 

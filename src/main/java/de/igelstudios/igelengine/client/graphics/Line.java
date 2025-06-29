@@ -365,4 +365,9 @@ public class Line implements BatchContent,AlphaColoredObject {
     public Vector2f getOrg() {
         return org;
     }
+
+    public void setA(float a) {
+        this.a = a;
+        markDirty();
+    }
 }
