@@ -5,7 +5,7 @@ import org.joml.Vector2f;
 
 import java.text.DecimalFormat;
 
-public class Line implements BatchContent {
+public class Line implements BatchContent,AlphaColoredObject {
     public enum Type{
         RIGHT,
         CENTER,
@@ -211,6 +211,15 @@ public class Line implements BatchContent {
         return g;
     }
 
+    @Override
+    public Line setColor(float r, float g, float b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        dirty = true;
+        return this;
+    }
+
     public float getR() {
         return r;
     }
@@ -351,5 +360,9 @@ public class Line implements BatchContent {
 
     public Line mirrored(){
         return new Line(new Vector2f(end),(float) Math.toDegrees(-angle),length,thickness,mirror,r,g,b,a);
+    }
+
+    public Vector2f getOrg() {
+        return org;
     }
 }

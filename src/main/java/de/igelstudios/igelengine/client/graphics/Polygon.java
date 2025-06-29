@@ -3,7 +3,7 @@ package de.igelstudios.igelengine.client.graphics;
 import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
 import org.joml.Vector2f;
 
-public class Polygon implements BatchContent {
+public class Polygon implements BatchContent,AlphaColoredObject {
     private Vector2f[] coords;
     private float r,g,b,a;
     private boolean dirty = true;
@@ -29,12 +29,13 @@ public class Polygon implements BatchContent {
         this(coords,0f,0f,0f,1.0f);
     }
 
-    public void setColor(float r,float g,float b,float a){
+    public Polygon setRGBA(float r,float g,float b,float a){
         this.r = r;
         this.g = g;
         this.b = b;
         this.a = a;
         markDirty();
+        return this;
     }
 
     public void setA(float a) {
@@ -71,6 +72,16 @@ public class Polygon implements BatchContent {
 
     public Vector2f[] getCoords() {
         return coords;
+    }
+
+    @Override
+    public ColoredObject setColor(float r, float g, float b) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+
+        markDirty();
+        return this;
     }
 
     public float getR() {
