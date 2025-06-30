@@ -13,12 +13,11 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class Server extends Thread implements Tickable {
     private static Map<ClientNet,Package> queueHandling = new HashMap<>();
+    private static List<ConnectionListener> connectionListeners = new ArrayList<>();
     private static final Map<String, ServerHandler> serverHandlers = new HashMap<>();
 
     /**
@@ -110,5 +109,17 @@ public class Server extends Thread implements Tickable {
     public void tick() {
         queueHandling.forEach(Server::handleSelf);
         queueHandling.clear();
+    }
+
+    public static void addConnectionListener(ConnectionListener connectionListener){
+        connectionListeners.add(connectionListener);
+    }
+
+    public static void removeConnectionListener(ConnectionListener connectionListener){
+        connectionListeners.remove(connectionListener);
+    }
+
+    public static List<ConnectionListener> getConnectionListeners() {
+        return connectionListeners;
     }
 }

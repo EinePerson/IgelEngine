@@ -6,6 +6,7 @@ import de.igelstudios.igelengine.common.networking.ErrorHandler;
 import de.igelstudios.igelengine.common.networking.client.Client;
 import de.igelstudios.igelengine.common.networking.client.ClientNet;
 import de.igelstudios.igelengine.common.networking.server.ConnectionListener;
+import de.igelstudios.igelengine.common.networking.server.Server;
 import de.igelstudios.igelengine.common.startup.ServerInitializer;
 import de.igelstudios.igelengine.common.util.PlayerFactory;
 import de.igelstudios.igelengine.server.ServerConfig;
@@ -67,6 +68,7 @@ public class ServerMain {
         if(this.settings.getServerEventListener() != null && !this.settings.getServerEventListener().equals("")) {
             try {
                 this.listener = (ConnectionListener) Class.forName(this.settings.getServerEventListener()).getConstructor(new Class[0]).newInstance(new Object[0]);
+                Server.addConnectionListener(this.listener);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException |
                      ClassNotFoundException e) {
@@ -74,18 +76,6 @@ public class ServerMain {
             } catch (ClassCastException e) {
                 throw new RuntimeException("The class specified as server_error_handler in info.json has to implement ServerInitializer");
             }
-        }else{
-            listener = new ConnectionListener() {
-                @Override
-                public void playerConnect(ClientNet player) {
-
-                }
-
-                @Override
-                public void playerDisConnect(ClientNet player) {
-
-                }
-            };
         }
         instance = this;
         engine = new ServerEngine(port,handler);
