@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import de.igelstudios.ClientMain;
 import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.graphics.Renderer;
-import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
 import de.igelstudios.igelengine.client.graphics.text.GLFont;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -28,6 +27,9 @@ public final class Text{
 
     private boolean changed;
     private List<GraphChar> chars;
+    private List<Text> childTexts;
+    private boolean charsDirty = true;
+    private List<GraphChar> fullCharList;
 
     private Text(String content){
         this.content = content;
@@ -38,6 +40,8 @@ public final class Text{
         scale = 0.0078125f;
         chars = new ArrayList<>();
         pos = new Vector2f(0.0f);
+        childTexts = new ArrayList<>();
+        fullCharList = new ArrayList<>();
     }
 
     public static void init(String lang){
@@ -108,6 +112,7 @@ public final class Text{
             graphChar.setColor(r,g,b);
             graphChar.markDirty();
         });
+        charsDirty = true;
 
         return this;
     }
@@ -147,14 +152,19 @@ public final class Text{
     }*/
     public void add(char c){
         content += c;
+
+        GraphChar graphChar = new GraphChar(c,new Vector2f(pos.x + getVisualLength(),pos.y),lifeTime,scale,r,g,b,font);
+        chars.add(graphChar);
+        Renderer.get().render(graphChar);
+        changed = true;
+    }
+
+    public float getVisualLength(){
         float i = 0;
         for (GraphChar chat : chars) {
             i += chat.getFont().get(chat.getChat()).getWith() * scale;
         }
-        GraphChar graphChar = new GraphChar(c,new Vector2f(pos.x + i,pos.y),lifeTime,scale,r,g,b,font);
-        chars.add(graphChar);
-        Renderer.get().render(graphChar);
-        changed = true;
+        return i;
     }
 
     public void remove(){
@@ -177,13 +187,16 @@ public final class Text{
     }
 
     public List<GraphChar> getChars() {
-        return chars;
+        if(checkDirty()){
+            fullCharList = getFullCharList();
+        }
+        return fullCharList;
     }
 
     public Text update(){
         char[] charArr = content.toCharArray();
         float j = 0;
-        if(chars.size() == 0){
+        if(chars.isEmpty()){
             for (int i = 0; i < charArr.length; i++) {
                 chars.add(new GraphChar(charArr[i],new Vector2f(pos.x + j,pos.y),lifeTime,scale,r,g,b,font));
                 j += chars.get(i).getFont().get(chars.get(i).getChat()).getWith() * scale;
@@ -194,6 +207,48 @@ public final class Text{
             if(chars.size() > i && !(chars.get(i).getChat() == charArr[i])) chars.add(i,new GraphChar(charArr[i],new Vector2f(pos.x + j,pos.y),lifeTime,scale,r,g,b,font));
             j += chars.get(i).getFont().get(chars.get(i).getChat()).getWith() * scale;
         }
+        return this;
+    }
+
+    private boolean checkDirty(){
+        boolean dirty = charsDirty;
+        for (Text childText : childTexts) {
+            if(childText.checkDirty())dirty = true;
+        }
+
+        charsDirty = false;
+        update();
+        return dirty;
+    }
+
+    private List<GraphChar> getFullCharList(){
+        fullCharList.clear();
+
+        fullCharList.addAll(chars);
+        float x = getVisualLength();
+        for (Text childText : childTexts) {
+            childText.setPos(new Vector2f(pos.x + x,pos.y));
+            x += childText.getFullVisualLength();
+            fullCharList.addAll(childText.getFullCharList());
+        }
+
+        return fullCharList;
+    }
+
+    private float getFullVisualLength(){
+        float length = getVisualLength();
+
+        for (Text childText : childTexts) {
+            length += childText.getFullVisualLength();
+        }
+
+        return length;
+    }
+
+    public Text append(Text text){
+        childTexts.add(text);
+        charsDirty = true;
+
         return this;
     }
 }
