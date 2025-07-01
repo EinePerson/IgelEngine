@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.client.gui;
 
+import de.igelstudios.igelengine.client.graphics.Polygon;
 import de.igelstudios.igelengine.client.graphics.Renderer;
 import de.igelstudios.igelengine.client.lang.Text;
 import de.igelstudios.igelengine.common.scene.SceneObject;
@@ -13,12 +14,14 @@ public abstract class GUI {
     private List<TextField> textFields;
     private List<Text> texts;
     private List<SceneObject> objects;
+    private List<Polygon> polygons;
 
     public GUI(){
         buttons = new ArrayList<>();
         textFields = new ArrayList<>();
         texts = new ArrayList<>();
         objects = new ArrayList<>();
+        polygons = new ArrayList<>();
 
         //instance = this;
     }
@@ -39,6 +42,11 @@ public abstract class GUI {
         objects.add(object);
     }
 
+    public void render(Polygon polygon){
+        Renderer.get().render(polygon);
+        polygons.add(polygon);
+    }
+
     List<Button> getButtons() {
         return buttons;
     }
@@ -53,6 +61,10 @@ public abstract class GUI {
 
     List<SceneObject> getObjects() {
         return objects;
+    }
+
+    public List<Polygon> getPolygons() {
+        return polygons;
     }
 
     public void addButton(Button button){

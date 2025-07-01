@@ -24,7 +24,6 @@ public class Line implements BatchContent,AlphaColoredObject {
     private boolean dirty;
     private boolean remove;
     private Type mirror;
-    private static final DecimalFormat df = new DecimalFormat("#.#####");
 
     private Line(Vector2f start){
         this.org = start;
@@ -225,8 +224,8 @@ public class Line implements BatchContent,AlphaColoredObject {
     }
 
     private void recalculate(){
-        float deltaX = Float.parseFloat(df.format(length * (float) Math.cos(angle)));
-        float deltaY = Float.parseFloat(df.format(length * (float) Math.sin(angle)));
+        float deltaX = Math.round(length * (float) Math.cos(angle) * 100000) / 100000.0f;
+        float deltaY = Math.round(length * (float) Math.sin(angle) * 100000) / 100000.0f;
         if(mirror != Type.CENTER){
             start = new Vector2f(org);
         }else{

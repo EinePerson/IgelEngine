@@ -83,7 +83,7 @@ public class Window{
 
         glfwShowWindow(window);
         glfwMakeContextCurrent(window);
-        glfwSwapInterval(0);
+        glfwSwapInterval(1);
         GL.createCapabilities();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_ALPHA);

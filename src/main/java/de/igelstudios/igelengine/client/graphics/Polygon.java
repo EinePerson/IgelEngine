@@ -7,6 +7,7 @@ public class Polygon implements BatchContent,AlphaColoredObject {
     private Vector2f[] coords;
     private float r,g,b,a;
     private boolean dirty = true;
+    private boolean remove;
 
     public Polygon(Vector2f[] coords,float r,float g,float b,float a) {
         this.coords = coords;
@@ -131,5 +132,17 @@ public class Polygon implements BatchContent,AlphaColoredObject {
             coord.y += y;
         }
         return copy;
+    }
+
+    public void removed() {
+        remove = false;
+    }
+
+    public void remove(){
+        remove = true;
+    }
+
+    public boolean toRemove(){
+        return remove;
     }
 }

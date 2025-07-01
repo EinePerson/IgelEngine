@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.client.gui;
 
+import de.igelstudios.igelengine.client.graphics.Polygon;
 import de.igelstudios.igelengine.client.keys.*;
 import de.igelstudios.igelengine.common.scene.SceneObject;
 import org.lwjgl.glfw.GLFW;
@@ -100,6 +101,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
         gui.getTextFields().forEach(textfield -> textfield.getText().setLifeTime(0));
         gui.getTexts().forEach(text -> text.setLifeTime(0));
         gui.getObjects().forEach(SceneObject::remove);
+        gui.getPolygons().forEach(Polygon::remove);
         this.gui = null;
     }
 

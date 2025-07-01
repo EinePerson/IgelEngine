@@ -24,7 +24,7 @@ public abstract class Batch<T extends BatchContent> {
     private int totalInBits = 0;
     private int total = 0;
     private int ebo;
-    private int[] indices;
+    protected int[] indices;
     private boolean dynamic;
     /**
      * last parameter of {@link Batch#Batch(int, Shader, boolean,boolean, int...)}  Batch
@@ -73,7 +73,15 @@ public abstract class Batch<T extends BatchContent> {
 
     public abstract boolean dirtyCheck(List<T> objs);
 
+    public void clearP(int i,List<T> objs){
+
+    }
+
     protected void clear(int i, List<T> objs){
+        if(dynamic){
+            clearP(i,objs);
+            return;
+        }
         //System.out.println("A     A\n" + Arrays.toString(vertices) + "A     A");
         int k = 0;
         for (int j = 0; j < objs.size() && j < i; j++) {

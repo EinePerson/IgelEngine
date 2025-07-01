@@ -56,6 +56,7 @@ public final class Text{
     public Text setLifeTime(int lifeTime) {
         this.lifeTime = lifeTime;
         chars.forEach(graphChar -> graphChar.setLifeTime(lifeTime));
+        childTexts.forEach(text -> text.setLifeTime(lifeTime));
         return this;
     }
 

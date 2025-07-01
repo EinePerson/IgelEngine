@@ -15,6 +15,13 @@ public class PolygonBatch extends Batch<Polygon>{
     public boolean dirtyCheck(List<Polygon> objs) {
         boolean dirty = false;
         for (int i = 0; i < objs.size(); i++) {
+            if(objs.get(i).toRemove()){
+                clear(i,objs);
+                objs.remove(i);
+
+                dirty = true;
+                continue;
+            }
             if(objs.get(i).isDirty()){
                 objs.get(i).unMarkDirty();
                 add(i,objs.get(i));
@@ -44,6 +51,40 @@ public class PolygonBatch extends Batch<Polygon>{
             indices[startID + 1] = i - 1 + startVertices;
             indices[startID + 2] = i + startVertices;
             startID += 3;
+        }
+    }
+
+    @Override
+    public void clearP(int i, List<Polygon> objs) {
+        int offset = 0;
+        for (int j = 0; j < objs.size() && j < i; j++) {
+            offset += objs.get(j).getLength() * 6;
+        }
+
+        int afterOffset = offset + objs.get(i).getLength() * 6;
+
+        System.arraycopy(vertices,afterOffset,vertices,offset,vertices.length - afterOffset);
+
+        int indOffset = 0;
+        for (int j = 0; j < objs.size() && j < i; j++) {
+            indOffset += (objs.get(j).getLength() - 2);
+        }
+
+        int fullOffset = indOffset;
+
+        for (int j = i; j < objs.size(); j++) {
+            fullOffset += (objs.get(j).getLength() - 2);
+        }
+
+        indOffset *= 3;
+        fullOffset *= 3;
+
+        int afterIndOffset = indOffset + (objs.get(i).getLength() - 2) * 3;
+
+        System.arraycopy(indices,indOffset,indices,afterIndOffset,indices.length - afterIndOffset);
+
+        for(int j = fullOffset;j < fullOffset + (objs.get(i).getLength() - 2) * 3;j++){
+            indices[j] = 0;
         }
     }
 }
