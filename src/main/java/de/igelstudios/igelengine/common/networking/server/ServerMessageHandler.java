@@ -48,6 +48,12 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<Package> {
         Server.handle(players.get(playerIds.get(ctx.channel().id())),msg);
     }
 
+    public void messageReceived(ChannelHandlerContext ctx,Object msg) throws Exception {
+        if(msg instanceof Package){
+            Server.handle(players.get(playerIds.get(ctx.channel().id())), (Package) msg);
+        }
+    }
+
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("User connected");

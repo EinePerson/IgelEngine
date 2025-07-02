@@ -20,6 +20,12 @@ public class ClientMessageHandler extends SimpleChannelInboundHandler<Package> {
         Client.handle(msg);
     }
 
+    public void messageReceived(ChannelHandlerContext ctx, Object msg) throws Exception {
+        if(msg instanceof Package){
+            Client.handle((Package) msg);
+        }
+    }
+
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         handler.handle(cause);
@@ -27,11 +33,11 @@ public class ClientMessageHandler extends SimpleChannelInboundHandler<Package> {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ClientMain.getInstance().getListener().playerConnect();
+        Client.getConnectionListeners().forEach(ClientConnectListener::playerConnect);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        ClientMain.getInstance().getListener().playerDisConnect();
+        Client.getConnectionListeners().forEach(ClientConnectListener::playerDisConnect);
     }
 }

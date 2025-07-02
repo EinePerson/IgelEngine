@@ -12,6 +12,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     //private double x,y;
     private int selText;
     private GUI gui;
+    private boolean changed = false;
 
     private GUIManager(){
         instance = this;
@@ -19,16 +20,25 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
 
     @KeyHandler("LMB")
     public void lmb(boolean pressed,double x,double y){
+        changed = false;
         if(!pressed)return;
         if(gui == null)return;
-        gui.getButtons().forEach(button -> {
+        for (Button button : gui.getButtons()) {
+            if(changed){
+                changed = false;
+                return;
+            }
             if(button.getPos().x <= x && button.getPos().x + button.getSize().x > x && button.getPos().y <= y && button.getPos().y + button.getSize().y > y){
                 button.invoke(MouseButton.LMB);
             }
-        });
+        }
         if(gui == null)return;
         boolean set = false;
         for (int i = 0; i < gui.getTextFields().size(); i++) {
+            if(changed){
+                changed = false;
+                return;
+            }
             TextField field = gui.getTextFields().get(i);
             if(field.getPos().x <= x && field.getPos().x + field.getSize().x > x && field.getPos().y <= y && field.getPos().y + field.getSize().y > y){
                 selText = i;
@@ -43,22 +53,30 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     public void rmb(boolean pressed,double x,double y){
         if(!pressed)return;
         if(gui == null)return;
-        gui.getButtons().forEach(button -> {
+        for (Button button : gui.getButtons()) {
+            if(changed){
+                changed = false;
+                return;
+            }
             if(button.getPos().x <= x && button.getPos().x + button.getSize().x > x && button.getPos().y <= y && button.getPos().y + button.getSize().y > y){
                 button.invoke(MouseButton.RMB);
             }
-        });
+        }
     }
 
     @KeyHandler("MMB")
     public void mmb(boolean pressed,double x,double y){
         if(!pressed)return;
         if(gui == null)return;
-        gui.getButtons().forEach(button -> {
+        for (Button button : gui.getButtons()) {
+            if(changed){
+                changed = false;
+                return;
+            }
             if(button.getPos().x <= x && button.getPos().x + button.getSize().x > x && button.getPos().y <= y && button.getPos().y + button.getSize().y > y){
                 button.invoke(MouseButton.MMB);
             }
-        });
+        }
     }
 
     /*@Override
@@ -87,6 +105,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
 
     private void setGui(GUI gui) {
         selText = -1;
+        changed = true;
         if(this.gui != null) removeGUI();
         if(gui == null)HIDInput.deactivateListener(this);
         else HIDInput.activateListener(this);
@@ -122,5 +141,9 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
         new GUIManager();
         input.registerMouseClickListener(instance);
         //input.registerMoveListener(instance);
+    }
+
+    public static GUI getGui() {
+        return instance.gui;
     }
 }

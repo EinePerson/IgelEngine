@@ -60,6 +60,7 @@ public class ClientEngine extends Engine {
 
     @Override
     public void second() {
+        //System.out.println("FPS: " + fps);
         fps = 0;
     }
 

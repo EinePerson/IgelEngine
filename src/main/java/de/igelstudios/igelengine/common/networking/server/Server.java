@@ -72,7 +72,7 @@ public class Server extends Thread implements Tickable {
     public void run(){
         try {
             System.out.println("Started Server on " + port);
-            ServerBootstrap bootstrap = new ServerBootstrap().group(boosGroup, workerGroup).channel(NioServerSocketChannel.class).option(ChannelOption.SO_BACKLOG, 1024).option(ChannelOption.AUTO_CLOSE, true)
+            ServerBootstrap bootstrap = new ServerBootstrap().group(boosGroup, workerGroup).channel(NioServerSocketChannel.class).option(ChannelOption.SO_BACKLOG, 1024)
                     .option(ChannelOption.SO_REUSEADDR, true).childOption(ChannelOption.SO_KEEPALIVE, true).childOption(ChannelOption.TCP_NODELAY, true);
 
             bootstrap.childHandler(createChannel());

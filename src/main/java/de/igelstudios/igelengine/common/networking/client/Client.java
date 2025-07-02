@@ -3,6 +3,7 @@ package de.igelstudios.igelengine.common.networking.client;
 import de.igelstudios.ClientMain;
 import de.igelstudios.igelengine.common.networking.*;
 import de.igelstudios.igelengine.common.networking.Package;
+import de.igelstudios.igelengine.common.networking.server.ConnectionListener;
 import de.igelstudios.igelengine.common.util.Tickable;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -10,13 +11,16 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
+import java.io.IOException;
 import java.net.ConnectException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Client extends Thread implements Tickable {
+    private static List<ClientConnectListener> connectionListeners = new ArrayList<>();
     static Client instance;
     private static Map<String, ClientHandler> clientHandlers = new HashMap<>();
 
@@ -84,6 +88,10 @@ public class Client extends Thread implements Tickable {
             queuedPackets.clear();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }catch (Exception e){
+            if(e instanceof ConnectException){
+                connectionListeners.forEach(ClientConnectListener::connectionFailed);
+            }
         }
     }
 
@@ -112,5 +120,17 @@ public class Client extends Thread implements Tickable {
     public void tick() {
         queueHandling.forEach(Client::handleSelf);
         queueHandling.clear();
+    }
+
+    public static void addConnectionListener(ClientConnectListener connectionListener){
+        connectionListeners.add(connectionListener);
+    }
+
+    public static void removeConnectionListener(ClientConnectListener connectionListener){
+        connectionListeners.remove(connectionListener);
+    }
+
+    public static List<ClientConnectListener> getConnectionListeners() {
+        return connectionListeners;
     }
 }

@@ -22,17 +22,17 @@ public class Decoder extends MessageToMessageDecoder<ByteBuf> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        byte[] b = new byte[in.readableBytes()];
+        /*byte[] b = new byte[in.readableBytes()];
         for (int o = 0; o < in.readableBytes(); o++) {
             b[o] = in.readByte();
         }
-        System.out.println(Arrays.toString(b));
-        /*k = in.readableBytes();
+        System.out.println(Arrays.toString(b));*/
+        k = in.readableBytes();
         n = 0;
         while (n < k){
             Package p = read(in);
             if(p != null)out.add(p);
-        }*/
+        }
     }
 
     private Package read(ByteBuf in){

@@ -27,7 +27,7 @@ public class PlayerFactory {
         if(clazz == null)throw new RuntimeException("The class of the PlayerFactory has to be set before networking can be used");
         if (inConstructor){
             try {
-                return clazz.getConstructor().newInstance(uuid);
+                return clazz.getConstructor(UUID.class).newInstance(uuid);
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException e) {
                 throw new RuntimeException(e);

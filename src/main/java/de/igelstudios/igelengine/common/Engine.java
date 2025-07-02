@@ -21,7 +21,7 @@ public abstract class Engine {
     public final void run() {
         running = true;
         double ticks = 1000000000d / 20d;
-        double loops = 1000000000d / maxLoops;
+        //double loops = 1000000000d / maxLoops;
         double delta = 0d;
         double loopDelta = 0d;
         long org = System.nanoTime();
@@ -42,10 +42,11 @@ public abstract class Engine {
                 sTimer -= 1000000000;
                 second();
             }
-            if(loopDelta >= loops){
+            loop();
+            /*if(loopDelta >= loops){
                 loopDelta = 0;
                 loop();
-            }
+            }*/
         }
         stopSub();
         System.exit(0);

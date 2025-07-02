@@ -4,6 +4,7 @@ import de.igelstudios.igelengine.client.lang.ClientConfig;
 import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.Window;
 import de.igelstudios.igelengine.common.io.EngineSettings;
+import de.igelstudios.igelengine.common.networking.client.Client;
 import de.igelstudios.igelengine.common.networking.client.ClientConnectListener;
 import de.igelstudios.igelengine.common.startup.EngineInitializer;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class ClientMain {
         }
         if(this.settings.getClientEventListener() != null && !this.settings.getClientEventListener().equals("")) {
             try {
-                this.listener = (ClientConnectListener) Class.forName(this.settings.getClientEventListener()).getConstructor(new Class[0]).newInstance(new Object[0]);
+                Client.addConnectionListener((ClientConnectListener) Class.forName(this.settings.getClientEventListener()).getConstructor(new Class[0]).newInstance(new Object[0]));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                      NoSuchMethodException |
                      ClassNotFoundException e) {
@@ -52,18 +53,6 @@ public class ClientMain {
             } catch (ClassCastException e) {
                 throw new RuntimeException("The class specified as client_event_listener in info.json has to implement ServerInitializer");
             }
-        }else{
-            listener = new ClientConnectListener() {
-                @Override
-                public void playerConnect() {
-
-                }
-
-                @Override
-                public void playerDisConnect() {
-
-                }
-            };
         }
         instance = this;
         config = new ClientConfig();

@@ -102,6 +102,7 @@ public abstract class Batch<T extends BatchContent> {
 
     public void clearBatch(){
         Arrays.fill(vertices,0);
+        if(dynamic)Arrays.fill(indices,0);
     }
 
 
