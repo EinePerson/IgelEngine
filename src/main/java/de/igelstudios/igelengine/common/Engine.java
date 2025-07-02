@@ -5,8 +5,10 @@ import de.igelstudios.igelengine.common.util.Tickable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is the Main Engine class, it runs until it is told to stop, {@link #tick()} 20 times per second and {@link #second()} once a second as well as {@link #loop()} as often as the computer can handle
+ */
 public abstract class Engine {
-    public static final int maxLoops = 60;//this is basically max fps
     private final List<Tickable> tickables;
     private boolean running;
 
@@ -76,24 +78,42 @@ public abstract class Engine {
     public abstract void tick();
 
     /**
-     * called {@link #maxLoops} times per second
+     * called every iteration of the loop (as often as possible)
      */
     public void loop(){
 
     }
 
+    /**
+     * Overridable methode for subclasses to get notified when the Engine stops
+     */
     public void stopSub(){
 
     }
 
+    /**
+     * Signals to stop the Engine
+     */
     public final void stop(){
         running = false;
     }
 
+    /**
+     * adds an Object to get {@link #tick()} 20 times per second
+     * @param tickable the class to tick
+     * @see #removeTickable(Tickable)
+     * @see Tickable
+     */
     public void addTickable(Tickable tickable){
         tickables.add(tickable);
     }
 
+    /**
+     * removes an object from the Ticking list
+     * @param tickable the object
+     * @see #addTickable(Tickable)
+     * @see Tickable
+     */
     public void removeTickable(Tickable tickable){
         tickables.remove(tickable);
     }

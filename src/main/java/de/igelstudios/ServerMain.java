@@ -34,6 +34,10 @@ public class ServerMain {
     private ServerInitializer main;
     private ConnectionListener listener;
 
+    /**
+     * This initializes the Engine for the Server with the settings from the info.json file
+     * @param port the port the server should be started on
+     */
     public ServerMain(int port){
         this.settings = EngineSettings.parser("info.json").read();
         try {
@@ -90,11 +94,10 @@ public class ServerMain {
         return engine;
     }
 
+    /**
+     * @return the Error handler for networking errors
+     */
     public ErrorHandler getHandler() {
         return handler;
-    }
-
-    public ConnectionListener getListener() {
-        return listener;
     }
 }

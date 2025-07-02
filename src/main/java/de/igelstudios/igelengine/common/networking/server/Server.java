@@ -15,6 +15,13 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 
 import java.util.*;
 
+/**
+ * This handles the server code
+ * {@link #registerClient2ServerHandler(String, ServerHandler)} may be used to register a handler class with the specific id,the id MUST be specified when sending data to this handler
+ * {@link #send2Client(ClientNet, String, PacketByteBuf)} may be used to send data to the Specified connected client
+ * @see ServerHandler
+ * @see Client
+ */
 public class Server extends Thread implements Tickable {
     private static Map<ClientNet,Package> queueHandling = new HashMap<>();
     private static List<ConnectionListener> connectionListeners = new ArrayList<>();
@@ -54,10 +61,23 @@ public class Server extends Thread implements Tickable {
     private ServerMessageHandler handler;
     private ErrorHandler errorHandler;
 
+    /**
+     * Creates a new server and binds it to the default port
+     * @param map a map that maps UUID to players, this is not copied, so it is directly changed on (dis)connects
+     * @param handler the handler that handles errors occurring
+     * @see Server#Server(int, Map, ErrorHandler)  Server
+     */
     public Server(Map<UUID, ClientNet> map,ErrorHandler handler){
         this(Client.DEFAULT_PORT,map,handler);
     }
 
+    /**
+     * Creates a new server
+     * @param port the port the server should bind on
+     * @param map a map that maps UUID to players, this is not copied, so it is directly changed on (dis)connects
+     * @param errorHandler the handler that handles errors occurring
+     * @see Server#Server(Map, ErrorHandler)  Server
+     */
     public Server(int port,Map<UUID, ClientNet> map,ErrorHandler errorHandler){
         this.port = port;
         this.boosGroup = new NioEventLoopGroup();
@@ -84,6 +104,9 @@ public class Server extends Thread implements Tickable {
         }
     }
 
+    /**
+     * This stops the server gracefully
+     */
     public void stopServer(){
         boosGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();

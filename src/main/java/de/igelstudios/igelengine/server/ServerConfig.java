@@ -3,6 +3,9 @@ package de.igelstudios.igelengine.server;
 import de.igelstudios.igelengine.common.io.Config;
 import de.igelstudios.igelengine.common.networking.client.Client;
 
+/**
+ * this is a theoretical unused class for Server exclusive settings
+ */
 public class ServerConfig {
     private static Config config;
     private static int port;

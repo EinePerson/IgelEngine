@@ -3,12 +3,17 @@ package de.igelstudios.igelengine.common.networking.client;
 import de.igelstudios.ClientMain;
 import de.igelstudios.igelengine.common.networking.ErrorHandler;
 import de.igelstudios.igelengine.common.networking.Package;
+import de.igelstudios.igelengine.common.networking.server.Server;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 import java.net.ConnectException;
 import java.net.SocketException;
 
+/**
+ * This is an internal class used as bridge for networking
+ * @see Client
+ */
 public class ClientMessageHandler extends SimpleChannelInboundHandler<Package> {
     private ErrorHandler handler;
 

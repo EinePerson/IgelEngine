@@ -4,6 +4,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
+/**
+ * This encodes Packages so that they can be sent over the network
+ */
 public class Encoder extends MessageToByteEncoder<Package> {
 
     @Override

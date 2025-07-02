@@ -9,6 +9,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
 
+/**
+ * This is an internal class to parse the info.json file
+ */
 public class EngineSettings {
     private String main;
     private String server_main;

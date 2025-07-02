@@ -34,6 +34,10 @@ public class ClientMain {
     private EngineSettings settings;
     private ClientConnectListener listener;
 
+
+    /**
+     * This initializes the Engine for the Client with the settings from the info.json file
+     */
     public ClientMain(){
         this.settings = EngineSettings.parser("info.json").read();
         try {

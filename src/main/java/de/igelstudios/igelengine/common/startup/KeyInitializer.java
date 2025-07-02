@@ -4,6 +4,10 @@ import de.igelstudios.igelengine.client.keys.*;
 
 import java.util.*;
 
+/**
+ * Here keys and their respective listeners may be added so that the engine can register them internally
+ * @see EngineInitializer#registerKeys(KeyInitializer)
+ */
 public class KeyInitializer {
     private Map<Integer, String> keys = new HashMap<>();
 

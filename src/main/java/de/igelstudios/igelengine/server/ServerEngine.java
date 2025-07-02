@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * The game Engine implementation for the server
+ */
 public class ServerEngine extends Engine implements Runnable {
     private Map<UUID, ClientNet> players;
     private Server server;

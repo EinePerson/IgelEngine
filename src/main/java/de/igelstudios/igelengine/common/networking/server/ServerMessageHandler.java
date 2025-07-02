@@ -15,6 +15,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * This is an internal class used as bridge for networking
+ * @see Server
+ */
 @ChannelHandler.Sharable
 public class ServerMessageHandler extends SimpleChannelInboundHandler<Package> {
     private Map<ChannelId, UUID> playerIds;

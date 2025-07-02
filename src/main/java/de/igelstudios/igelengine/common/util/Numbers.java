@@ -3,6 +3,9 @@ package de.igelstudios.igelengine.common.util;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
+/**
+ * A util class to convert numbers between different formats
+ */
 public class Numbers {
     private Numbers(){
 

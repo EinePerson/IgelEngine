@@ -19,6 +19,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+/**
+ * This is a simple wrapper class to write/read data from Networking Objects
+ */
 public class PacketByteBuf extends ByteBuf {
     public static PacketByteBuf create(){
         return new PacketByteBuf(Unpooled.buffer());

@@ -8,6 +8,9 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This decoding and fragments the incoming data so that it can be handled accordingly
+ */
 public class Decoder extends MessageToMessageDecoder<ByteBuf> {
     private int i = 0;
     private int j = 0;

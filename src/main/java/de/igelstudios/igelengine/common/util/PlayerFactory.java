@@ -7,7 +7,7 @@ import java.util.UUID;
 
 
 /**
- * Used to create a Player(From networking perspective)
+ * Used to create a {@link ClientNet} as Player (From networking perspective)
  */
 public class PlayerFactory {
     private static Class<? extends ClientNet> clazz;
@@ -23,6 +23,11 @@ public class PlayerFactory {
         PlayerFactory.inConstructor = incConstructor;
     }
 
+    /**
+     * Gets the player Corresponding to the UUID
+     * @param uuid the UUID
+     * @return the player as an instance of the class set in {@link #setPlayerClass(Class, boolean)}
+     */
     public static ClientNet get(UUID uuid) {
         if(clazz == null)throw new RuntimeException("The class of the PlayerFactory has to be set before networking can be used");
         if (inConstructor){
