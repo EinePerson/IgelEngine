@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TextBatch extends Batch<GraphChar>implements Tickable {
     public TextBatch(int size) {
-        super(size, new Shader("text"), true,false,2,3,3);
+        super(size, new Shader("text"), true,false,2,3,4);
     }
 
     @Override
@@ -53,8 +53,9 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
                 vertices[j + 5] = obj.getR();
                 vertices[j + 6] = obj.getG();
                 vertices[j + 7] = obj.getB();
+                vertices[j + 8] = obj.getA();
 
-                j += 8;
+                j += 9;
             }
     }
 

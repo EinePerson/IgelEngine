@@ -22,6 +22,7 @@ public class ClientEngine extends Engine {
     private static GLFont defaultFont = null;
 
     public static GLFont getDefaultFont() {
+        if(defaultFont == null) defaultFont = new GLFont("calibri");
         return defaultFont;
     }
     private EngineInitializer initializer;
@@ -36,7 +37,6 @@ public class ClientEngine extends Engine {
         GL11.glClearColor(1.0f,1.0f,1.0f,1.0f);
         scene = new ClientScene();
         addTickable(Renderer.get().getTextBatch());
-        if(defaultFont == null) defaultFont = new GLFont("calibri");
     }
 
     @Override

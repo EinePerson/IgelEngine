@@ -19,7 +19,7 @@ public final class Text{
     private static Map<String,String> translatable;
     private String content;
     private static boolean init = false;
-    private float r,g,b;
+    private float r,g,b,a;
     private Vector2f pos;
     private float scale;
     private GLFont font;
@@ -37,6 +37,7 @@ public final class Text{
         r = 0;
         g = 0;
         b = 0;
+        a = 0;
         scale = 0.0078125f;
         chars = new ArrayList<>();
         pos = new Vector2f(0.0f);
@@ -118,6 +119,33 @@ public final class Text{
         return this;
     }
 
+    public Text setColor(float r, float g, float b,float a){
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+
+        chars.forEach(graphChar -> {
+            graphChar.setColor(r,g,b,a);
+            graphChar.markDirty();
+        });
+        charsDirty = true;
+
+        return this;
+    }
+
+    public Text setA(float a) {
+        this.a = a;
+
+        chars.forEach(graphChar -> {
+            graphChar.setColor(r,g,b,a);
+            graphChar.markDirty();
+        });
+        charsDirty = true;
+
+        return this;
+    }
+
     public float getB() {
         return b;
     }
@@ -128,6 +156,10 @@ public final class Text{
 
     public float getR() {
         return r;
+    }
+
+    public float getA() {
+        return a;
     }
 
     public GLFont getFont() {
@@ -236,7 +268,7 @@ public final class Text{
         return fullCharList;
     }
 
-    private float getFullVisualLength(){
+    public float getFullVisualLength(){
         float length = getVisualLength();
 
         for (Text childText : childTexts) {

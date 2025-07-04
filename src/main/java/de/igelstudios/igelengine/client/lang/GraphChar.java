@@ -5,7 +5,7 @@ import de.igelstudios.igelengine.client.graphics.text.GLFont;
 import org.joml.Vector2f;
 
 public class GraphChar implements BatchContent {
-    private float r,g,b;
+    private float r,g,b,a;
     private Vector2f pos;
     private float scale;
     private GLFont font;
@@ -22,6 +22,7 @@ public class GraphChar implements BatchContent {
         this.r = r;
         this.g = g;
         this.b = b;
+        this.a = 1.0f;
         this.font = font;
     }
 
@@ -93,6 +94,17 @@ public class GraphChar implements BatchContent {
         this.b = b;
     }
 
+    void setColor(float r, float g, float b,float a) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
+
+    void setA(float a) {
+        this.a = a;
+    }
+
     void setScale(float scale) {
         this.scale = scale;
     }
@@ -115,6 +127,10 @@ public class GraphChar implements BatchContent {
 
     public boolean toRemove() {
         return remove;
+    }
+
+    public float getA() {
+        return a;
     }
 
     @Override

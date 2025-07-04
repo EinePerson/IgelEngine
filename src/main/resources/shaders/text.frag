@@ -1,7 +1,7 @@
 #version 450
 
 layout(location = 0) in vec3 inTex;
-layout(location = 1) in vec3 inColor;
+layout(location = 1) in vec4 inColor;
 
 uniform sampler2D tex[8];
 layout(location = 0) out vec4 color;
@@ -11,7 +11,7 @@ void main() {
     //color = vec4(inColor,1.0f);
     int id = int(inTex.x);
     color = texture(tex[id],vec2(inTex.y,inTex.z));
-    if(color.a == 1)color = vec4(inColor,1.0);
+    if(color.a == 1)color = inColor;
     else color = vec4(0.0);
     //color = vec4(1.0f,1.0f,1.0f,c) * vec4(1.0f,0.0f,1.0f,1.0f);
     //color = vec4(acolor.a);

@@ -2,14 +2,14 @@
 
 layout(location = 0) in vec2 pos;
 layout(location = 1) in vec3 tex;
-layout(location = 2) in vec3 color;
+layout(location = 2) in vec4 color;
 //in vec2 uv;
 
 uniform mat4 projMat;
 uniform mat4 viewMat;
 
 layout(location = 0) out vec3 outTex;
-layout(location = 1) out vec3 outColor;
+layout(location = 1) out vec4 outColor;
 //layout(location = 1) out vec2 inUV;
 
 void main() {
