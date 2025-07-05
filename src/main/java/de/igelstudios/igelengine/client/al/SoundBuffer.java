@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * This is used to get a Sound buffer to create a playable sound with using {@link #get(String)}
+ */
 public class SoundBuffer {
     private final static Map<String, SoundBuffer> sounds = new HashMap<>();
 
@@ -42,6 +45,11 @@ public class SoundBuffer {
         return audId;
     }
 
+    /**
+     * creates or returns the SoundBuffer associated with the file name
+     * @param file the sound file name
+     * @return the SoundBuffer
+     */
     public static SoundBuffer get(String file){
         if(!sounds.containsKey(file)) {
             sounds.put(file,new SoundBuffer(file));

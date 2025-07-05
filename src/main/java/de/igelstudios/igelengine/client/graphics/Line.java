@@ -5,6 +5,9 @@ import org.joml.Vector2f;
 
 import java.text.DecimalFormat;
 
+/**
+ * This represents a simple line
+ */
 public class Line implements BatchContent,AlphaColoredObject {
     public enum Type{
         RIGHT,
@@ -30,15 +33,47 @@ public class Line implements BatchContent,AlphaColoredObject {
         dirty = true;
     }
 
+    /**
+     * creates a line spanning from start to end
+     * @param start the start point of the line
+     * @param end the end point of the line
+     * @param thickness the thickness the line should have
+     * @see  #Line(Vector2f, float, float, float, Type)  Line
+     * @see #Line(Vector2f, float, float, float, Type, float, float, float, float)  Line
+     */
     public Line(Vector2f start, Vector2f end,float thickness) {
         this(start, (float) -Math.toDegrees(new Vector2f(end).sub(start).angle(new Vector2f(1,0))),(float) Math.sqrt(Math.pow(end.x - start.x,2) +
-                Math.pow(end.y - start.y,2)),thickness,Type.LEFT,0,0,0,1);
+                Math.pow(end.y - start.y,2)),thickness,Type.CENTER,0,0,0,1);
     }
 
+    /**
+     * creates a new simple line in black
+     * @param start the start point of the line
+     * @param angleD the angle relative to the x-Axis/lower side of the screen in degrees
+     * @param length the length the line should have
+     * @param thickness the thickness the line should have
+     * @param mirror in which direction relative to the virtual line given here the visuallity should be expanded
+     * @see #Line(Vector2f, float, float, float, Type, float, float, float, float)  Line
+     * @see #Line(Vector2f, Vector2f, float)  Line
+     */
     public Line(Vector2f start,float angleD,float length,float thickness,Type mirror){
         this(start,angleD,length,thickness,mirror,0,0,0,1);
     }
 
+    /**
+     * creates a new simple line with the given color between 0 and 1
+     * @param start the start point of the line
+     * @param angleD the angle relative to the x-Axis/lower side of the screen in degrees
+     * @param length the length the line should have
+     * @param thickness the thickness the line should have
+     * @param mirror in which direction relative to the virtual line given here the visuallity should be expanded
+     * @param r the amount of red
+     * @param g the amount of green
+     * @param b the amount of blue
+     * @param a the alpha value
+     * @see #Line(Vector2f, float, float, float, Type, float, float, float, float)  Line
+     * @see #Line(Vector2f, Vector2f, float)  Line
+     */
     public Line(Vector2f start,float angleD,float length,float thickness,Type mirror,float r,float g,float b,float a) {
         this.org = new Vector2f(start);
         this.angle = (float) Math.toRadians(angleD);
@@ -57,10 +92,32 @@ public class Line implements BatchContent,AlphaColoredObject {
         dirty = true;
     }
 
+    /**
+     * Draws a line from this Lines start point in black
+     * @param angleD the angle relative to the x-Axis/lower side of the screen in degrees
+     * @param length the length of the line
+     * @param thickness the thickness of the line
+     * @param mirror in which direction relative to the virtual line given here the visuallity should be expanded
+     * @return a new line from this lines start point
+     * @see #cloneFromStart(float, float, float, Type, float, float, float, float)
+     */
     public Line cloneFromStart(float angleD,float length,float thickness,Type mirror){
         return cloneFromStart(angleD,length,thickness,mirror,0,0,0,1);
     }
 
+    /**
+     * Draws a line from this Lines start point in black
+     * @param angleD the angle relative to the x-Axis/lower side of the screen in degrees
+     * @param length the length of the line
+     * @param thickness the thickness of the line
+     * @param mirror in which direction relative to the virtual line given here the visuallity should be expanded
+     * @param r the amount of red
+     * @param g the amount of green
+     * @param b the amount of blue
+     * @param a the alpha value
+     * @return a new line from this lines start point
+     * @see #cloneFromStart(float, float, float, Type)
+     */
     public Line cloneFromStart(float angleD,float length,float thickness,Type mirror,float r,float g,float b,float a) {
         Line clone = new Line(new Vector2f(mirror == Type.CENTER?org:start));
         clone.endUp = new Vector2f(endUp);
@@ -90,14 +147,29 @@ public class Line implements BatchContent,AlphaColoredObject {
         return clone;
     }
 
+    /**
+     * creates a line from this lines start to the other lines end
+     * @param other the line to span to
+     * @return the newly created line
+     */
     public Line spanStartToEnd(Line other){
         return spanHelper(this.start,this.org,other.end,other.org);
     }
 
+    /**
+     * creates a line from this lines start to the other lines start
+     * @param other the line to span to
+     * @return the newly created line
+     */
     public Line spanStartToStart(Line other){
         return spanHelper(this.start,this.org,other.start,other.org);
     }
 
+    /**
+     * creates a line from this lines end to the other lines start
+     * @param other the line to span to
+     * @return the newly created line
+     */
     public Line spanEndToStart(Line other){
         Vector2f org = switch (mirror) {
             case CENTER -> new Vector2f(end).sub(endUp).normalize().mul(thickness / 2).add(endUp);
@@ -106,6 +178,11 @@ public class Line implements BatchContent,AlphaColoredObject {
         return spanHelper(this.end,this.endOrg,other.start,other.org);
     }
 
+    /**
+     * creates a line from this lines end to the other lines end
+     * @param other the line to span to
+     * @return the newly created line
+     */
     public Line spanEndToEnd(Line other){
         Vector2f org = switch (mirror) {
             case CENTER -> new Vector2f(end).sub(endUp).normalize().mul(thickness / 2).add(endUp);
@@ -137,10 +214,32 @@ public class Line implements BatchContent,AlphaColoredObject {
         return clone;
     }
 
+    /**
+     * Draws a line from this Lines end point in black
+     * @param angleD the angle relative to the x-Axis/lower side of the screen in degrees
+     * @param length the length of the line
+     * @param thickness the thickness of the line
+     * @param mirror in which direction relative to the virtual line given here the visuallity should be expanded
+     * @return a new line from this lines start point
+     * @see #cloneFromEnd(float, float, float, Type, float, float, float, float)
+     */
     public Line cloneFromEnd(float angleD,float length,float thickness,Type mirror){
         return cloneFromEnd(angleD,length,thickness,mirror,0,0,0,1);
     }
 
+    /**
+     * Draws a line from this Lines end point in black
+     * @param angleD the angle relative to the x-Axis/lower side of the screen in degrees
+     * @param length the length of the line
+     * @param thickness the thickness of the line
+     * @param mirror in which direction relative to the virtual line given here the visuallity should be expanded
+     * @param r the amount of red
+     * @param g the amount of green
+     * @param b the amount of blue
+     * @param a the alpha value
+     * @return a new line from this lines start point
+     * @see #cloneFromEnd(float, float, float, Type)
+     */
     public Line cloneFromEnd(float angleD,float length,float thickness,Type mirror,float r,float g,float b,float a) {
         Line clone = new Line(new Vector2f(mirror == Type.CENTER?endOrg:end));
         clone.endUp = new Vector2f(endUp);
@@ -170,10 +269,23 @@ public class Line implements BatchContent,AlphaColoredObject {
         return clone;
     }
 
+    /**
+     * creates a clone that is move by the given Vector
+     * @param deltaPox the amount to move by
+     * @return the newly created line
+     * @see #cloneMoved(float, float)
+     */
     public Line cloneMoved(Vector2f deltaPox){
         return cloneMoved(deltaPox.x,deltaPox.y);
     }
 
+    /**
+     * creates a clone that is move by the given Vector
+     * @param deltaX the amount to move by in x direction
+     * @param deltaY the amount to move by in y direction
+     * @return the newly created line
+     * @see #cloneMoved(Vector2f)
+     */
     public Line cloneMoved(float deltaX, float deltaY){
         Line clone = clone();
         clone.org.x += deltaX;
@@ -210,6 +322,14 @@ public class Line implements BatchContent,AlphaColoredObject {
         return g;
     }
 
+    /**
+     * sets the color of the line
+     * @param r the amount of red
+     * @param g the amount of green
+     * @param b the amount of blue
+     * @return the Line for chained modification calls
+     * @see #setRGBA(float, float, float, float)
+     */
     @Override
     public Line setColor(float r, float g, float b) {
         this.r = r;
@@ -242,6 +362,11 @@ public class Line implements BatchContent,AlphaColoredObject {
         dirty = true;
     }
 
+    /**
+     * redraws the line with the set type
+     * @param mirror in which direction relative to the virtual line given here the visuallity should be expanded
+     * @return the line for chained modification calls
+     */
     public Line setType(Type mirror) {
         if(this.mirror == mirror)return this;
         this.mirror = mirror;
@@ -251,6 +376,11 @@ public class Line implements BatchContent,AlphaColoredObject {
         return this;
     }
 
+    /**
+     * redraws the line with the set thickness
+     * @param thickness the thickness of the line
+     * @return the line for chained modification calls
+     */
     public Line setThickness(float thickness) {
         if(thickness == this.thickness)return this;
         this.thickness = thickness;
@@ -262,6 +392,11 @@ public class Line implements BatchContent,AlphaColoredObject {
         return this;
     }
 
+    /**
+     * redraws the line with the set angle
+     * @param angleD the angle relative to the x-Axis/lower side of the screen in degrees
+     * @return the line for chained modification calls
+     */
     public Line setIncline(float angleD) {
         if((float) Math.toRadians(angleD) == this.angle)return this;
         this.angle = (float) Math.toRadians(angleD);
@@ -271,6 +406,11 @@ public class Line implements BatchContent,AlphaColoredObject {
         return this;
     }
 
+    /**
+     * redraws the line with the set length
+     * @param length the length of the line
+     * @return the line for chained modification calls
+     */
     public Line setLength(float length) {
         if(this.length == length)return this;
 
@@ -282,6 +422,15 @@ public class Line implements BatchContent,AlphaColoredObject {
         return this;
     }
 
+    /**
+     * sets the colors, from 0 to 1
+     * @param r the amount of red
+     * @param g the amount of green
+     * @param b the amount of blue
+     * @param a the alpha value
+     * @return the Polygon for chained modification calls
+     * @see #setColor(float, float, float)
+     */
     public Line setRGBA(float r, float g, float b,float a) {
         this.r = r;
         this.g = g;
@@ -357,6 +506,10 @@ public class Line implements BatchContent,AlphaColoredObject {
         return clone;
     }
 
+    /**
+     * mirrors the line
+     * @return a new line going from end to start of this line
+     */
     public Line mirrored(){
         return new Line(new Vector2f(end),(float) Math.toDegrees(-angle),length,thickness,mirror,r,g,b,a);
     }

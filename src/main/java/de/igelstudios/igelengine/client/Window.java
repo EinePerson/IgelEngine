@@ -18,6 +18,9 @@ import static org.lwjgl.openal.EXTThreadLocalContext.alcSetThreadContext;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+/**
+ * This class contains a window where Graphics can be drawn to
+ */
 public class Window{
     private static Window instance;
     public static final String TITLE = "Test";
@@ -36,6 +39,14 @@ public class Window{
     private long audioContext;
     private List<String> audioDevices;
 
+    /**
+     * creates a window with the desired parameters
+     * @param width the width of the window, a width of 1 results in the width of the monitor
+     * @param height the height of the window, a height of 1 results in the height of the monitor
+     * @param title the title the window should hold
+     * @param windowed weather the window should be in windowed or fullscreen mode
+     * @see Window#Window(String)  Window
+     */
     public Window(int width, int height,String title ,boolean windowed) {
         this.title = title;
 
@@ -90,6 +101,11 @@ public class Window{
         instance = this;
     }
 
+    /**
+     * Creates a window with the specified title
+     * @param title the title of the window
+     * @see Window#Window(int, int, String, boolean)  Window
+     */
     public Window(String title) {
         this(1,1,title,false);
     }
@@ -98,6 +114,10 @@ public class Window{
         glfwPollEvents();
     }
 
+    /**
+     * This creates an Audio context for the specified device
+     * @param device the name of the device to be used
+     */
     public void createAudio(String device){
         if(audioDevice != MemoryUtil.NULL)closeAudio();
         updateSoundDevices();
@@ -131,6 +151,10 @@ public class Window{
         audioDevices = ALUtil.getStringList(NULL, ALC11.ALC_ALL_DEVICES_SPECIFIER);
     }
 
+    /**
+     * closes the window and audio system
+     * @see #closeAudio()
+     */
     public void close() {
         closeAudio();
 
@@ -138,6 +162,10 @@ public class Window{
         glfwTerminate();
     }
 
+    /**
+     * closes only the Audio system
+     * @see #close()
+     */
     public void closeAudio(){
         if(audioDevice != NULL) ALC11.alcCloseDevice(audioDevice);
         if(audioContext != NULL) ALC11.alcDestroyContext(audioContext);
@@ -154,6 +182,11 @@ public class Window{
         return glfwWindowShouldClose(window);
     }
 
+    /**
+     * resizes the window to the specified size
+     * @param width the new width of the window
+     * @param height the new height of the window
+     */
     public void resize(int width, int height) {
         resized = true;
         this.width = width;
@@ -164,6 +197,9 @@ public class Window{
         return window;
     }
 
+    /**
+     * @return a list of all names of all present audio devices
+     */
     public List<String> getAudioDevices() {
         return audioDevices;
     }

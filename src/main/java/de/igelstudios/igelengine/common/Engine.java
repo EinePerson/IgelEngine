@@ -28,6 +28,7 @@ public abstract class Engine {
         double loopDelta = 0d;
         long org = System.nanoTime();
         long sTimer = 0;
+        started();
         while (running && shouldRun()){
             long t = System.nanoTime();
             loopDelta += (t - org);
@@ -44,7 +45,7 @@ public abstract class Engine {
                 sTimer -= 1000000000;
                 second();
             }
-            loop();
+            //loop();
             /*if(loopDelta >= loops){
                 loopDelta = 0;
                 loop();
@@ -74,7 +75,6 @@ public abstract class Engine {
     /**
      * Called Every Time a tick occurs
      */
-
     public abstract void tick();
 
     /**
@@ -88,6 +88,13 @@ public abstract class Engine {
      * Overridable methode for subclasses to get notified when the Engine stops
      */
     public void stopSub(){
+
+    }
+
+    /**
+     * this may be overridden to be called whenever the game loop starts
+     */
+    protected void started(){
 
     }
 

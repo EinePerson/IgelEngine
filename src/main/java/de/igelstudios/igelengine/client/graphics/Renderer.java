@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.client.graphics;
 
+import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.ClientScene;
 import de.igelstudios.igelengine.client.graphics.batch.*;
 import de.igelstudios.igelengine.client.lang.GraphChar;
@@ -11,6 +12,9 @@ import org.joml.Vector2f;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This is the main Render class which dispatches draw calls and keeps track of everything that should be displayed
+ */
 public class Renderer {
     private static Renderer renderer;
 
@@ -29,19 +33,26 @@ public class Renderer {
     private PolygonSupplier polygonSupplier;
 
     public Renderer(ClientScene scene){
-        textBatch = new TextBatch(80 * 45);
-        objectBatch = new ObjectBatch(80 * 45);
-        lineBatch = new LineBatch(80 * 45);
-        polygonBatch = new PolygonBatch(80 * 45);
-        this.scene = scene;
-        textSupplier = new TextSupplier();
-        objectSupplier = new ObjectSupplier();
-        lineSupplier = new LineSupplier();
-        polygonSupplier = new PolygonSupplier();
         renderer = this;
-        render();
+
+        ClientEngine.queueForRenderThread(() -> {
+            textBatch = new TextBatch(80 * 45);
+            objectBatch = new ObjectBatch(80 * 45);
+            lineBatch = new LineBatch(80 * 45);
+            polygonBatch = new PolygonBatch(80 * 45);
+            this.scene = scene;
+            textSupplier = new TextSupplier();
+            objectSupplier = new ObjectSupplier();
+            lineSupplier = new LineSupplier();
+            polygonSupplier = new PolygonSupplier();
+            render();
+        });
     }
 
+    /**
+     * Displays a polygon
+     * @param polygon the polygon
+     */
     public void render(Polygon polygon){
         polygon.unMarkDirty();
         polygonBatch.add(polygonSupplier.lines.size(),polygon);
@@ -77,6 +88,10 @@ public class Renderer {
         });
     }
 
+    /**
+     * Displays a simple Line
+     * @param line the line to display
+     */
     public void render(Line line){
         line.removed();
         lineBatch.add(lineSupplier.lines.size(),line);
@@ -88,6 +103,12 @@ public class Renderer {
         textSupplier.texts.add(graphChar);
     }
 
+    /**
+     * Displays the object at the given coordinates
+     * @param obj the object
+     * @param x the x Position
+     * @param y the y Position
+     */
     public void render(SceneObject obj,float x,float y){
         obj.removed();
         obj.setPos(new Vector2f(x,y));
@@ -103,6 +124,9 @@ public class Renderer {
         textBatch.render(textSupplier);
     }
 
+    /**
+     * Clears the entire screen from all its objects
+     */
     public void clear(){
         objectBatch.clearBatch();
         textBatch.clearBatch();

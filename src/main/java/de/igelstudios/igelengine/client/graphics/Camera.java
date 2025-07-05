@@ -6,6 +6,9 @@ import org.joml.Vector3f;
 
 import static org.lwjgl.openal.AL10.*;
 
+/**
+ * this is a camera, it holds the projection and view matrix to move the objects in the room when the player moves
+ */
 public class Camera {
     private static int x = 80;
     private static int y = 45;

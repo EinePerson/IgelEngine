@@ -5,10 +5,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This keeps track of all textures currently in use and returns new textures for their respective path
+ */
 public class TexturePool {
     private static final Map<Integer, Texture> textures = new HashMap<>();
     private static final Map<String,Integer> texIDs = new HashMap<>();
 
+    /**
+     * Creates a usable texture
+     * @param path the path in the resources folder
+     * @return the Texture to use
+     */
     public static Texture get(String path){
         if(!texIDs.containsKey(path)){
             int i;

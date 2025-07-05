@@ -4,6 +4,9 @@ import org.joml.Vector3f;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.openal.AL11;
 
+/**
+ * This represents a sound that is played
+ */
 public class Sound {
     private int srcId;
     private int loop;
@@ -11,7 +14,7 @@ public class Sound {
 
     /**
      * Makes a new Playable Sound
-     * @param loop weather and how often this should loop upon playing,-1 is forever, 0 and 1 means once everything else is the loops
+     * @param loop weather and how often this should loop upon playing,-1 is forever, 0 and 1 means once everything else is the number of loops
      * @param relative weather the Position is relative to the Listener
      * @param pos the Position of the Sound
      * @param buf the Sound buffer Obtainable with {@link SoundBuffer#get(String)}
@@ -26,6 +29,9 @@ public class Sound {
         this.buf = buf;
     }
 
+    /**
+     * plays the sound for {@link #loop} times
+     */
     public void play(){
         if(loop > 1) for (int i = 0; i < loop; i++) {
             AL11.alSourceQueueBuffers(srcId,buf.getId());

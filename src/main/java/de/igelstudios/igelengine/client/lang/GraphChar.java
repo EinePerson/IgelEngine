@@ -4,6 +4,10 @@ import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
 import de.igelstudios.igelengine.client.graphics.text.GLFont;
 import org.joml.Vector2f;
 
+/**
+ * This is the Graphical implementation of {@link Text}<br>
+ * DO NOT USE THIS ON YOUR OWN
+ */
 public class GraphChar implements BatchContent {
     private float r,g,b,a;
     private Vector2f pos;

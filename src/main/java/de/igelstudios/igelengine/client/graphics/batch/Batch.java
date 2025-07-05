@@ -12,6 +12,10 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
+/**
+ * This is an Engine internal super class which helps with drawing all kinds of objects to the screen
+ * @param <T> the object that this batch renders, to be set by the implementing class
+ */
 public abstract class Batch<T extends BatchContent> {
     private final Shader shader;
     protected float[] vertices;
@@ -77,6 +81,11 @@ public abstract class Batch<T extends BatchContent> {
 
     }
 
+    /**
+     * removes the given object from the list
+     * @param i the list index where the object should be removed from
+     * @param objs the list of objects
+     */
     protected void clear(int i, List<T> objs){
         if(dynamic){
             clearP(i,objs);
@@ -100,6 +109,9 @@ public abstract class Batch<T extends BatchContent> {
         vertices = nvertecies;
     }
 
+    /**
+     * clears everything from this Batch
+     */
     public void clearBatch(){
         Arrays.fill(vertices,0);
         if(dynamic)Arrays.fill(indices,0);
@@ -174,6 +186,11 @@ public abstract class Batch<T extends BatchContent> {
 
     protected abstract void addP(int j,T obj);
 
+    /**
+     * overrides the object specified by the index
+     * @param i the index of where in the list the object should be overridden
+     * @param obj the list that contains all the objects
+     */
     public void add(int i,T obj){
         int j = supplier.getSize(i) * totalInBits;
         if(dynamic)j /= 4;

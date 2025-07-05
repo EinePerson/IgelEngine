@@ -15,6 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * This is the wrapper class used to render string to the screen
+ * <br> instances may be created either via {@link #literal(String)} which copies the String as is or with a translation key in {@link #translatable(String)} which translates the key with the given value in the language or the key itself if no value is found
+ * <br> a lifetime in 20th of seconds may be set after which the text will automatically disappear
+ */
 public final class Text{
     private static Map<String,String> translatable;
     private String content;
@@ -54,6 +59,11 @@ public final class Text{
         return  lifeTime != 0;
     }
 
+    /**
+     * sets the lifetime of a text in 20th of seconds, a value of -1 means the text is to be removed manually and not by code
+     * @param lifeTime the lifetime in 20th of seconds
+     * @return the object for chained modifications
+     */
     public Text setLifeTime(int lifeTime) {
         this.lifeTime = lifeTime;
         chars.forEach(graphChar -> graphChar.setLifeTime(lifeTime));
@@ -65,22 +75,43 @@ public final class Text{
         if(lifeTime > 0)lifeTime--;
     }
 
+    /**
+     * Creates a Text object with the given text as text
+     * @param content the text to show
+     * @return a text object with the text
+     * @see #translatable(String)
+     */
     public static Text literal(String content){
         return new Text(content);
     }
 
+    /**
+     * Creates a Text object where the key is translated in the language file or the key if no translation is set
+     * @param key the key to lookup in the translation table
+     * @return a translated Text object
+     */
     public static Text translatable(String key){
         if(!init)throw new IllegalStateException("Texts hava to be initialised before being utilised");
         String v = translatable.get(key);
         return v != null ? new Text(v):new Text(key);
     }
 
+    /**
+     * This set the font to use in the text
+     * @param font the font object
+     * @return the text for chained modification calls
+     */
     public Text setFont(GLFont font){
         this.font = font;
         chars.forEach(graphChar -> graphChar.setFont(font));
         return this;
     }
 
+    /**
+     * This sets the new position of the Text object
+     * @param pos the pos to move this text to
+     * @return the Text for chained modification calls
+     */
     public Text setPos(Vector2f pos) {
         this.pos = pos;
         float i = 0;
@@ -91,6 +122,11 @@ public final class Text{
         return this;
     }
 
+    /**
+     * This sets the scale of the text
+     * @param scale the scale the text shall have
+     * @return the Text for chained modification calls
+     */
     public Text setScale(float scale) {
         this.scale = scale / 128;
         chars.forEach(graphChar -> graphChar.setScale(this.scale));
@@ -105,6 +141,14 @@ public final class Text{
         return pos;
     }
 
+    /**
+     * sets the color of the text, all values from 0 to 1
+     * @param r the amount of red
+     * @param g the amount of green
+     * @param b the amount of blue
+     * @return the Text for chained modification calls
+     * @see #setColor(float, float, float, float)
+     */
     public Text setColor(float r, float g, float b){
         this.r = r;
         this.g = g;
@@ -119,6 +163,16 @@ public final class Text{
         return this;
     }
 
+    /**
+     * sets the color of the text, all values from 0 to 1
+     * @param r the amount of red
+     * @param g the amount of green
+     * @param b the amount of blue
+     * @param a the alpha value
+     * @return the Text for chained modification calls
+     * @see #setColor(float, float, float)
+     * @see #setA(float)
+     */
     public Text setColor(float r, float g, float b,float a){
         this.r = r;
         this.g = g;
@@ -134,6 +188,11 @@ public final class Text{
         return this;
     }
 
+    /**
+     * This sets only the Alpha value of the text
+     * @param a the new Alpha value
+     * @return the Text for chained modification calls
+     */
     public Text setA(float a) {
         this.a = a;
 
@@ -268,6 +327,10 @@ public final class Text{
         return fullCharList;
     }
 
+    /**
+     * returns the length the rendered text will have
+     * @return the length in normalized screen sized
+     */
     public float getFullVisualLength(){
         float length = getVisualLength();
 
@@ -278,6 +341,11 @@ public final class Text{
         return length;
     }
 
+    /**
+     * adds a new Text as a child object, most modifications to the parent object will not affect the child one except for position modification
+     * @param text the text to add as child
+     * @return the Text for chained modification calls
+     */
     public Text append(Text text){
         childTexts.add(text);
         charsDirty = true;

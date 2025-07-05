@@ -1,14 +1,11 @@
 package de.igelstudios;
 
-import de.igelstudios.igelengine.client.lang.ClientConfig;
+import de.igelstudios.igelengine.client.ClientConfig;
 import de.igelstudios.igelengine.client.ClientEngine;
-import de.igelstudios.igelengine.client.Window;
 import de.igelstudios.igelengine.common.io.EngineSettings;
 import de.igelstudios.igelengine.common.networking.client.Client;
 import de.igelstudios.igelengine.common.networking.client.ClientConnectListener;
 import de.igelstudios.igelengine.common.startup.EngineInitializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -61,7 +58,6 @@ public class ClientMain {
         instance = this;
         config = new ClientConfig();
         engine = new ClientEngine(main,settings.getName());
-        this.main.onInitialize();
     }
 
     public void start(){

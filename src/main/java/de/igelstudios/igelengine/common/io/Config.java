@@ -42,9 +42,22 @@ public final class Config {
      * Gets a value from the config
      * @param key the key of the Item
      * @return the value, this might be null
+     * @see #getOrDefault(String, Object)
      */
     public Object get(String key){
         return properties.get(key);
+    }
+
+    /**
+     * Gets a value from the config
+     * @param key the key of the Item
+     * @return the value that is read or the default value
+     * @see #getOrDefault(String, Object)
+     */
+    public Object getOrDefault(String key,Object defaultValue){
+        Object value = get(key);
+        if(value == null) value = defaultValue;
+        return value;
     }
 
     /**

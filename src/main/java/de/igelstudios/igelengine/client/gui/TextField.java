@@ -9,16 +9,32 @@ import org.joml.Vector2f;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A text field is a clickable area where a text can be written to, beware that only the text is shown and no background
+ */
 public class TextField {
     private String content = "";
     private Vector2f pos;
     private Vector2f size;
     private final Text text;
 
+    /**
+     * creates a new Text field
+     * @param pos the position the field should start at
+     * @param size the overall size of the field, thus pos + size = the end position
+     * @see TextField#TextField(Vector2f, Vector2f, Vector2f)  TextField
+     */
     public TextField(Vector2f pos,Vector2f size){
         this(pos,new Vector2f(0,0),size);
     }
 
+    /**
+     * creates a new Text field
+     * @param pos the position the field should start at
+     * @param textOffset the offset from the pos to where the text shall be shown
+     * @param size the overall size of the field, thus pos + size = the end position
+     * @see TextField#TextField(Vector2f, Vector2f)  TextField
+     */
     public TextField(Vector2f pos,Vector2f textOffset,Vector2f size){
         this.pos = pos;
         this.size = size;
@@ -26,7 +42,13 @@ public class TextField {
         Renderer.get().render(text,textOffset.x + pos.x,textOffset.y + pos.y);
     }
 
-    public void setTextCol(int r,int g,int b){
+    /**
+     * the color of the text that is displayed when typing, from 0 to 1
+     * @param r the amount of red
+     * @param g the amount of green
+     * @param b the amount of blue
+     */
+    public void setTextCol(float r,float g,float b){
         text.setColor(r,g,b);
     }
 
@@ -64,6 +86,10 @@ public class TextField {
         return text;
     }
 
+    /**
+     * This returns what is currently written in the field
+     * @return the content
+     */
     public String getContent() {
         return content;
     }

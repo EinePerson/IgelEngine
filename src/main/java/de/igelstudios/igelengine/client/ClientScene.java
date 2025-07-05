@@ -10,6 +10,10 @@ import org.joml.Vector2f;
 
 import java.util.List;
 
+/**
+ * This is the Client side implementation of the Scene, this adds the possibility to move around with an instance of {@link Camera}
+ * it for some reason also contains the initialisation of a Render, this may be changed in the future
+ */
 public class ClientScene extends Scene implements BatchSupplier<SceneObject> {
     private Camera cam;
 

@@ -78,6 +78,11 @@ public class HIDInput {
         }
     }
 
+    /**
+     * Adds a {@link MouseClickListener} to be called when the specific mouse key was pressed or released
+     * @param listener The listener class to be used<br> Every method being registered has to be annotated with {@link  KeyHandler} annotation
+     * @see MouseClickListener
+     */
     public void registerMouseClickListener(MouseClickListener listener){
         activeListeners.put(listener,false);
         for (Method method : listener.getClass().getMethods()) {

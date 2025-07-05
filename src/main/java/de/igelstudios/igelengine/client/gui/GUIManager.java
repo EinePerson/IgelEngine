@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.client.gui;
 
+import de.igelstudios.igelengine.client.graphics.Line;
 import de.igelstudios.igelengine.client.graphics.Polygon;
 import de.igelstudios.igelengine.client.keys.*;
 import de.igelstudios.igelengine.common.scene.SceneObject;
@@ -7,6 +8,9 @@ import org.lwjgl.glfw.GLFW;
 
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 
+/**
+ * in this class, one can set the currently shown GUI (only 1) with {@link #setGUI(GUI)}
+ */
 public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     private static GUIManager instance;
     //private double x,y;
@@ -85,8 +89,10 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
         this.y = y;
     }*/
 
-
-
+    /**
+     * sets the current active GUI on the screen
+     * @param gui the new GUI or null to remove the old GUI
+     */
     public static void setGUI(GUI gui){
         instance.setGui(gui);
     }
@@ -112,6 +118,9 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
         this.gui = gui;
     }
 
+    /**
+     * Removes the current GUI
+     */
     public static void removeGui(){
         if(instance.gui != null)instance.removeGUI();
     }
@@ -121,6 +130,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
         gui.getTexts().forEach(text -> text.setLifeTime(0));
         gui.getObjects().forEach(SceneObject::remove);
         gui.getPolygons().forEach(Polygon::remove);
+        gui.getLines().forEach(Line::remove);
         this.gui = null;
     }
 

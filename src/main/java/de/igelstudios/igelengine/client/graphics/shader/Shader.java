@@ -1,9 +1,11 @@
 package de.igelstudios.igelengine.client.graphics.shader;
 
 import de.igelstudios.ClientMain;
+import de.igelstudios.igelengine.client.ClientEngine;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL20;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +17,9 @@ import java.util.Objects;
 
 import static org.lwjgl.opengl.GL46.*;
 
+/**
+ * This is an Engine internal class that represents a set of shaders that are used together
+ */
 public class Shader {
     private int[] shaders;
     private int program;
@@ -30,18 +35,25 @@ public class Shader {
         return usesTexture;
     }
 
+    /**
+     * Creates a new shader
+     * @param data the specified shader data holding objects
+     */
     public Shader(ShaderData[] data){
         shaders = new int[data.length];
-        for (int i = 0; i < data.length; i++) {
-            shaders[i] = load(data[i].type,data[i].name);
-        }
-        program = glCreateProgram();
-        for (int shader : shaders) {
-            glAttachShader(program, shader);
-        }
-        glLinkProgram(program);
 
-        int i = glGetProgrami(program, GL_LINK_STATUS);
+        ClientEngine.queueForRenderThread(() -> {
+            for (int i = 0; i < data.length; i++) {
+                shaders[i] = load(data[i].type,data[i].name);
+            }
+            program = glCreateProgram();
+            for (int shader : shaders) {
+                glAttachShader(program, shader);
+            }
+            glLinkProgram(program);
+
+            int i = glGetProgrami(program, GL_LINK_STATUS);
+        });
         //if (i == GL_FALSE) ClientMain.LOGGER.error(data + " Linking of shaders failed." + glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH)));
 
     }
@@ -59,6 +71,10 @@ public class Shader {
         }
     }
 
+    /**
+     * Creates a pair of Vertex and Fragment shader
+     * @param name the file name where the vertex shader ends in .vert and the fragment shader in .frag
+     */
     public Shader(String name){
         this(new Shader.ShaderData[]{new Shader.ShaderData(name + ".vert",GL_VERTEX_SHADER),new Shader.ShaderData(name + ".frag",GL_FRAGMENT_SHADER)});
     }
