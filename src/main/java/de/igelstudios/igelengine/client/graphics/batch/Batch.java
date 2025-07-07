@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.client.graphics.batch;
 
+import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.graphics.shader.Shader;
 import de.igelstudios.igelengine.client.graphics.texture.Texture;
 import de.igelstudios.igelengine.client.graphics.texture.TexturePool;
@@ -224,7 +225,7 @@ public abstract class Batch<T extends BatchContent> {
 
         vertices = nvertices;
 
-        load();
+        ClientEngine.queueForRenderThread(this::load);
     }
 
     private void load(){

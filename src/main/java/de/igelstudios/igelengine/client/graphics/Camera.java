@@ -69,12 +69,12 @@ public class Camera {
         return projMat;
     }
 
-    public void move(Vector2f pos){
-        this.pos.add(pos);
-        adjust();
+    public static void move(Vector2f pos){
+        instance.pos.add(pos);
+        instance.adjust();
     }
 
-    public Vector2f getPos() {
-        return pos;
+    public static Vector2f getPos() {
+        return instance.pos;
     }
 }

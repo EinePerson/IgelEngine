@@ -14,7 +14,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     private static GUIManager instance;
     //private double x,y;
-    private int selText;
+    private int selText = -1;
     private GUI gui;
     private boolean changed = false;
 

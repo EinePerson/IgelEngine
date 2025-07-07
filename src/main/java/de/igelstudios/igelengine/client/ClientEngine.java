@@ -109,6 +109,11 @@ public class ClientEngine extends Engine {
     @Override
     public void stopSub() {
         renderThread.interrupt();
+        try {
+            renderThread.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         this.initializer.onEnd();
         this.window.close();
