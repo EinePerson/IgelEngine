@@ -43,6 +43,7 @@ public abstract class Batch<T extends BatchContent> {
      * @param shader the shader the batch will use
      * @param attrs every attribute where the value is the size of the specific attribute
      * @param movable determent's weather objects rendered by this can be moved relative to the player
+     * @param dynamic whether the indices are dynamic or static rectangles
      */
     public Batch(int size,Shader shader,boolean movable,boolean dynamic,int ... attrs){
         this.orgSize = size;

@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public interface ClientNet {
 
-    public UUID getUUID();
+    UUID getUUID();
 
-    public void setUUID(UUID uuid);
+    void setUUID(UUID uuid);
 }

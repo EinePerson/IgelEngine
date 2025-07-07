@@ -51,6 +51,7 @@ public final class Config {
     /**
      * Gets a value from the config
      * @param key the key of the Item
+     * @param defaultValue the value to return when no value is found
      * @return the value that is read or the default value
      * @see #getOrDefault(String, Object)
      */
