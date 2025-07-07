@@ -14,7 +14,7 @@ public class Line implements BatchContent,AlphaColoredObject {
         CENTER,
         LEFT;
     }
-    private final Vector2f org;
+    private Vector2f org;
     private Vector2f endOrg;
     private Vector2f start;
     private Vector2f startUp;
@@ -521,5 +521,10 @@ public class Line implements BatchContent,AlphaColoredObject {
     public void setA(float a) {
         this.a = a;
         markDirty();
+    }
+
+    public void setStart(Vector2f org) {
+        this.org = org;
+        recalculate();
     }
 }
