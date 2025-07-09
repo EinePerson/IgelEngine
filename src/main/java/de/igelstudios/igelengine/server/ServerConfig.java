@@ -18,7 +18,7 @@ public class ServerConfig {
     public static void create(){
         config = new Config("server");
         try {
-            port = Integer.parseInt(config.get("port", Client.DEFAULT_PORT).toString());
+            port = Integer.parseInt(config.getOrDefault("port", Client.DEFAULT_PORT).toString());
         }catch (NumberFormatException e){
             throw new RuntimeException("The port specified in server.properties has to be a number");
         }

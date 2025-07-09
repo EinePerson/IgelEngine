@@ -48,6 +48,8 @@ public final class Text{
         pos = new Vector2f(0.0f);
         childTexts = new ArrayList<>();
         fullCharList = new ArrayList<>();
+
+        update();
     }
 
     public static void init(String lang){

@@ -18,9 +18,10 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GLFontGen {
+    private static final int CHAR_COUNT = 256;
     private final String name;
     private final int fontSize;
-    int w,h,l;
+    int w,h;
     private Map<Integer,Char> chars;
     private int tex;
 
@@ -52,28 +53,21 @@ public class GLFontGen {
         Graphics2D g2d = img.createGraphics();
         g2d.setFont(font);
         FontMetrics metrics = g2d.getFontMetrics();
-        int estimatedWidth = (int)Math.sqrt(font.getNumGlyphs()) * font.getSize() + 1;
         w = 0;
-        h = metrics.getHeight();
-        l = metrics.getHeight();
+        h = (int) (metrics.getHeight() * 1.4f);
         int x = 0;
         int y = (int) (metrics.getHeight() * 1.4f);
 
         chars = new HashMap<>();
-        for (int i = 0; i < font.getNumGlyphs(); i++) {
+        for (int i = 0; i < CHAR_COUNT; i++) {
             if(font.canDisplay(i)){
-                Char chat = new Char(x,y,metrics.charWidth(i),metrics.getHeight());
+                Char chat = new Char(x,y,metrics.charWidth(i), (int) (metrics.getHeight() * 1.4f));
                 chars.put(i,chat);
                 w = Math.max(x + metrics.charWidth(i),w);
                 x += chat.getWith();
-                if(x > estimatedWidth){
-                    x = 0;
-                    y += metrics.getHeight() * 1.4f;
-                    h += metrics.getHeight() * 1.4f;
-                }
             }
         }
-        h += metrics.getHeight() * 1.4f;
+        h += (int) (metrics.getHeight() * 1.4f);
         g2d.dispose();
 
         img = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
@@ -81,7 +75,7 @@ public class GLFontGen {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setFont(font);
         g2d.setColor(Color.WHITE);
-        for (int i = 0; i < font.getNumGlyphs(); i++) {
+        for (int i = 0; i < CHAR_COUNT; i++) {
             if(font.canDisplay(i)){
                 Char chat = chars.get(i);
                 chat.calcCords(w,h);
@@ -91,7 +85,7 @@ public class GLFontGen {
         g2d.dispose();
 
         try {
-            String trimmed = new File(name).getName().replace(".ttf","");
+            String trimmed = new File(name).getName().replace(".ttf","").replace(".otf","");
             String png = trimmed + ".png";
             String json = trimmed + ".json";
             if(!new File("src/main/resources/fonts/" + png).exists())new File("src/main/resources/fonts/" + png).createNewFile();

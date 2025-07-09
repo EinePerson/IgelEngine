@@ -22,7 +22,7 @@ public class TextField {
      * creates a new Text field
      * @param pos the position the field should start at
      * @param size the overall size of the field, thus pos + size = the end position
-     * @see TextField#TextField(Vector2f, Vector2f, Vector2f)  TextField
+     * @see TextField#TextField(Vector2f, Vector2f, Vector2f) TextField
      */
     public TextField(Vector2f pos,Vector2f size){
         this(pos,new Vector2f(0,0),size);
@@ -31,14 +31,44 @@ public class TextField {
     /**
      * creates a new Text field
      * @param pos the position the field should start at
+     * @param size the overall size of the field, thus pos + size = the end position
+     * @param initialText the initial text to be displayed
+     * @see TextField#TextField(Vector2f, Vector2f, Vector2f) TextField
+      * @see TextField#TextField(Vector2f, Vector2f)  TextField
+      * @see TextField#TextField(Vector2f, Vector2f, Vector2f, String) TextField
+     */
+    public TextField(Vector2f pos,Vector2f size,String initialText){
+        this(pos,new Vector2f(0,0),size,initialText);
+    }
+
+    /**
+     * creates a new Text field
+     * @param pos the position the field should start at
      * @param textOffset the offset from the pos to where the text shall be shown
      * @param size the overall size of the field, thus pos + size = the end position
      * @see TextField#TextField(Vector2f, Vector2f)  TextField
+     * @see TextField#TextField(Vector2f, Vector2f, Vector2f, String) TextField
+     * @see TextField#TextField(Vector2f, Vector2f, String) TextField
+     *
      */
     public TextField(Vector2f pos,Vector2f textOffset,Vector2f size){
+        this(pos,textOffset,size,"");
+    }
+
+    /**
+     * creates a new Text field
+     * @param pos the position the field should start at
+     * @param textOffset the offset from the pos to where the text shall be shown
+     * @param size the overall size of the field, thus pos + size = the end position
+     * @param initialText the initial text to be displayed
+     * @see TextField#TextField(Vector2f, Vector2f) TextField
+     * @see TextField#TextField(Vector2f, Vector2f, Vector2f) TextField
+     * @see TextField#TextField(Vector2f, Vector2f, String) TextField
+     */
+    public TextField(Vector2f pos,Vector2f textOffset,Vector2f size,String initialText){
         this.pos = pos;
         this.size = size;
-        text = Text.literal("");
+        text = Text.literal(initialText);
         Renderer.get().render(text,textOffset.x + pos.x,textOffset.y + pos.y);
     }
 

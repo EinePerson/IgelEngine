@@ -40,23 +40,25 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
 
     @Override
     public void addP(int j, GraphChar obj) {
-            Char chat = obj.getFont().get(obj.getChat());
-            int k = j;
-            for (int m = 0; m < 4; m++) {
+        Char chat = obj.getFont().get(obj.getChat());
+        int k = j;
+        for (int m = 0; m < 4; m++) {
 
-                vertices[j] = obj.getPos().x + (Texture.TEX_COORDS[0][m].x * chat.getWith() * obj.getScale());
-                vertices[j + 1] = obj.getPos().y + (Texture.TEX_COORDS[0][m].y * chat.getHeight() * obj.getScale());
-                vertices[j + 2] = ((float) obj.getFont().getTex());
-                vertices[j + 3] = chat.getTexCords()[(int) Texture.TEX_COORDS[0][m].x].x;
-                vertices[j + 4] = chat.getTexCords()[(int) Texture.TEX_COORDS[0][m].y].y * 1.125f;
+            vertices[j] = obj.getPos().x + (Texture.TEX_COORDS[0][m].x * chat.getWith() * obj.getScale());
+            vertices[j + 1] = obj.getPos().y + (Texture.TEX_COORDS[0][m].y * chat.getHeight() * obj.getScale());
 
-                vertices[j + 5] = obj.getR();
-                vertices[j + 6] = obj.getG();
-                vertices[j + 7] = obj.getB();
-                vertices[j + 8] = obj.getA();
+            vertices[j + 2] = ((float) obj.getFont().getTex());
+            vertices[j + 3] = chat.getTexCords()[(int) Texture.TEX_COORDS[0][m].x].x;
+            vertices[j + 4] = chat.getTexCords()[(int) Texture.TEX_COORDS[0][m].y].y * 1.125f;
 
-                j += 9;
-            }
+            vertices[j + 5] = obj.getR();
+            vertices[j + 6] = obj.getG();
+            vertices[j + 7] = obj.getB();
+            vertices[j + 8] = obj.getA();
+
+            j += 9;
+        }
+        obj.unMarkDirty();
     }
 
     @Override

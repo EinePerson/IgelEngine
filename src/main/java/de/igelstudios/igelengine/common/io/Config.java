@@ -24,7 +24,7 @@ public final class Config {
      * Creates a new instance of Config
      * @param name the name of the file
      * @param withType weather the name includes the file extension
-     * @see #Config(String)  Config
+     * @see #Config(String) Config
      */
     public Config(String name,boolean withType){
         if(!withType) name += ".properties";
@@ -56,19 +56,7 @@ public final class Config {
      * @see #getOrDefault(String, Object)
      */
     public Object getOrDefault(String key,Object defaultValue){
-        Object value = get(key);
-        if(value == null) value = defaultValue;
-        return value;
-    }
-
-    /**
-     * Gets a value from the Config
-     * @param key the key of the Item
-     * @param standard the Value of the Item of there is non associated in the file
-     * @return the value of the propertied or standard
-     */
-    public Object get(String key, Object standard){
-        return properties.getOrDefault(key,standard);
+        return properties.getOrDefault(key,defaultValue);
     }
 
     public void write(String key,Object value){

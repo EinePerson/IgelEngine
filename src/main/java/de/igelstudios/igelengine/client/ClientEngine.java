@@ -42,7 +42,7 @@ public class ClientEngine extends Engine {
     }
 
     public static GLFont getDefaultFont() {
-        if(defaultFont == null) defaultFont = new GLFont("calibri");
+        if(defaultFont == null) defaultFont = new GLFont("Cantarell-VF");
         return defaultFont;
     }
     private EngineInitializer initializer;
