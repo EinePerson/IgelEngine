@@ -15,10 +15,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This handles the client code
@@ -32,7 +29,7 @@ public class Client extends Thread implements Tickable {
     static Client instance;
     private static Map<String, ClientHandler> clientHandlers = new HashMap<>();
 
-    private static List<Package> queueHandling = new ArrayList<>();
+    private static List<Package> queueHandling = Collections.synchronizedList(new ArrayList<>());
     public static void handle(Package p){
         queueHandling.add(p);
     }

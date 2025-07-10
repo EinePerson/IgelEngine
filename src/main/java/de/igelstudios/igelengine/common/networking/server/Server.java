@@ -23,7 +23,7 @@ import java.util.*;
  * @see Client
  */
 public class Server extends Thread implements Tickable {
-    private static Map<ClientNet,Package> queueHandling = new HashMap<>();
+    private static Map<ClientNet,Package> queueHandling = Collections.synchronizedMap(new HashMap<>());
     private static List<ConnectionListener> connectionListeners = new ArrayList<>();
     private static final Map<String, ServerHandler> serverHandlers = new HashMap<>();
 
