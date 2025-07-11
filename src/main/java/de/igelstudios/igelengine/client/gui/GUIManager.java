@@ -15,7 +15,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     private static GUIManager instance;
     //private double x,y;
     private int selText = -1;
-    private GUI gui;
+    private volatile GUI gui;
     private boolean changed = false;
 
     private GUIManager(){
@@ -45,7 +45,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
             }
             TextField field = gui.getTextFields().get(i);
             if(field.getPos().x <= x && field.getPos().x + field.getSize().x > x && field.getPos().y <= y && field.getPos().y + field.getSize().y > y){
-                selText = i;
+                changeTextField(i);
                 set = true;
                 break;
             }
@@ -83,6 +83,20 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
         }
     }
 
+    private void changeTextField(int newSelected){
+        if(selText != -1 && gui.getTextFields().get(selText).hasBackground()) {
+            int oldColor = gui.getTextFields().get(selText).getBackGroundColor();
+            gui.getTextFields().get(selText).getBackGround().setRGBA(((oldColor >> 24) & 0xFF) / 255.0f, ((oldColor >> 16) & 0xFF) / 255.0f, ((oldColor >> 8) & 0xFF) / 255.0f, (oldColor & 0xFF) / 255.0f);
+        }
+
+        selText = newSelected;
+
+        if(selText != -1 && gui.getTextFields().get(selText).hasBackground()) {
+            int oldColor = gui.getTextFields().get(selText).getSelectedBackgroundColor();
+            gui.getTextFields().get(selText).getBackGround().setRGBA(((oldColor >> 24) & 0xFF) / 255.0f, ((oldColor >> 16) & 0xFF) / 255.0f, ((oldColor >> 8) & 0xFF) / 255.0f, (oldColor & 0xFF) / 255.0f);
+        }
+    }
+
     /*@Override
     public void mouseMove(double x, double y) {
         this.x = x;
@@ -93,7 +107,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
      * sets the current active GUI on the screen
      * @param gui the new GUI or null to remove the old GUI
      */
-    public static void setGUI(GUI gui){
+    public static synchronized void setGUI(GUI gui){
         instance.setGui(gui);
     }
 
@@ -121,7 +135,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     /**
      * Removes the current GUI
      */
-    public static void removeGui(){
+    public static synchronized void removeGui(){
         if(instance.gui != null)instance.removeGUI();
     }
 
@@ -136,6 +150,10 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
 
     public static boolean handle(int mods,int key) {
         if (instance.hasSelText()) {
+            if(key == GLFW.GLFW_KEY_ESCAPE){
+                instance.changeTextField(-1);
+                return true;
+            }
             int keyS = key;
             if ((mods & GLFW_MOD_SHIFT) == 0) {
                 keyS = Character.toLowerCase(key);
@@ -153,7 +171,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
         //input.registerMoveListener(instance);
     }
 
-    public static GUI getGui() {
+    public static synchronized GUI getGui() {
         return instance.gui;
     }
 }

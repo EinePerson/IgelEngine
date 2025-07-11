@@ -63,6 +63,9 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
 
     @Override
     public void tick() {
-        Renderer.get().getTextSupplier().getT().forEach(GraphChar::decrement);
+        for (int i = 0; i < Renderer.get().getTextSupplier().getT().size(); i++) {
+            Renderer.get().getTextSupplier().getT().get(i).decrement();
+        }
+        //Renderer.get().getTextSupplier().getT().forEach(GraphChar::decrement);
     }
 }

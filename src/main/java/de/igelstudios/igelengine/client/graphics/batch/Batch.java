@@ -26,7 +26,7 @@ public abstract class Batch<T extends BatchContent> {
     private final int orgSize;
     private int gi = 0;
     private int[] attrs;
-    private int totalInBits = 0;
+    protected final int totalInBits;
     private int total = 0;
     private int ebo;
     protected int[] indices;
@@ -58,8 +58,7 @@ public abstract class Batch<T extends BatchContent> {
 
         this.movable = movable;
 
-        /*if(dynamic)totalInBits = total;
-        else*/ totalInBits = total * 4;
+        totalInBits = total * 4;
 
 
         vertices = new float[size * totalInBits];
@@ -104,11 +103,13 @@ public abstract class Batch<T extends BatchContent> {
             vertices[j] = 0;
         }
         //System.out.println("B     B\n" + Arrays.toString(vertices) + "B     B");
-        float[] nvertecies = new float[vertices.length];
+        /*float[] nvertecies = new float[vertices.length];
         System.arraycopy(vertices,0,nvertecies,0,k);
         System.arraycopy(vertices,l,nvertecies,k,vertices.length - l);
         //System.out.println("C     C\n" + Arrays.toString(nvertecies) + "C     C");
-        vertices = nvertecies;
+        vertices = nvertecies;*/
+
+        System.arraycopy(vertices,l,vertices,k,vertices.length - l);
     }
 
     /**

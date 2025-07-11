@@ -39,7 +39,7 @@ public final class Config {
     }
 
     /**
-     * Gets a value from the config
+     * Gets a value from the config, the returned value is normally of type String
      * @param key the key of the Item
      * @return the value, this might be null
      * @see #getOrDefault(String, Object)
@@ -49,16 +49,63 @@ public final class Config {
     }
 
     /**
-     * Gets a value from the config
+     * Gets a value from the config, if the value is neither a String nor a Primitive, it has to be converted from the returned String
      * @param key the key of the Item
      * @param defaultValue the value to return when no value is found
      * @return the value that is read or the default value
      * @see #getOrDefault(String, Object)
      */
     public Object getOrDefault(String key,Object defaultValue){
-        return properties.getOrDefault(key,defaultValue);
+        String value = properties.getOrDefault(key,defaultValue).toString();
+        if (defaultValue instanceof Integer) {
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                return defaultValue;
+            }
+        }else if(defaultValue instanceof Short){
+            try {
+                return Short.parseShort(value);
+            }catch (NumberFormatException e){
+                return defaultValue;
+            }
+        }else if(defaultValue instanceof Byte){
+            try {
+                return Byte.parseByte(value);
+            }catch (NumberFormatException e){
+                return defaultValue;
+            }
+        }else if(defaultValue instanceof Character){
+            return value.charAt(0);
+        } else if (defaultValue instanceof Boolean) {
+            return Boolean.parseBoolean(value);
+        } else if (defaultValue instanceof Double) {
+            try {
+                return Double.parseDouble(value);
+            } catch (NumberFormatException e) {
+                return defaultValue;
+            }
+        } else if (defaultValue instanceof Long) {
+            try {
+                return Long.parseLong(value);
+            } catch (NumberFormatException e) {
+                return defaultValue;
+            }
+        } else if (defaultValue instanceof Float) {
+            try {
+                return Float.parseFloat(value);
+            } catch (NumberFormatException e) {
+                return defaultValue;
+            }
+        }
+        return value;
     }
 
+    /**
+     * Writes the specific value as String
+     * @param key the key that identifies the value
+     * @param value the value to write
+     */
     public void write(String key,Object value){
         try {
             properties.setProperty(key,value.toString());

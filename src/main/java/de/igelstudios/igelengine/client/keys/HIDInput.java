@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.client.keys;
 
+import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.Window;
 import de.igelstudios.igelengine.client.graphics.Camera;
 import de.igelstudios.igelengine.client.gui.GUIManager;
@@ -178,24 +179,28 @@ public class HIDInput {
         keyboard = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
-                if (!keys[key] && action == GLFW_PRESS){
-                    if(!GUIManager.handle(mods,key)) {
-                        /*if(mouseClickListeners.containsKey(keyConfig.get(key))){
-                            mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
-                                try {
-                                    if(activeListeners.get(mouseClickListeners.get(keyConfig.get(key)).get(method))) {
-                                        method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method),mouseX,mouseY ,true);
+                //System.out.println((action == GLFW_PRESS));
+                //ClientEngine.queueForMainThread(() -> {
+                    if (!keys[key] && action == GLFW_PRESS) {
+                        if (!GUIManager.handle(mods, key)) {
+                            if (listeners.containsKey(keyConfig.get(key))) {
+                                listeners.get(keyConfig.get(key)).keySet().forEach(method -> {
+                                    try {
+                                        if (activeListeners.get(listeners.get(keyConfig.get(key)).get(method))) {
+                                            method.invoke(listeners.get(keyConfig.get(key)).get(method), true);
+                                        }
+                                    } catch (IllegalAccessException | InvocationTargetException e) {
+                                        throw new RuntimeException(e);
                                     }
-                                } catch (IllegalAccessException | InvocationTargetException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            });
-                        }*/
+                                });
+                            }
+                        }
+                    } else if (keys[key] && action == GLFW_RELEASE) {
                         if (listeners.containsKey(keyConfig.get(key))) {
                             listeners.get(keyConfig.get(key)).keySet().forEach(method -> {
                                 try {
-                                    if(activeListeners.get(listeners.get(keyConfig.get(key)).get(method))) {
-                                        method.invoke(listeners.get(keyConfig.get(key)).get(method), true);
+                                    if (activeListeners.get(listeners.get(keyConfig.get(key)).get(method))) {
+                                        method.invoke(listeners.get(keyConfig.get(key)).get(method), false);
                                     }
                                 } catch (IllegalAccessException | InvocationTargetException e) {
                                     throw new RuntimeException(e);
@@ -203,90 +208,73 @@ public class HIDInput {
                             });
                         }
                     }
-                }else if(keys[key] && action == GLFW_RELEASE) {
-                    /*if(mouseClickListeners.containsKey(keyConfig.get(key))){
-                        mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
-                            try {
-                                if(activeListeners.get(mouseClickListeners.get(keyConfig.get(key)).get(method))) {
-                                    method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method), mouseX, mouseY, false);
-                                }
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-                    }*/
-                    if(listeners.containsKey(keyConfig.get(key))) {
-                        listeners.get(keyConfig.get(key)).keySet().forEach(method -> {
-                            try {
-                                if(activeListeners.get(listeners.get(keyConfig.get(key)).get(method))) {
-                                    method.invoke(listeners.get(keyConfig.get(key)).get(method), false);
-                                }
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-                    }
-                }
-                keys[key] = (action != GLFW_RELEASE);
+                    keys[key] = (action != GLFW_RELEASE);
+                //});
             }
         };
 
         mousePos = new GLFWCursorPosCallback() {
             @Override
-            public void invoke(long window, double xPos, double yPos) {
-                xPos /= Window.getWidth();
-                yPos = Window.getHeight() / 2.0f - yPos + (Window.getHeight() / 2.0f);
-                yPos /= Window.getHeight();
-                double finalXPos = xPos * Camera.getX();
-                double finalYPos = yPos * Camera.getY();
-                dragListeners.forEach((name, map) -> map.forEach(((method, listener) -> {
-                    try {
-                        if(keys[keyConfig.get(name)])
-                            if(activeListeners.get(listener)) {
-                                method.invoke(listener, finalXPos - mouseX, finalYPos - mouseY, finalXPos, finalYPos);
-                            }
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
-                    }
-                })));
-                mouseMove.forEach(listeners ->{
-                    if(activeListeners.containsKey(listeners)) listeners.mouseMove(finalXPos,finalYPos);
-                });
-                mouseX = xPos;
-                mouseY = yPos;
+            public void invoke(long window, double xPosO, double yPosO) {
+                //ClientEngine.queueForMainThread(() -> {
+                    double xPos = xPosO;
+                    double yPos = yPosO;
+                    xPos /= Window.getWidth();
+                    yPos = Window.getHeight() / 2.0f - yPos + (Window.getHeight() / 2.0f);
+                    yPos /= Window.getHeight();
+                    double finalXPos = xPos * Camera.getX();
+                    double finalYPos = yPos * Camera.getY();
+                    dragListeners.forEach((name, map) -> map.forEach(((method, listener) -> {
+                        try {
+                            if(keys[keyConfig.get(name)])
+                                if(activeListeners.get(listener)) {
+                                    method.invoke(listener, finalXPos - mouseX, finalYPos - mouseY, finalXPos, finalYPos);
+                                }
+                        } catch (IllegalAccessException | InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    })));
+                    mouseMove.forEach(listeners ->{
+                        if(activeListeners.containsKey(listeners)) listeners.mouseMove(finalXPos,finalYPos);
+                    });
+                    mouseX = xPos;
+                    mouseY = yPos;
+                //});
             }
         };
 
         mouseKeys = new GLFWMouseButtonCallback() {
             @Override
             public void invoke(long window, int key, int action, int mods) {
-                if (keys[key]) {
-                    if (mouseClickListeners.containsKey(keyConfig.get(key))) {
-                        mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
-                            try {
-                                if(activeListeners.get(mouseClickListeners.get(keyConfig.get(key)).get(method))) {
-                                    method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method), false, mouseX * Camera.getX(), mouseY * Camera.getY());
+                //ClientEngine.queueForMainThread(() -> {
+                    if (keys[key]) {
+                        if (mouseClickListeners.containsKey(keyConfig.get(key))) {
+                            mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
+                                try {
+                                    if (activeListeners.get(mouseClickListeners.get(keyConfig.get(key)).get(method))) {
+                                        method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method), false, mouseX * Camera.getX(), mouseY * Camera.getY());
+                                    }
+                                } catch (IllegalAccessException | InvocationTargetException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    }
-                }else {
-                    if(mouseClickListeners.containsKey(keyConfig.get(key))) {
-                        Map<Listener,Boolean> listener = new HashMap<>(activeListeners);
-                        mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
-                            try {
-                                if(listener.get(mouseClickListeners.get(keyConfig.get(key)).get(method))) {
-                                    method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method), true, mouseX * Camera.getX(), mouseY * Camera.getY());
+                            });
+                        }
+                    } else {
+                        if (mouseClickListeners.containsKey(keyConfig.get(key))) {
+                            Map<Listener, Boolean> listener = new HashMap<>(activeListeners);
+                            mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
+                                try {
+                                    if (listener.get(mouseClickListeners.get(keyConfig.get(key)).get(method))) {
+                                        method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method), true, mouseX * Camera.getX(), mouseY * Camera.getY());
+                                    }
+                                } catch (IllegalAccessException | InvocationTargetException e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-                        });
+                            });
+                        }
                     }
-                }
-                keys[key] = (action != GLFW_RELEASE);
+                    keys[key] = (action != GLFW_RELEASE);
+                //});
             }
         };
     }

@@ -56,20 +56,44 @@ public class PolygonBatch extends Batch<Polygon>{
     @Override
     public void clearP(int i, List<Polygon> objs) {
         int indOffset = 0;
-        for (int j = 0; j < objs.size(); j++) {
+        for (int j = 0;j < i && j < objs.size(); j++) {
             indOffset += (objs.get(j).getLength() - 2);
         }
 
-        indOffset *= 3;
-
-        for(int j = indOffset - (objs.get(i).getLength() - 2) * 3;j < indOffset;j++){
-            indices[j] = 0;
+        int fullIndOffset = 0;
+        for (int j = i; j < objs.size(); j++) {
+            fullIndOffset += (objs.get(j).getLength() - 2);
         }
 
-        objs.remove(i);
+        indOffset *= 3;
+        fullIndOffset *= 3;
+        fullIndOffset += indOffset;
+
+        int k = 0;
+        for (int j = 0; j < objs.size() && j < i; j++) {
+            k += objs.get(j).formerLength();
+        }
+        k *= totalInBits;
+        int l = k + totalInBits * objs.get(i).formerLength();
+        for (int j = k; j < l; j++) {
+            vertices[j] = 0;
+        }
+
+        System.arraycopy(vertices,l,vertices,k,vertices.length - l);
 
         for (int j = i; j < objs.size(); j++) {
             add(j,objs.get(j));
         }
+
+        int offset = (objs.get(i).getLength() - 2) * 3;
+        for(int j = indOffset + (objs.get(i).getLength() - 2) * 3;j < fullIndOffset;j++){
+            indices[j - offset] = indices[j] - objs.get(i).getLength();
+        }
+
+        for (int j = fullIndOffset - (objs.get(i).getLength() - 2) * 3; j < fullIndOffset; j++) {
+            indices[j] = 0;
+        }
+
+        objs.remove(i);
     }
 }

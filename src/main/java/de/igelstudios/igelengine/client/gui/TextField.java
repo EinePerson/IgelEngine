@@ -1,13 +1,9 @@
 package de.igelstudios.igelengine.client.gui;
 
+import de.igelstudios.igelengine.client.graphics.Polygon;
 import de.igelstudios.igelengine.client.graphics.Renderer;
-import de.igelstudios.igelengine.client.graphics.batch.TextBatch;
 import de.igelstudios.igelengine.client.lang.Text;
-import de.igelstudios.igelengine.common.scene.Scene;
 import org.joml.Vector2f;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A text field is a clickable area where a text can be written to, beware that only the text is shown and no background
@@ -17,6 +13,15 @@ public class TextField {
     private Vector2f pos;
     private Vector2f size;
     private final Text text;
+
+    private boolean hasBackground = false;
+    private Polygon backGround = null;
+    private int backColor = 0;
+    private int selBackBackground = 0;
+
+    private boolean hasLabel = false;
+    private Text label = null;
+
 
     /**
      * creates a new Text field
@@ -122,5 +127,62 @@ public class TextField {
      */
     public String getContent() {
         return content;
+    }
+
+    /**
+     * Adds a background to this text field, this color changes when the text field is selected
+     * @param color the color this normally has in RGBA format
+     * @param selectedColor the color this has when selected in RGBA format
+     * @return this for chained modification calls
+     */
+    public TextField addBackground(int color,int selectedColor){
+        backGround = new Polygon(new Vector2f(pos),new Vector2f(pos).add(new Vector2f(size.x,0)),new Vector2f(pos).add(new Vector2f(size)),new Vector2f(pos).add(new Vector2f(0,size.y)));
+        this.backColor = color;
+        this.selBackBackground = selectedColor;
+        backGround.setRGBA(((color >> 24) & 0xFF) / 255.0f,((color >> 16) & 0xFF) / 255.0f,((color >> 8) & 0xFF) / 255.0f,(color & 0xFF) / 255.0f);
+        hasBackground = true;
+
+        return this;
+    }
+
+    /**
+     * Adds a label to be displayed directly left of the Text field
+     * @param text the text to be displayed, no modifications except for position are done in here so the color and similar things habe to be done manually
+     * @return this for chained modification calls
+     */
+    public TextField addLabel(Text text){
+        label = text;
+
+        hasLabel = true;
+
+        return this;
+    }
+
+    /**
+     * Checks weather this has a background
+     * @return weather the text field has a background
+     */
+    public boolean hasBackground(){
+        return hasBackground;
+    }
+
+    public Polygon getBackGround() {
+        return backGround;
+    }
+
+    public int getBackGroundColor() {
+        return backColor;
+    }
+
+    public int getSelectedBackgroundColor() {
+        return selBackBackground;
+    }
+
+    public boolean hasLabel() {
+        return hasLabel;
+    }
+
+    public Text getLabel() {
+        return label;
     }
 }

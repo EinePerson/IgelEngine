@@ -23,53 +23,59 @@ public class ClientEngine extends Engine {
     private Window window;
     private HIDInput input;
     private ClientScene scene;
-    private Thread renderThread;
-    private Thread mainThread;
+
     private String title;
-    private static boolean renderTaskQueue = false;
+    private EngineInitializer initializer;
+    private boolean printFPS = false;
+    int fps = 0;
+
+    private static Thread renderThread;
+    private static volatile boolean renderTaskQueue = false;
     private static final ConcurrentLinkedQueue<Runnable> renderTasks1 = new ConcurrentLinkedQueue<>();
     private static final ConcurrentLinkedQueue<Runnable> renderTasks2 = new ConcurrentLinkedQueue<>();
+
+    private static Thread mainThread;
+    private static volatile boolean mainTaskQueue = false;
+    private static final ConcurrentLinkedQueue<Runnable> mainTasks1 = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<Runnable> mainTasks2 = new ConcurrentLinkedQueue<>();
 
     private static GLFont defaultFont = null;
 
     /**
      * Because everything that has to do with Open GL(Rendering) has to run on the same thread, you can add a task here so that it may be executed on the next rendering
      * @param task the task to be executed on the renderer thread
+     * @see #queueForMainThread(Runnable)
      */
     public static void queueForRenderThread(Runnable task){
         if(renderTaskQueue) renderTasks1.add(task);
         else renderTasks2.add(task);
     }
 
+    /**
+     * Logic should run on the main thread you can enqueue them here so that they may be run on the next tick
+     * @param task the task to be executed on the main/logic thread
+     */
+    public static void queueForMainThread(Runnable task){
+        if(mainTaskQueue) mainTasks1.add(task);
+        else mainTasks2.add(task);
+    }
+
+    /**
+     * Returns the default fonts of the Engine
+     * @return the default font
+     */
     public static GLFont getDefaultFont() {
         if(defaultFont == null) defaultFont = new GLFont("Cantarell-VF");
         return defaultFont;
     }
-    private EngineInitializer initializer;
-
-    int fps = 0;
 
     public ClientEngine(EngineInitializer initializer,String title){
         this.initializer = initializer;
         this.title = title;
 
         renderThread = new Render();
-        //window = new Window(title);
 
-        //renderThread = new Render();
-        //input = new HIDInput(initializer);
-        //input.registerGLFWListeners(window.getWindow());
-        //GL11.glClearColor(1.0f,1.0f,1.0f,1.0f);
-        //scene = new ClientScene();
-        //addTickable(Renderer.get().getTextBatch());
-        //ClientEngine.this.window = new Window(ClientEngine.this.title);
-        //ClientEngine.this.input.registerGLFWListeners(ClientEngine.this.window.getWindow());
-        //GL11.glClearColor(1.0f,1.0f,1.0f,1.0f);
-
-        //renderTasks.forEach(Runnable::run);
-        //renderTasks.clear();
-        //addTickable(Renderer.get().getTextBatch());
-        //((Render) renderThread).init();
+        ClientEngine.this.input = new HIDInput(initializer);
     }
 
     @Override
@@ -79,6 +85,15 @@ public class ClientEngine extends Engine {
 
     @Override
     public void tick() {
+        mainTaskQueue = !mainTaskQueue;
+        if(mainTaskQueue){
+            mainTasks2.forEach(Runnable::run);
+            mainTasks2.clear();
+        }else{
+            mainTasks1.forEach(Runnable::run);
+            mainTasks1.clear();
+        }
+
         input.invokeContinuous();
     }
 
@@ -102,7 +117,7 @@ public class ClientEngine extends Engine {
 
     @Override
     public void second() {
-        //System.out.println("FPS: " + fps);
+        if(printFPS)System.out.println("FPS: " + fps);
         fps = 0;
     }
 
@@ -116,7 +131,6 @@ public class ClientEngine extends Engine {
         }
 
         this.initializer.onEnd();
-        this.window.close();
         this.input.close();
     }
 
@@ -151,6 +165,8 @@ public class ClientEngine extends Engine {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        ClientEngine.this.window.createAudio((String) ClientConfig.getConfig().getOrDefault("audio_device",window.getAudioDevices().getFirst()));
+        ClientEngine.this.input.registerGLFWListeners(ClientEngine.this.window.getWindow());
         this.initializer.onInitialize();
     }
 
@@ -160,7 +176,6 @@ public class ClientEngine extends Engine {
 
         private Render(){
             super("Render Thread");
-
         }
 
         @Override
@@ -169,13 +184,11 @@ public class ClientEngine extends Engine {
             while (!isInterrupted()){
                 loop();
             }
+            ClientEngine.this.window.close();
         }
 
         public void init(){
             ClientEngine.this.window = new Window(ClientEngine.this.title);
-            ClientEngine.this.window.createAudio((String) ClientConfig.getConfig().getOrDefault("audio_device",window.getAudioDevices().getFirst()));
-            ClientEngine.this.input = new HIDInput(initializer);
-            ClientEngine.this.input.registerGLFWListeners(ClientEngine.this.window.getWindow());
             GL11.glClearColor(1.0f,1.0f,1.0f,1.0f);
 
             scene = new ClientScene();
@@ -191,11 +204,34 @@ public class ClientEngine extends Engine {
 
             addTickable(Renderer.get().getTextBatch());
 
+            printFPS = (boolean) ClientConfig.getConfig().getOrDefault("print_fps",false);
+
             synchronized (mainThread){
                 mainThread.notify();
             }
         }
     }
 
+    /**
+     * Used for making sure that code that may only run on the main thread does so <br>
+     * If called from the main thread, task gets executed immediately else it gets queued to be executed on the main thread
+     * @param task the task that may only run on the main thread
+     * @see #enforceRenderThread(Runnable)
+     */
+    public static void enforceMainThread(Runnable task){
+        if(Thread.currentThread() != mainThread)queueForMainThread(task);
+        else task.run();
+    }
+
+    /**
+     * Used for making sure that code that may only run on the render thread does so <br>
+     * If called from the render thread, task gets executed immediately else it gets queued to be executed on the render thread
+     * @param task the task that may only run on the render thread
+     * @see #enforceMainThread(Runnable)
+     */
+    public static void enforceRenderThread(Runnable task){
+        if(Thread.currentThread() != renderThread)queueForRenderThread(task);
+        else task.run();
+    }
 
 }

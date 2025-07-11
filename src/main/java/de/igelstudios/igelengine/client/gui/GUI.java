@@ -113,6 +113,12 @@ public abstract class GUI {
 
     public void addTextField(TextField textField){
         textFields.add(textField);
+        if(textField.hasBackground()){
+            render(textField.getBackGround());
+        }
+        if(textField.hasLabel()){
+            render(textField.getLabel(),textField.getPos().x - textField.getLabel().getFullVisualLength() - 0.5f,textField.getPos().y);
+        }
     }
 
     public List<Line> getLines() {
