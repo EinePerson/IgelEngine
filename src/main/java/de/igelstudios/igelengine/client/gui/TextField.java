@@ -74,6 +74,7 @@ public class TextField {
         this.pos = pos;
         this.size = size;
         text = Text.literal(initialText);
+        content = initialText;
         Renderer.get().render(text,textOffset.x + pos.x,textOffset.y + pos.y);
     }
 
