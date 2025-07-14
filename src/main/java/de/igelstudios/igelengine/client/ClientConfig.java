@@ -13,7 +13,8 @@ public class ClientConfig {
 
     public ClientConfig(){
         config = new Config("client");
-        Text.init((String) config.getOrDefault("lang", EngineSettings.parser("info.json").read().getDefaultLang()));
+        if(!config.contains("lang"))config.write("lang",EngineSettings.parser("info.json").read().getDefaultLang());
+        Text.init((String) config.get("lang"));
         instance = this;
     }
 

@@ -110,8 +110,18 @@ public final class Config {
         try {
             properties.setProperty(key,value.toString());
             properties.store(new FileOutputStream(name),null);
+            properties.load(new FileInputStream(name));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Checks weather a specific key is present in the config
+     * @param key the key to check for
+     * @return weather the key is present
+     */
+    public boolean contains(String key){
+        return properties.containsKey(key);
     }
 }

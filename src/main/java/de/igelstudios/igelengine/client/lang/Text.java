@@ -287,6 +287,18 @@ public final class Text{
         return fullCharList;
     }
 
+    public Text update(String newContent){
+        content = newContent;
+        changed = true;
+        charsDirty = true;
+        chars.forEach(GraphChar::remove);
+        chars.clear();
+        update();
+        chars.forEach(chat -> Renderer.get().render(chat));
+
+        return this;
+    }
+
     public Text update(){
         char[] charArr = content.toCharArray();
         float j = 0;
