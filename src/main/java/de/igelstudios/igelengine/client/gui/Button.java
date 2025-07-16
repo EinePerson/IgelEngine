@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.client.gui;
 
+import de.igelstudios.igelengine.client.lang.Text;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ public class Button {
     private Vector2f pos;
     private Vector2f size;
     private List<ButtonClickEvent> listeners;
+    private boolean hasLabel = false;
+    private Text label = null;
 
     /**
      * creates a new button spanning from pos to pos + size
@@ -21,6 +24,19 @@ public class Button {
     public Button(Vector2f pos,Vector2f size){
         this.pos = pos;
         this.size = size;
+        listeners = new ArrayList<>();
+    }
+
+    /**
+     * creates a new Button, the size of the button is the exact size of the label
+     * @param pos the position where the button shall be located
+     * @param label the text to display and wrap this button around
+     */
+    public Button(Vector2f pos,Text label){
+        this.pos = pos;
+        size = new Vector2f(label.getFullVisualLength(),label.getHeight());
+        hasLabel = true;
+        this.label = label;
         listeners = new ArrayList<>();
     }
 
@@ -43,5 +59,13 @@ public class Button {
 
     public Vector2f getSize() {
         return size;
+    }
+
+    public boolean hasLabel() {
+        return hasLabel;
+    }
+
+    public Text getLabel() {
+        return label;
     }
 }

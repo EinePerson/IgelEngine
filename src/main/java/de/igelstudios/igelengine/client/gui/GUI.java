@@ -109,6 +109,7 @@ public abstract class GUI {
 
     public void addButton(Button button){
         buttons.add(button);
+        if(button.hasLabel())render(button.getLabel(),button.getPos().x,button.getPos().y);
     }
 
     public void addTextField(TextField textField){

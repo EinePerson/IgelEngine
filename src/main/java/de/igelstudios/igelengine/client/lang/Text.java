@@ -253,12 +253,17 @@ public final class Text{
         changed = true;
     }
 
+    public float getHeight(){
+        if(!chars.isEmpty())return chars.getFirst().getFont().get(chars.getFirst().getChat()).getHeight() * scale;
+        return 0;
+    }
+
     public float getVisualLength(){
-        float i = 0;
-        for (GraphChar chat : chars) {
-            i += chat.getFont().get(chat.getChat()).getWith() * scale;
+        float j = 0;
+        for (int i = 0; i < chars.size(); i++) {
+            j += chars.get(i).getFont().get(chars.get(i).getChat()).getWith() * scale;
         }
-        return i;
+        return j;
     }
 
     public void remove(){
