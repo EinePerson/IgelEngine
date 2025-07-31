@@ -33,4 +33,8 @@ public interface BatchSupplier<T> {
      * @return either a View Matrix or null
      */
     Matrix4f getViewMat();
+
+    void clear();
+
+    void add(T t);
 }
