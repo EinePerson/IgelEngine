@@ -126,6 +126,20 @@ public class Polygon implements BatchContent,AlphaColoredObject {
         return this;
     }
 
+    /**
+     * sets the rgb values from a single integer
+     * @param color the new color as single integer
+     * @return this
+     */
+    public ColoredObject setColor(int color){
+        this.r = ((color >> 16) & 0xFF) / 255.0f;
+        this.g = ((color >> 8) & 0xFF) / 255.0f;
+        this.b = (color & 0xFF) / 255.0f;
+
+        markDirty();
+        return this;
+    }
+
     public float getR() {
         return r;
     }

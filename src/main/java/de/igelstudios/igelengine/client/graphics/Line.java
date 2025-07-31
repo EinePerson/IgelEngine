@@ -414,10 +414,16 @@ public class Line implements BatchContent,AlphaColoredObject {
     public Line setLength(float length) {
         if(this.length == length)return this;
 
-        endUp.sub(startUp).div(this.length).mul(length).add(startUp);
-        end.sub(endUp).div(this.length).mul(length).add(endUp);
+        if(this.length == 0){
+            this.length = length;
+            recalculate();
+        }else {
+            endUp.sub(startUp).div(this.length).mul(length).add(startUp);
+            end.sub(start).div(this.length).mul(length).add(start);
+            this.length = length;
+        }
 
-        this.length = length;
+
         dirty = true;
         return this;
     }

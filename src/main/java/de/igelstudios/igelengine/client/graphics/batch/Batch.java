@@ -7,6 +7,7 @@ import de.igelstudios.igelengine.client.graphics.texture.TexturePool;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -31,11 +32,12 @@ public abstract class Batch<T extends BatchContent> {
     private int ebo;
     protected int[] indices;
     private boolean dynamic;
+    protected int id;
     /**
      * last parameter of {@link Batch#Batch(int, Shader, boolean,boolean, int...)}  Batch
      */
     private final boolean movable;
-    private BatchSupplier<T> supplier;
+    //private BatchSupplier<T> supplier;
 
     /**
      * Super Constructor of any Batch child class
@@ -76,7 +78,7 @@ public abstract class Batch<T extends BatchContent> {
         return i;
     }
 
-    public abstract boolean dirtyCheck(List<T> objs);
+    public abstract boolean dirtyCheck(List<T> objs, BatchSupplier<T> supplier);
 
     public void clearP(int i,List<T> objs){
 
@@ -122,9 +124,8 @@ public abstract class Batch<T extends BatchContent> {
 
 
     public void render(BatchSupplier<T> supplier){
-        this.supplier = supplier;
         supplier.getSize();
-        if(!dirty) dirty = dirtyCheck(supplier.getT());
+        if(!dirty) dirty = dirtyCheck(supplier.getT(),supplier);
         if(dirty) {
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
@@ -194,7 +195,7 @@ public abstract class Batch<T extends BatchContent> {
      * @param i the index of where in the list the object should be overridden
      * @param obj the list that contains all the objects
      */
-    public void add(int i,T obj){
+    public void add(int i,T obj,BatchSupplier<T> supplier){
         int j = supplier.getSize(i) * totalInBits;
         if(dynamic)j /= 4;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
@@ -205,7 +206,7 @@ public abstract class Batch<T extends BatchContent> {
         gi += totalInBits * obj.getLength();
     }
 
-    public int add(T obj){
+    public int add(T obj,BatchSupplier<T> supplier){
         int j = gi * totalInBits;
         if(dynamic)j /= 4;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
@@ -227,7 +228,8 @@ public abstract class Batch<T extends BatchContent> {
 
         vertices = nvertices;
 
-        ClientEngine.queueForRenderThread(this::load);
+        load();
+        //ClientEngine.queueForRenderThread(this::load);
     }
 
     private void load(){
@@ -252,5 +254,9 @@ public abstract class Batch<T extends BatchContent> {
         }
 
         dirty = true;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 }

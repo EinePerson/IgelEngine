@@ -27,27 +27,30 @@ import static org.lwjgl.glfw.GLFW.*;
  * The standard Mouse buttons LMB,MMB and RMB are always registered
  */
 public class HIDInput {
-    private final Map<String, Map<Method,KeyListener>> listeners;
-    private final Map<String, Map<Method,KeyListener>> continousListeners;
-    private final Map<String, Map<Method,MouseDragListener>> dragListeners;
-    private final Map<String, Map<Method,MouseClickListener>> mouseClickListeners;
-    private final Map<Integer,String> defaultKeys;
-    private final List<MouseMoveListener> mouseMove;
+    private static Map<String, Map<Method,KeyListener>> listeners = new HashMap<>();
+    private static Map<String, Map<Method,KeyListener>> continousListeners = new HashMap<>();
+    private static Map<String, Map<Method,MouseDragListener>> dragListeners = new HashMap<>();
+    private static Map<String, Map<Method,MouseClickListener>> mouseClickListeners = new HashMap<>();
+    private static Map<Integer,String> defaultKeys = new HashMap<>();
+    private static List<MouseMoveListener> mouseMove = new ArrayList<>();
     private final boolean[] keys = new boolean[GLFW_KEY_LAST];
     private double mouseX, mouseY;
     private final GLFWKeyCallback keyboard;
     private final GLFWCursorPosCallback mousePos;
     private final GLFWMouseButtonCallback mouseKeys;
-    private final KeyConfig keyConfig;
-    private final Map<Listener,Boolean> activeListeners;
-    private static HIDInput instance;
+    private static KeyConfig keyConfig;
+    private static Map<Listener,Boolean> activeListeners = new HashMap<>();
+
+    static {
+        registerKeys();
+    }
 
     /**
      * Adds a {@link KeyListener} to be called when the specific key was pressed or released
      * @param listener The listener class to be used<br> Every method being registered has to be annotated with {@link  KeyHandler} annotation
      * @see KeyHandler
      */
-    public void registerKeyListener(KeyListener listener){
+    public static void registerKeyListener(KeyListener listener){
         activeListeners.put(listener,false);
         for (Method method : listener.getClass().getMethods()) {
             if(!method.isAnnotationPresent(KeyHandler.class))continue;
@@ -84,7 +87,7 @@ public class HIDInput {
      * @param listener The listener class to be used<br> Every method being registered has to be annotated with {@link  KeyHandler} annotation
      * @see MouseClickListener
      */
-    public void registerMouseClickListener(MouseClickListener listener){
+    public static void registerMouseClickListener(MouseClickListener listener){
         activeListeners.put(listener,false);
         for (Method method : listener.getClass().getMethods()) {
             if(!method.isAnnotationPresent(KeyHandler.class))continue;
@@ -108,12 +111,12 @@ public class HIDInput {
     /**
      * @param listener the listener that will be notified when the mouse has been moved
      */
-    public void registerMoveListener(MouseMoveListener listener){
+    public static void registerMoveListener(MouseMoveListener listener){
         activeListeners.put(listener,false);
         mouseMove.add(listener);
     }
 
-    public void registerDragListener(MouseDragListener listener){
+    public static void registerDragListener(MouseDragListener listener){
         activeListeners.put(listener,false);
         for (Method method : listener.getClass().getMethods()) {
             if(!method.isAnnotationPresent(DragHandler.class))continue;
@@ -139,7 +142,7 @@ public class HIDInput {
      * @param listener The {@link KeyListener} to be used
      * @see #registerKey(int, String) 
      */
-    public void removeKeyListener(KeyListener listener){
+    public static void removeKeyListener(KeyListener listener){
         activeListeners.remove(listener);
         for (Method method : listener.getClass().getMethods()) {
             if(!method.isAnnotationPresent(KeyHandler.class) || method.getParameters().length != 1 || !method.getParameters()[0].getType().equals(boolean.class))continue;
@@ -155,25 +158,15 @@ public class HIDInput {
      * @param defaultKey the default Key bind
      * @param name The name under which this key is referenced
      */
-    public void registerKey(int defaultKey,String name){
+    public static void registerKey(int defaultKey,String name){
         if(defaultKeys.containsKey(defaultKey) && defaultKeys.get(defaultKey).equals(name))
             throw new IllegalArgumentException("The key: " + ((char) defaultKey) + " already is defined as " + defaultKeys.get(defaultKey));
         defaultKeys.put(defaultKey,name);
     }
 
-    public HIDInput(EngineInitializer initializer){
-        instance = this;
-        defaultKeys = new HashMap<>();
-        listeners = new HashMap<>();
-        mouseMove = new ArrayList<>();
-        dragListeners = new HashMap<>();
-        continousListeners = new HashMap<>();
-        mouseClickListeners = new HashMap<>();
-        activeListeners = new HashMap<>();
-        registerKeys();
-        KeyInitializer keyInit = new KeyInitializer();
-        initializer.registerKeys(keyInit);
-        keyInit.register(this);
+    public HIDInput(int windowId){
+        //KeyInitializer keyInit = new KeyInitializer();
+        //initializer.registerKeys(keyInit);
         registerListeners();
         keyConfig = new KeyConfig(defaultKeys);
         keyboard = new GLFWKeyCallback() {
@@ -219,11 +212,11 @@ public class HIDInput {
                 //ClientEngine.queueForMainThread(() -> {
                     double xPos = xPosO;
                     double yPos = yPosO;
-                    xPos /= Window.getWidth();
-                    yPos = Window.getHeight() / 2.0f - yPos + (Window.getHeight() / 2.0f);
-                    yPos /= Window.getHeight();
-                    double finalXPos = xPos * Camera.getX();
-                    double finalYPos = yPos * Camera.getY();
+                    xPos /= ClientEngine.getWindow(windowId).getWidth();
+                    yPos = ClientEngine.getWindow(windowId).getHeight() / 2.0f - yPos + (ClientEngine.getWindow(windowId).getHeight() / 2.0f);
+                    yPos /= ClientEngine.getWindow(windowId).getHeight();
+                    double finalXPos = xPos * ClientEngine.getCamera(windowId).getX();
+                    double finalYPos = yPos * ClientEngine.getCamera(windowId).getY();
                     dragListeners.forEach((name, map) -> map.forEach(((method, listener) -> {
                         try {
                             if(keys[keyConfig.get(name)])
@@ -252,7 +245,8 @@ public class HIDInput {
                             mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
                                 try {
                                     if (activeListeners.get(mouseClickListeners.get(keyConfig.get(key)).get(method))) {
-                                        method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method), false, mouseX * Camera.getX(), mouseY * Camera.getY());
+                                        method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method), false,
+                                                mouseX * ClientEngine.getCamera(windowId).getX(), mouseY * ClientEngine.getCamera(windowId).getY());
                                     }
                                 } catch (IllegalAccessException | InvocationTargetException e) {
                                     e.printStackTrace();
@@ -265,7 +259,8 @@ public class HIDInput {
                             mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
                                 try {
                                     if (listener.get(mouseClickListeners.get(keyConfig.get(key)).get(method))) {
-                                        method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method), true, mouseX * Camera.getX(), mouseY * Camera.getY());
+                                        method.invoke(mouseClickListeners.get(keyConfig.get(key)).get(method), true,
+                                                mouseX * ClientEngine.getCamera(windowId).getX(), mouseY * ClientEngine.getCamera(windowId).getY());
                                     }
                                 } catch (IllegalAccessException | InvocationTargetException e) {
                                     e.printStackTrace();
@@ -293,7 +288,7 @@ public class HIDInput {
         }
     }
 
-    private void registerKeys() {
+    private static void registerKeys() {
         //registerKey(GLFW_KEY_D,"right");
         //registerKey(GLFW_KEY_A,"left");
         registerKey(GLFW_MOUSE_BUTTON_1,"LMB");
@@ -318,10 +313,10 @@ public class HIDInput {
     }
 
     public static void activateListener(Listener listener){
-        instance.activeListeners.put(listener,true);
+        activeListeners.put(listener,true);
     }
 
     public static void deactivateListener(Listener listener){
-        instance.activeListeners.put(listener,false);
+        activeListeners.put(listener,false);
     }
 }

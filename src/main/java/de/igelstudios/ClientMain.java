@@ -67,4 +67,8 @@ public class ClientMain {
     public ClientConnectListener getListener() {
         return listener;
     }
+
+    public EngineSettings getSettings() {
+        return settings;
+    }
 }

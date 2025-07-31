@@ -36,13 +36,15 @@ public final class Text{
     private boolean charsDirty = true;
     private List<GraphChar> fullCharList;
 
+    private int windowId = -1;
+
     private Text(String content){
         this.content = content;
         font = ClientEngine.getDefaultFont();
         r = 0;
         g = 0;
         b = 0;
-        a = 0;
+        a = 1.0f;
         scale = 0.0078125f;
         chars = new ArrayList<>();
         pos = new Vector2f(0.0f);
@@ -50,6 +52,11 @@ public final class Text{
         fullCharList = new ArrayList<>();
 
         update();
+    }
+
+    public void setWindowId(int windowId){
+        if(this.windowId != -1)throw new IllegalStateException("Text can only be rendered on one window");
+        this.windowId = windowId;
     }
 
     public static void init(String lang){
@@ -249,7 +256,7 @@ public final class Text{
 
         GraphChar graphChar = new GraphChar(c,new Vector2f(pos.x + getVisualLength(),pos.y),lifeTime,scale,r,g,b,font);
         chars.add(graphChar);
-        Renderer.get().render(graphChar);
+        Renderer.get(windowId).render(graphChar);
         changed = true;
     }
 
@@ -299,7 +306,7 @@ public final class Text{
         chars.forEach(GraphChar::remove);
         chars.clear();
         update();
-        chars.forEach(chat -> Renderer.get().render(chat));
+        chars.forEach(chat -> Renderer.get(windowId).render(chat));
 
         return this;
     }

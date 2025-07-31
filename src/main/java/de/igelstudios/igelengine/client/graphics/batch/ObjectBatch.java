@@ -15,19 +15,19 @@ public class ObjectBatch extends Batch<SceneObject>{
     }
 
     @Override
-    public boolean dirtyCheck(List<SceneObject> objects) {
+    public boolean dirtyCheck(List<SceneObject> objects,BatchSupplier<SceneObject> supplier) {
         boolean dirty = false;
         for (int i = 0; i < objects.size(); i++) {
             if(objects.get(i).toRemove()){
                 clear(i,objects);
                 //objects.get(i).removed();
-                Renderer.get().getScene().removeObject(objects.get(i));
+                //Renderer.get().getScene().removeObject(objects.get(i));
                 objects.remove(i);
                 dirty = true;
                 continue;
             }
             if(objects.get(i).isDirty()){
-                add(i,objects.get(i));
+                add(i,objects.get(i),supplier);
                 dirty = true;
             }
         }

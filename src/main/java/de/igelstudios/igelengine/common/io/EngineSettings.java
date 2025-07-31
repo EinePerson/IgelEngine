@@ -25,6 +25,8 @@ public class EngineSettings {
     private String client_event_listener;
     private String default_lang;
 
+    private String window_count = "1";
+
     public static EngineSettingsParser parser(String fileName) {
         return new EngineSettingsParser(fileName);
     }
@@ -63,6 +65,10 @@ public class EngineSettings {
 
     public String getDefaultLang() {
         return default_lang;
+    }
+
+    public int getWindowCount() {
+        return Integer.parseInt(window_count);
     }
 
     public static class EngineSettingsParser {

@@ -1,32 +1,31 @@
 package de.igelstudios.igelengine.client.graphics;
 
+import de.igelstudios.igelengine.client.ClientEngine;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-
-import static org.lwjgl.openal.AL10.*;
 
 /**
  * this is a camera, it holds the projection and view matrix to move the objects in the room when the player moves
  */
 public class Camera {
-    private static int x = 80;
-    private static int y = 45;
+    private int x = 80;
+    private int y = 45;
     private Matrix4f projMat, viewMat;
     private Vector2f pos;
-    private static Camera instance;
+    private int id;
 
     /**
      * @return the x size of the Camera view
      */
-    public static int getX() {
+    public int getX() {
         return x;
     }
 
     /**
      * @return the y size of the Camera view
      */
-    public static int getY() {
+    public int getY() {
         return y;
     }
 
@@ -35,18 +34,18 @@ public class Camera {
      * @param x the new x Size
      * @param y the new y Size
      */
-    public static void setSize(int x, int y){
-        Camera.x = x;
-        Camera.y = y;
-        instance.adjust();
+    public void setSize(int x, int y){
+        this.x = x;
+        this.y = y;
+        adjust();
     }
 
-    public Camera(Vector2f pos){
-        this.pos = pos;
+    public Camera(int id){
+        this.pos = new Vector2f();
         projMat = new Matrix4f();
         viewMat = new Matrix4f();
         adjust();
-        instance = this;
+        this.id = id;
 
         //alListener3f(AL_POSITION, pos.x, pos.y, 0.0f);
         //alListener3f(AL_VELOCITY, 0, 0, 0);
@@ -54,7 +53,7 @@ public class Camera {
 
     public void adjust(){
         projMat.identity();
-        projMat.ortho(0.0f, x,0.0f, y,0.0f,100.0f);
+        projMat.ortho(0.0f, x /* ClientEngine.getWindow(id).getRelativeXScaling()*/,0.0f, y /* ClientEngine.getWindow(id).getRelativeYScaling()*/,0.0f,100.0f);
         //alListener3f(AL_POSITION, pos.x, pos.y, 0.0f);
         Vector3f up = new Vector3f(0.0f,1.0f,0.0f);
         Vector3f at = new Vector3f(0.0f,0.0f,-1.0f);
@@ -84,12 +83,12 @@ public class Camera {
      * Moves the camera view by the specified amount
      * @param pos the delta in Camera position
      */
-    public static void move(Vector2f pos){
-        instance.pos.add(pos);
-        instance.adjust();
+    public void move(Vector2f pos){
+        pos.add(pos);
+        adjust();
     }
 
-    public static Vector2f getPos() {
-        return instance.pos;
+    public Vector2f getPos() {
+        return pos;
     }
 }

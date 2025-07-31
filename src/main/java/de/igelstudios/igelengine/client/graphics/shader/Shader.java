@@ -42,7 +42,7 @@ public class Shader {
     public Shader(ShaderData[] data){
         shaders = new int[data.length];
 
-        ClientEngine.queueForRenderThread(() -> {
+
             for (int i = 0; i < data.length; i++) {
                 shaders[i] = load(data[i].type,data[i].name);
             }
@@ -53,7 +53,7 @@ public class Shader {
             glLinkProgram(program);
 
             int i = glGetProgrami(program, GL_LINK_STATUS);
-        });
+        
         //if (i == GL_FALSE) ClientMain.LOGGER.error(data + " Linking of shaders failed." + glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH)));
 
     }

@@ -12,7 +12,7 @@ public class PolygonBatch extends Batch<Polygon>{
     }
 
     @Override
-    public boolean dirtyCheck(List<Polygon> objs) {
+    public boolean dirtyCheck(List<Polygon> objs,BatchSupplier<Polygon> supplier) {
         boolean dirty = false;
         for (int i = 0; i < objs.size(); i++) {
             if(objs.get(i).toRemove()){
@@ -23,7 +23,7 @@ public class PolygonBatch extends Batch<Polygon>{
             }
             if(objs.get(i).isDirty()){
                 objs.get(i).unMarkDirty();
-                add(i,objs.get(i));
+                add(i,objs.get(i),supplier);
                 dirty = true;
             }
         }
@@ -81,9 +81,9 @@ public class PolygonBatch extends Batch<Polygon>{
 
         System.arraycopy(vertices,l,vertices,k,vertices.length - l);
 
-        for (int j = i; j < objs.size(); j++) {
+        /*for (int j = i; j < objs.size(); j++) {
             add(j,objs.get(j));
-        }
+        }*/
 
         int offset = (objs.get(i).getLength() - 2) * 3;
         for(int j = indOffset + (objs.get(i).getLength() - 2) * 3;j < fullIndOffset;j++){

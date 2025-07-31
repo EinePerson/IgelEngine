@@ -19,7 +19,7 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
     }
 
     @Override
-    public boolean dirtyCheck(List<GraphChar> objs){
+    public boolean dirtyCheck(List<GraphChar> objs,BatchSupplier<GraphChar> supplier) {
         boolean dirty = false;
         for (int i = 0; i < objs.size(); i++) {
             GraphChar obj = objs.get(i);
@@ -30,7 +30,7 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
                 continue;
             }
             if(obj.isDirty()){
-                add(i,obj);
+                add(i,obj,supplier);
                 dirty = true;
             }
         }
@@ -63,8 +63,8 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
 
     @Override
     public void tick() {
-        for (int i = 0; i < Renderer.get().getTextSupplier().getT().size(); i++) {
-            Renderer.get().getTextSupplier().getT().get(i).decrement();
+        for (int i = 0; i < Renderer.get(id).getTextSupplier().getT().size(); i++) {
+            Renderer.get(id).getTextSupplier().getT().get(i).decrement();
         }
         //Renderer.get().getTextSupplier().getT().forEach(GraphChar::decrement);
     }

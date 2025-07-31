@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.client;
 
+import de.igelstudios.igelengine.client.graphics.Renderer;
 import de.igelstudios.igelengine.client.graphics.texture.Texture;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWImage;
@@ -22,22 +23,27 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  * This class contains a window where Graphics can be drawn to
  */
 public class Window{
-    private static Window instance;
+    //private static Window instance;
     public static final String TITLE = "Test";
     private String title;
     private int width, height;
+    private final int orgWidth,orgHeight;
 
-    public static int getWidth(){
-        return instance.width;
+    public int getWidth(){
+        return width;
     }
-    public static int getHeight(){
-        return instance.height;
+
+    public int getHeight(){
+        return height;
     }
+
+    private final Thread localThread;
     private final long window;
     private boolean resized;
     private long audioDevice;
     private long audioContext;
     private List<String> audioDevices;
+    private int id;
 
     /**
      * creates a window with the desired parameters
@@ -45,10 +51,12 @@ public class Window{
      * @param height the height of the window, a height of 1 results in the height of the monitor
      * @param title the title the window should hold
      * @param windowed weather the window should be in windowed or fullscreen mode
-     * @see Window#Window(String)  Window
+     * @see Window#Window(String,int)  Window
      */
-    public Window(int width, int height,String title ,boolean windowed) {
+    public Window(int width, int height,String title ,boolean windowed,int id) {
         this.title = title;
+        this.id = id;
+        localThread = Thread.currentThread();
 
         GLFWErrorCallback.createPrint(System.err).set();
         /*GLFWErrorCallback.create(new GLFWErrorCallback() {
@@ -66,17 +74,20 @@ public class Window{
         }
         this.width = width;
         this.height = height;
+        this.orgWidth = width;
+        this.orgHeight = height;
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_DECORATED,GLFW_FALSE);
+        //glfwWindowHint(GLFW_DECORATED,GLFW_FALSE);
         if(windowed)glfwWindowHint(GLFW_RESIZABLE,GLFW_TRUE);
 
         window = glfwCreateWindow(width, height, title, NULL, NULL);
         if (window == NULL) throw new IllegalStateException("Could not create window");
 
-        if(windowed) glfwMaximizeWindow(window);
-        else glfwSetWindowPos(window,0,0);
+        //if(windowed) glfwMaximizeWindow(window);
+        //else
+        glfwSetWindowPos(window,0,0);
 
         glfwRequestWindowAttention(window);
         try(MemoryStack stack = MemoryStack.stackPush()) {
@@ -86,8 +97,8 @@ public class Window{
             glfwImg.set(info.ip0().get(),info.ip1().get(),img);
             glfwSetWindowIcon(window, GLFWImage.calloc(1,stack).put(0,glfwImg));
         }
-        glfwSetWindowSizeLimits(window, width, height, width, height);
-        glfwSetFramebufferSizeCallback(window, ((handle1, width1, height1) -> resize(width1,height1)));
+        //glfwSetWindowSizeLimits(window, width, height, width, height);
+        glfwSetFramebufferSizeCallback(window, (this::resize));
 
         updateSoundDevices();
         //createAudio(audioDevices.get(0));
@@ -98,16 +109,17 @@ public class Window{
         GL.createCapabilities();
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
-        instance = this;
+
+        //instance = this;
     }
 
     /**
      * Creates a window with the specified title
      * @param title the title of the window
-     * @see Window#Window(int, int, String, boolean)  Window
+     * @see Window#Window (int, int, String, boolean) Window
      */
-    public Window(String title) {
-        this(1,1,title,false);
+    public Window(String title,int id) {
+        this(1,1,title,true,id);
     }
 
     public void pollEvents(){
@@ -162,6 +174,14 @@ public class Window{
         glfwTerminate();
     }
 
+    public static void terminate(){
+        glfwTerminate();
+    }
+
+    public void closeMonitor(){
+        glfwDestroyWindow(window);
+    }
+
     /**
      * closes only the Audio system
      * @see #close()
@@ -187,10 +207,13 @@ public class Window{
      * @param width the new width of the window
      * @param height the new height of the window
      */
-    public void resize(int width, int height) {
-        resized = true;
-        this.width = width;
-        this.height = height;
+    public void resize(long ptr,int width, int height) {
+        ClientEngine.enforceRenderThread(() -> {
+            resized = true;
+            this.width = width;
+            this.height = height;
+            glViewport((int) Renderer.get(id).getCamera().getPos().x, (int) Renderer.get(id).getCamera().getPos().y, width, height);
+        },ClientEngine.findID(ptr));
     }
 
     public long getWindow() {

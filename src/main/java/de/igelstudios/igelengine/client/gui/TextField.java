@@ -13,6 +13,8 @@ public class TextField {
     private Vector2f pos;
     private Vector2f size;
     private final Text text;
+    private Vector2f textOffset;
+    private int windowId;
 
     private boolean hasBackground = false;
     private Polygon backGround = null;
@@ -75,7 +77,13 @@ public class TextField {
         this.size = size;
         text = Text.literal(initialText);
         content = initialText;
-        Renderer.get().render(text,textOffset.x + pos.x,textOffset.y + pos.y);
+
+        this.textOffset = textOffset;
+    }
+
+    void init(int windowId){
+        this.windowId = windowId;
+        Renderer.get(windowId).render(text,textOffset.x + pos.x,textOffset.y + pos.y);
     }
 
     /**

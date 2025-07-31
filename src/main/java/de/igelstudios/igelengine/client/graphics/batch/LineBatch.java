@@ -12,7 +12,7 @@ public class LineBatch extends Batch<Line>{
     }
 
     @Override
-    public boolean dirtyCheck(List<Line> objects) {
+    public boolean dirtyCheck(List<Line> objects,BatchSupplier<Line> supplier) {
         boolean dirty = false;
         for (int i = 0; i < objects.size(); i++) {
             if(objects.get(i).toRemove()){
@@ -23,7 +23,7 @@ public class LineBatch extends Batch<Line>{
                 continue;
             }
             if(objects.get(i).isDirty()){
-                add(i,objects.get(i));
+                add(i,objects.get(i),supplier);
                 dirty = true;
             }
         }

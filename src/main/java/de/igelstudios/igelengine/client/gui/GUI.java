@@ -21,8 +21,11 @@ public abstract class GUI {
     private List<SceneObject> objects;
     private List<Polygon> polygons;
     private List<Line> lines;
+    private final int windowId;
 
-    public GUI(){
+    public GUI(int windowId){
+        this.windowId = windowId;
+
         buttons = new ArrayList<>();
         textFields = new ArrayList<>();
         texts = new ArrayList<>();
@@ -41,7 +44,7 @@ public abstract class GUI {
      * @see #render(Text, float, float, int)
      */
     public void render(Text text,float x,float y){
-        Renderer.get().render(text,x,y);
+        Renderer.get(windowId).render(text,x,y);
         texts.add(text);
     }
 
@@ -54,7 +57,7 @@ public abstract class GUI {
      * @see #render(Text, float, float, int)
      */
     public void render(Text text,float x,float y,int lifetime){
-        Renderer.get().render(text,x,y,lifetime);
+        Renderer.get(windowId).render(text,x,y,lifetime);
         texts.add(text);
     }
 
@@ -65,7 +68,7 @@ public abstract class GUI {
      * @param y the y coordinate of the text
      */
     public void render(SceneObject object,float x,float y){
-        Renderer.get().render(object,x,y);
+        Renderer.get(windowId).render(object,x,y);
         objects.add(object);
     }
 
@@ -74,7 +77,7 @@ public abstract class GUI {
      * @param polygon the polygon to display
      */
     public void render(Polygon polygon){
-        Renderer.get().render(polygon);
+        Renderer.get(windowId).render(polygon);
         polygons.add(polygon);
     }
 
@@ -83,7 +86,7 @@ public abstract class GUI {
      * @param line the line to display
      */
     public void render(Line line){
-        Renderer.get().render(line);
+        Renderer.get(windowId).render(line);
         lines.add(line);
     }
 
@@ -113,6 +116,7 @@ public abstract class GUI {
     }
 
     public void addTextField(TextField textField){
+        textField.init(windowId);
         textFields.add(textField);
         if(textField.hasBackground()){
             render(textField.getBackGround());

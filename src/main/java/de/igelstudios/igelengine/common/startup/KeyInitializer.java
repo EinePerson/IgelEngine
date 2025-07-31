@@ -35,16 +35,11 @@ public class KeyInitializer {
     }
     public void add(MouseClickListener listener) {this.clickListeners.add(listener);}
 
-    public void register(HIDInput input) {
-        Objects.requireNonNull(input);
-        this.keys.forEach(input::registerKey);
-        Objects.requireNonNull(input);
-        this.keyListeners.forEach(input::registerKeyListener);
-        Objects.requireNonNull(input);
-        this.moveListeners.forEach(input::registerMoveListener);
-        Objects.requireNonNull(input);
-        this.dragListeners.forEach(input::registerDragListener);
-        Objects.requireNonNull(input);
-        this.clickListeners.forEach(input::registerMouseClickListener);
+    public void register() {
+        this.keys.forEach(HIDInput::registerKey);
+        this.keyListeners.forEach(HIDInput::registerKeyListener);
+        this.moveListeners.forEach(HIDInput::registerMoveListener);
+        this.dragListeners.forEach(HIDInput::registerDragListener);
+        this.clickListeners.forEach(HIDInput::registerMouseClickListener);
     }
 }
