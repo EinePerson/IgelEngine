@@ -16,7 +16,7 @@ public class GraphChar implements BatchContent {
     private int lifeTime;
     private boolean dirty;
     private  boolean remove;
-    private final char chat;
+    private char chat;
 
     public GraphChar(char chat,Vector2f pos,int lifeTime,float scale,float r,float g,float b,GLFont font){
         this.chat = chat;
@@ -28,6 +28,12 @@ public class GraphChar implements BatchContent {
         this.b = b;
         this.a = 1.0f;
         this.font = font;
+    }
+
+    void setChat(char chat) {
+        this.chat = chat;
+
+        markDirty();
     }
 
     @Override
@@ -96,6 +102,8 @@ public class GraphChar implements BatchContent {
         this.r = r;
         this.g = g;
         this.b = b;
+
+        markDirty();
     }
 
     void setColor(float r, float g, float b,float a) {
@@ -103,10 +111,14 @@ public class GraphChar implements BatchContent {
         this.g = g;
         this.b = b;
         this.a = a;
+
+        markDirty();
     }
 
     void setA(float a) {
         this.a = a;
+
+        markDirty();
     }
 
     void setScale(float scale) {

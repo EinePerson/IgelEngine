@@ -123,10 +123,11 @@ public abstract class Batch<T extends BatchContent> {
     }
 
 
-    public void render(BatchSupplier<T> supplier){
+    public void render(BatchSupplier<T> supplier,boolean mainRenderer){
         supplier.getSize();
-        if(!dirty) dirty = dirtyCheck(supplier.getT(),supplier);
-        if(dirty) {
+        if(supplier.getSize() == 0)return;
+        if(!dirty && mainRenderer) dirty = dirtyCheck(supplier.getT(),supplier);
+        if(dirty || !mainRenderer) {
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 
@@ -195,7 +196,7 @@ public abstract class Batch<T extends BatchContent> {
      * @param i the index of where in the list the object should be overridden
      * @param obj the list that contains all the objects
      */
-    public void add(int i,T obj,BatchSupplier<T> supplier){
+    public synchronized void add(int i,T obj,BatchSupplier<T> supplier){
         int j = supplier.getSize(i) * totalInBits;
         if(dynamic)j /= 4;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
@@ -206,7 +207,7 @@ public abstract class Batch<T extends BatchContent> {
         gi += totalInBits * obj.getLength();
     }
 
-    public int add(T obj,BatchSupplier<T> supplier){
+    public synchronized int add(T obj,BatchSupplier<T> supplier){
         int j = gi * totalInBits;
         if(dynamic)j /= 4;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();

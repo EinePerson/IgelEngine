@@ -1,6 +1,7 @@
 package de.igelstudios.igelengine.client.graphics;
 
 import de.igelstudios.igelengine.client.ClientEngine;
+import de.igelstudios.igelengine.client.ClientScene;
 import de.igelstudios.igelengine.client.graphics.batch.*;
 import de.igelstudios.igelengine.client.lang.GraphChar;
 import de.igelstudios.igelengine.client.lang.Text;
@@ -200,11 +201,15 @@ public class Renderer {
         }, id);
     }
 
-    public void render() {
-        polygonBatch.render(polygonSupplier);
-        objectBatch.render(objectSupplier);
-        lineBatch.render(lineSupplier);
-        textBatch.render(textSupplier);
+    public void render(){
+        render(true);
+    }
+
+    public synchronized void render(boolean mainRenderer) {
+        polygonBatch.render(polygonSupplier,mainRenderer);
+        objectBatch.render(objectSupplier,mainRenderer);
+        lineBatch.render(lineSupplier,mainRenderer);
+        textBatch.render(textSupplier,mainRenderer);
     }
 
     /**
