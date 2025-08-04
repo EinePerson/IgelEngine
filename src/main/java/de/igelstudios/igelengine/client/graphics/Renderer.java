@@ -12,8 +12,6 @@ import org.joml.Vector2f;
 import java.util.ArrayList;
 import java.util.List;
 
-//Test
-
 /**
  * This is the main Render class which dispatches draw calls and keeps track of everything that should be displayed
  */
