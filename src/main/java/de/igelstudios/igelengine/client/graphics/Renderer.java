@@ -206,10 +206,10 @@ public class Renderer {
     }
 
     public synchronized void render(boolean mainRenderer) {
-        polygonBatch.render(polygonSupplier,mainRenderer);
-        objectBatch.render(objectSupplier,mainRenderer);
-        lineBatch.render(lineSupplier,mainRenderer);
-        textBatch.render(textSupplier,mainRenderer);
+        polygonBatch.render(polygonSupplier,false);
+        objectBatch.render(objectSupplier,false);
+        lineBatch.render(lineSupplier,false);
+        textBatch.render(textSupplier,false);
     }
 
     /**

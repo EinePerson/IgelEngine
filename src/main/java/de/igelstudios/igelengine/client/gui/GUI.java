@@ -21,7 +21,7 @@ public abstract class GUI {
     private List<SceneObject> objects;
     private List<Polygon> polygons;
     private List<Line> lines;
-    private final int windowId;
+    protected final int windowId;
 
     public GUI(int windowId){
         this.windowId = windowId;
@@ -90,19 +90,19 @@ public abstract class GUI {
         lines.add(line);
     }
 
-    List<Button> getButtons() {
+    public List<Button> getButtons() {
         return buttons;
     }
 
-    List<TextField> getTextFields() {
+    public List<TextField> getTextFields() {
         return textFields;
     }
 
-    List<Text> getTexts() {
+    public List<Text> getTexts() {
         return texts;
     }
 
-    List<SceneObject> getObjects() {
+    public List<SceneObject> getObjects() {
         return objects;
     }
 
@@ -132,5 +132,9 @@ public abstract class GUI {
 
     public void addObject(SceneObject object){
         objects.add(object);
+    }
+
+    public int getWindowId() {
+        return windowId;
     }
 }

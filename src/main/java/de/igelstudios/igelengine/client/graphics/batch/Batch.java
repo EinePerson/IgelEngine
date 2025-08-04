@@ -126,8 +126,10 @@ public abstract class Batch<T extends BatchContent> {
     public void render(BatchSupplier<T> supplier,boolean mainRenderer){
         supplier.getSize();
         if(supplier.getSize() == 0)return;
-        if(!dirty && mainRenderer) dirty = dirtyCheck(supplier.getT(),supplier);
-        if(dirty || !mainRenderer) {
+
+        //if(!dirty && mainRenderer)
+        dirty = dirtyCheck(supplier.getT(),supplier);
+        //if(dirty || !mainRenderer) {
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 
@@ -136,7 +138,7 @@ public abstract class Batch<T extends BatchContent> {
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER,indices,GL_STATIC_DRAW);
             }
             dirty = false;
-        }
+        //}
 
         shader.use();
         if(movable) {

@@ -45,6 +45,8 @@ public class Window{
     private List<String> audioDevices;
     private int id;
 
+    private static volatile int selectedWindowID = -1;
+
     /**
      * creates a window with the desired parameters
      * @param width the width of the window, a width of 1 results in the width of the monitor
@@ -99,6 +101,7 @@ public class Window{
         }
         //glfwSetWindowSizeLimits(window, width, height, width, height);
         glfwSetFramebufferSizeCallback(window, (this::resize));
+        glfwSetWindowFocusCallback(window,this::focus);
 
         updateSoundDevices();
         //createAudio(audioDevices.get(0));
@@ -113,6 +116,14 @@ public class Window{
         //instance = this;
     }
 
+    private void focus(long ptr,boolean b) {
+        if(b) selectedWindowID = ClientEngine.findID(ptr);
+    }
+
+    public static int getSelectedWindowID() {
+        return selectedWindowID;
+    }
+
     /**
      * Creates a window with the specified title
      * @param title the title of the window
@@ -123,7 +134,8 @@ public class Window{
     }
 
     public void pollEvents(){
-        glfwPollEvents();
+        //if(this.id == selectedWindowID)
+            glfwPollEvents();
     }
 
     /**

@@ -4,6 +4,7 @@ import de.igelstudios.ClientMain;
 import de.igelstudios.igelengine.client.graphics.Camera;
 import de.igelstudios.igelengine.client.graphics.Renderer;
 import de.igelstudios.igelengine.client.graphics.text.GLFont;
+import de.igelstudios.igelengine.client.gui.GUIManager;
 import de.igelstudios.igelengine.client.keys.HIDInput;
 import de.igelstudios.igelengine.common.Engine;
 import de.igelstudios.igelengine.common.scene.Scene;
@@ -202,6 +203,12 @@ public class ClientEngine extends Engine {
         //ClientEngine.this.window.createAudio((String) ClientConfig.getConfig().getOrDefault("audio_device",window.getAudioDevices().getFirst()));
 
         this.initializer.onInitialize();
+
+        for(Render renderThread : renderThreads){
+            synchronized(renderThread){
+                renderThread.notify();
+            }
+        }
     }
 
     private class Render extends Thread{
@@ -264,6 +271,14 @@ public class ClientEngine extends Engine {
 
             synchronized (mainThread){
                 mainThread.notify();
+
+            }
+            synchronized (this){
+                try{
+                    wait();
+                }catch(InterruptedException e){
+                    throw new RuntimeException(e);
+                }
             }
         }
 

@@ -6,20 +6,23 @@ import de.igelstudios.igelengine.client.keys.*;
 import de.igelstudios.igelengine.common.scene.SceneObject;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 
 /**
  * in this class, one can set the currently shown GUI (only 1) with {@link #setGUI(GUI)}
  */
 public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
-    private static GUIManager instance;
+    private static List<GUIManager> instances = new ArrayList<>();
     //private double x,y;
     private int selText = -1;
     private volatile GUI gui;
     private boolean changed = false;
 
     private GUIManager(){
-        instance = this;
+        instances.add(this);
     }
 
     @KeyHandler("LMB")
@@ -108,7 +111,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
      * @param gui the new GUI or null to remove the old GUI
      */
     public static synchronized void setGUI(GUI gui){
-        instance.setGui(gui);
+        instances.get(gui.getWindowId()).setGui(gui);
     }
 
     public void addText(int c){
@@ -135,8 +138,8 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     /**
      * Removes the current GUI
      */
-    public static synchronized void removeGui(){
-        if(instance.gui != null)instance.removeGUI();
+    public static synchronized void removeGui(int id){
+        if(instances.get(id).gui != null)instances.get(id).removeGUI();
     }
 
     private void removeGUI(){
@@ -148,10 +151,10 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
         this.gui = null;
     }
 
-    public static boolean handle(int mods,int key) {
-        if (instance.hasSelText()) {
+    public static boolean handle(int mods,int key,int id) {
+        if (instances.get(id).hasSelText()) {
             if(key == GLFW.GLFW_KEY_ESCAPE){
-                instance.changeTextField(-1);
+                instances.get(id).changeTextField(-1);
                 return true;
             }
             int keyS = key;
@@ -159,19 +162,19 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
                 keyS = Character.toLowerCase(key);
             } else if (key == 47) keyS = 95;
             else if (key == 46) keyS = 58;
-            instance.addText(keyS);
+            instances.get(id).addText(keyS);
             return true;
         }
         return false;
     }
 
-    public static void register(HIDInput input){
+    public static void register(){
         new GUIManager();
-        input.registerMouseClickListener(instance);
+        HIDInput.registerMouseClickListener(instances.getLast());
         //input.registerMoveListener(instance);
     }
 
-    public static synchronized GUI getGui() {
-        return instance.gui;
+    public static synchronized GUI getGui(int id) {
+        return instances.get(id).gui;
     }
 }

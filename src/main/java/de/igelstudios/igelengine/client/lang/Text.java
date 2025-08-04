@@ -17,7 +17,7 @@ import java.util.Objects;
 
 /**
  * This is the wrapper class used to render string to the screen
- * <br> instances may be created either via {@link #literal(String)} which copies the String as is or with a translation key in {@link #translatable(String)} which translates the key with the given value in the language or the key itself if no value is found
+ * <br> instances may be created either via {@link #literal(String,Object...)} which copies the String as is or with a translation key in {@link #translatable(String,Object...)} which translates the key with the given value in the language or the key itself if no value is found
  * <br> a lifetime in 20th of seconds may be set after which the text will automatically disappear
  */
 public final class Text{
@@ -55,7 +55,7 @@ public final class Text{
     }
 
     public void setWindowId(int windowId){
-        if(this.windowId != -1)throw new IllegalStateException("Text can only be rendered on one window");
+        if(this.windowId != -1 && windowId != this.windowId)throw new IllegalStateException("Text can only be rendered on one window");
         this.windowId = windowId;
     }
 
