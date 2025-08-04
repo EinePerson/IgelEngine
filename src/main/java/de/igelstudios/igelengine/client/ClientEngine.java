@@ -4,6 +4,7 @@ import de.igelstudios.ClientMain;
 import de.igelstudios.igelengine.client.graphics.Camera;
 import de.igelstudios.igelengine.client.graphics.Renderer;
 import de.igelstudios.igelengine.client.graphics.text.GLFont;
+import de.igelstudios.igelengine.client.gui.GUIManager;
 import de.igelstudios.igelengine.client.keys.HIDInput;
 import de.igelstudios.igelengine.common.Engine;
 import de.igelstudios.igelengine.common.scene.Scene;
@@ -202,6 +203,12 @@ public class ClientEngine extends Engine {
         //ClientEngine.this.window.createAudio((String) ClientConfig.getConfig().getOrDefault("audio_device",window.getAudioDevices().getFirst()));
 
         this.initializer.onInitialize();
+
+        for(Render renderThread : renderThreads){
+            synchronized(renderThread){
+                renderThread.notify();
+            }
+        }
     }
 
     private class Render extends Thread{
@@ -264,6 +271,14 @@ public class ClientEngine extends Engine {
 
             synchronized (mainThread){
                 mainThread.notify();
+
+            }
+            synchronized (this){
+                try{
+                    wait();
+                }catch(InterruptedException e){
+                    throw new RuntimeException(e);
+                }
             }
         }
 
@@ -279,7 +294,9 @@ public class ClientEngine extends Engine {
 
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
             renderer.render();
-            extraRenderers.forEach(Renderer::render);
+            for(int i = 0; i < extraRenderers.size(); i++){
+                extraRenderers.get(i).render(false);
+            }
             GLFW.glfwSwapBuffers(window.getWindow());
 
             window.pollEvents();
@@ -307,7 +324,7 @@ public class ClientEngine extends Engine {
      */
     public static void enforceRenderThread(Runnable task,int id){
         if(id == -1)return;
-        if(Thread.currentThread() != renderThreads.getFirst())queueForRenderThread(task,id);
+        if(Thread.currentThread() != renderThreads.get(id))queueForRenderThread(task,id);
         else task.run();
     }
 

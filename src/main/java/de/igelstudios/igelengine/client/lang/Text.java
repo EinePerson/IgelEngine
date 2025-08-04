@@ -17,7 +17,7 @@ import java.util.Objects;
 
 /**
  * This is the wrapper class used to render string to the screen
- * <br> instances may be created either via {@link #literal(String)} which copies the String as is or with a translation key in {@link #translatable(String)} which translates the key with the given value in the language or the key itself if no value is found
+ * <br> instances may be created either via {@link #literal(String,Object...)} which copies the String as is or with a translation key in {@link #translatable(String,Object...)} which translates the key with the given value in the language or the key itself if no value is found
  * <br> a lifetime in 20th of seconds may be set after which the text will automatically disappear
  */
 public final class Text{
@@ -38,8 +38,8 @@ public final class Text{
 
     private int windowId = -1;
 
-    private Text(String content){
-        this.content = content;
+    private Text(String content,Object ... vals){
+        this.content = String.format(content,vals);
         font = ClientEngine.getDefaultFont();
         r = 0;
         g = 0;
@@ -55,7 +55,7 @@ public final class Text{
     }
 
     public void setWindowId(int windowId){
-        if(this.windowId != -1)throw new IllegalStateException("Text can only be rendered on one window");
+        if(this.windowId != -1 && windowId != this.windowId)throw new IllegalStateException("Text can only be rendered on one window");
         this.windowId = windowId;
     }
 
@@ -88,10 +88,10 @@ public final class Text{
      * Creates a Text object with the given text as text
      * @param content the text to show
      * @return a text object with the text
-     * @see #translatable(String)
+     * @see #translatable(String,Object...) 
      */
-    public static Text literal(String content){
-        return new Text(content);
+    public static Text literal(String content,Object ... vals){
+        return new Text(content,vals);
     }
 
     /**
@@ -99,10 +99,10 @@ public final class Text{
      * @param key the key to lookup in the translation table
      * @return a translated Text object
      */
-    public static Text translatable(String key){
+    public static Text translatable(String key,Object ... vals){
         if(!init)throw new IllegalStateException("Texts hava to be initialised before being utilised");
         String v = translatable.get(key);
-        return v != null ? new Text(v):new Text(key);
+        return v != null ? new Text(v,vals):new Text(key,vals);
     }
 
     /**
@@ -165,7 +165,6 @@ public final class Text{
 
         chars.forEach(graphChar -> {
             graphChar.setColor(r,g,b);
-            graphChar.markDirty();
         });
         charsDirty = true;
 
@@ -190,7 +189,6 @@ public final class Text{
 
         chars.forEach(graphChar -> {
             graphChar.setColor(r,g,b,a);
-            graphChar.markDirty();
         });
         charsDirty = true;
 
@@ -206,8 +204,7 @@ public final class Text{
         this.a = a;
 
         chars.forEach(graphChar -> {
-            graphChar.setColor(r,g,b,a);
-            graphChar.markDirty();
+            graphChar.setA(a);
         });
         charsDirty = true;
 
@@ -300,6 +297,16 @@ public final class Text{
     }
 
     public Text update(String newContent){
+        if(newContent.length() == content.length()){
+            content = newContent;
+            changed = true;
+            charsDirty = true;
+            for(int i = 0; i < chars.size(); i++){
+                chars.get(i).setChat(newContent.charAt(i));
+            }
+
+            return this;
+        }
         content = newContent;
         changed = true;
         charsDirty = true;

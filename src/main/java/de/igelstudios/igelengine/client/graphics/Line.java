@@ -355,7 +355,9 @@ public class Line implements BatchContent,AlphaColoredObject {
         end = new Vector2f((float) (start.x + deltaX), (float) (start.y + deltaY));
         endOrg = new Vector2f((float) (org.x + deltaX), (float) (org.y + deltaY));
 
-        Vector2f directional = (mirror == Type.RIGHT ? new Vector2f((float) deltaY, (float) -deltaX) : new Vector2f((float) -deltaY, (float) deltaX)).normalize().mul(thickness);
+        Vector2f directional;
+        if(deltaY + deltaX != 0) directional = (mirror == Type.RIGHT ? new Vector2f((float) deltaY, (float) -deltaX) : new Vector2f((float) -deltaY, (float) deltaX)).normalize().mul(thickness);
+        else directional = new Vector2f(0,0);
         startUp = directional.add(start);
         endUp = new Vector2f(startUp).add(end).sub(start);
 
@@ -529,8 +531,10 @@ public class Line implements BatchContent,AlphaColoredObject {
         markDirty();
     }
 
-    public void setStart(Vector2f org) {
+    public Line setStart(Vector2f org) {
         this.org = org;
         recalculate();
+
+        return this;
     }
 }
