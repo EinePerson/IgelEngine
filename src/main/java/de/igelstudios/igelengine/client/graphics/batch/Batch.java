@@ -127,8 +127,7 @@ public abstract class Batch<T extends BatchContent> {
         supplier.getSize();
         if(supplier.getSize() == 0)return;
 
-        if(!dirty)
-            dirty = dirtyCheck(supplier.getT(),supplier);
+        if(!dirty) dirty = dirtyCheck(supplier.getT(),supplier);
         if(dirty) {
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
