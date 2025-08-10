@@ -2,6 +2,7 @@ package de.igelstudios.igelengine.client.lang;
 
 import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
+import de.igelstudios.igelengine.client.graphics.text.Char;
 import de.igelstudios.igelengine.client.graphics.text.GLFont;
 import org.joml.Vector2f;
 
@@ -37,6 +38,10 @@ public class GraphChar implements BatchContent {
         this.chat = chat;
 
         markDirty();
+    }
+
+    public Char getChar(){
+        return font.get(chat);
     }
 
     @Override

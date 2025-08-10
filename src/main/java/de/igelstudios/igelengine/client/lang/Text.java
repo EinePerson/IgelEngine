@@ -35,6 +35,7 @@ public final class Text{
     private List<Text> childTexts;
     private boolean charsDirty = true;
     private List<GraphChar> fullCharList;
+    private boolean completeDirty = true;
 
     private boolean[] windowAdded;
 
@@ -114,6 +115,7 @@ public final class Text{
     public Text setFont(GLFont font){
         this.font = font;
         chars.forEach(graphChar -> graphChar.setFont(font));
+        charsDirty = true;
         return this;
     }
 
@@ -129,6 +131,8 @@ public final class Text{
             chat.setPos(new Vector2f(pos.x + i,pos.y));
             i += (font.get(chat.getChat()).getWith() * scale);
         }
+
+        charsDirty = true;
         return this;
     }
 
@@ -146,6 +150,9 @@ public final class Text{
     public Text setScale(float scale) {
         this.scale = scale / 128;
         chars.forEach(graphChar -> graphChar.setScale(this.scale));
+
+        charsDirty = true;
+        updatePositions();
         return this;
     }
 
@@ -335,31 +342,65 @@ public final class Text{
         return this;
     }
 
+    private void updatePositions(){
+        char[] charArr = content.toCharArray();
+        float j = 0;
+
+        for(int i = 0; i < chars.size(); i++){
+            chars.get(i).setPos(new Vector2f(pos.x + j,pos.y));
+            j += chars.get(i).getChar().getWith() * scale;
+        }
+    }
+
     public Text update(){
         char[] charArr = content.toCharArray();
         float j = 0;
+
         if(chars.isEmpty()){
-            for (int i = 0; i < charArr.length; i++) {
+            for(int i = 0; i < charArr.length; i++){
                 chars.add(new GraphChar(charArr[i],new Vector2f(pos.x + j,pos.y),lifeTime,scale,r,g,b,font));
-                j += chars.get(i).getFont().get(chars.get(i).getChat()).getWith() * scale;
+                j += chars.get(i).getChar().getWith() * scale;
             }
             return this;
         }
-        for (int i = 0; i < charArr.length; i++) {
-            if(chars.size() > i && !(chars.get(i).getChat() == charArr[i])) chars.add(i,new GraphChar(charArr[i],new Vector2f(pos.x + j,pos.y),lifeTime,scale,r,g,b,font));
-            j += chars.get(i).getFont().get(chars.get(i).getChat()).getWith() * scale;
+
+        if(charsDirty){
+            for(int i = 0; i < chars.size(); i++){
+                chars.get(i).setChat(charArr[i]);
+                chars.get(i).setColor(r,g,b,a);
+                chars.get(i).setFont(font);
+                chars.get(i).setPos(new Vector2f(pos.x + j,pos.y));
+                chars.get(i).setScale(scale);
+                j += chars.get(i).getChar().getWith() * scale;
+            }
+
+            charsDirty = false;
+            completeDirty = true;
+        }else{
+            j = chars.getLast().getPos().x - pos.x + chars.getLast().getChar().getWith() * scale;
+        }
+
+        if(changed){
+            for(int i = chars.size(); i < charArr.length; i++){
+                chars.add(i,new GraphChar(charArr[i],new Vector2f(pos.x + j,pos.y),lifeTime,scale,r,g,b,font));
+                j += chars.get(i).getChar().getWith() * scale;
+            }
+
+            applied();
+            completeDirty = true;
         }
         return this;
     }
 
     private boolean checkDirty(){
-        boolean dirty = charsDirty;
+        if(charsDirty || changed) update();
+        boolean dirty = completeDirty;
+
         for (Text childText : childTexts) {
             if(childText.checkDirty())dirty = true;
         }
 
-        charsDirty = false;
-        update();
+        completeDirty = false;
         return dirty;
     }
 
