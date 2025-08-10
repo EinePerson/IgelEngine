@@ -24,6 +24,9 @@ public class TextField {
     private boolean hasLabel = false;
     private Text label = null;
 
+    private boolean hasNext = false;
+    private TextField nextField = null;
+
 
     /**
      * creates a new Text field
@@ -193,5 +196,20 @@ public class TextField {
 
     public Text getLabel() {
         return label;
+    }
+
+    public boolean hasNext() {
+        return hasNext;
+    }
+
+    public TextField getNextField() {
+        return nextField;
+    }
+
+    public TextField addNextTextField(TextField textField){
+        hasNext = true;
+        nextField = textField;
+
+        return this;
     }
 }

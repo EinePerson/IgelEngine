@@ -26,17 +26,24 @@ public class KeyInitializer {
         this.keyListeners.add(listener);
     }
 
+    @Deprecated
     public void add(MouseMoveListener listener) {
         this.moveListeners.add(listener);
     }
 
+    @Deprecated
     public void add(MouseDragListener listener) {
         this.dragListeners.add(listener);
     }
+    @Deprecated
     public void add(MouseClickListener listener) {this.clickListeners.add(listener);}
 
     public void register() {
         this.keys.forEach(HIDInput::registerKey);
+
+    }
+
+    public void registerListeners(){
         this.keyListeners.forEach(HIDInput::registerKeyListener);
         this.moveListeners.forEach(HIDInput::registerMoveListener);
         this.dragListeners.forEach(HIDInput::registerDragListener);

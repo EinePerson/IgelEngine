@@ -1,7 +1,10 @@
 package de.igelstudios.igelengine.client.graphics;
 
+import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
 import org.joml.Vector2f;
+
+import java.util.Arrays;
 
 /**
  * This represents a polygon spanning all the coords with a uniform color
@@ -10,7 +13,7 @@ import org.joml.Vector2f;
 public class Polygon implements BatchContent,AlphaColoredObject {
     private Vector2f[] coords;
     private float r,g,b,a;
-    private boolean dirty = true;
+    private boolean[] dirty;
     private boolean remove;
 
     /**
@@ -29,6 +32,9 @@ public class Polygon implements BatchContent,AlphaColoredObject {
         this.g = g;
         this.b = b;
         this.a = a;
+
+        dirty = new boolean[ClientEngine.getWindowCount()];
+        markDirty();
     }
 
     /**
@@ -44,6 +50,9 @@ public class Polygon implements BatchContent,AlphaColoredObject {
         g = polygon.g;
         b = polygon.b;
         a = polygon.a;
+
+        dirty = new boolean[ClientEngine.getWindowCount()];
+        markDirty();
     }
 
     /**
@@ -92,16 +101,19 @@ public class Polygon implements BatchContent,AlphaColoredObject {
         markDirty();
     }
 
-    public boolean isDirty() {
-        return dirty;
+    @Override
+    public boolean isDirty(int windowID) {
+        return dirty[windowID];
     }
 
-    public void unMarkDirty(){
-        dirty = false;
+    @Override
+    public void unMarkDirty(int windowID) {
+        dirty[windowID] = false;
     }
 
+     @Override
     public void markDirty(){
-        dirty = true;
+        Arrays.fill(dirty,true);
     }
 
     public Vector2f[] getCoords() {

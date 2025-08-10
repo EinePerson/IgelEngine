@@ -12,6 +12,7 @@ import de.igelstudios.igelengine.common.scene.SceneObject;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,87 +20,108 @@ import java.util.List;
  * it for some reason also contains the initialisation of a Render, this may be changed in the future
  */
 public class ClientScene extends Scene {
-    protected Renderer renderer;
     protected Camera camera;
+    private List<Integer> windowIDs;
 
-    public ClientScene(int id){
-        camera = new Camera(id);
-        renderer = new Renderer(camera, id);
+    public ClientScene(){
+        camera = new Camera();
+        windowIDs = new ArrayList<>();
     }
 
-    public Renderer getRenderer() {
-        return renderer;
+    public void onAddToRenderer(int id){
+        if(windowIDs.contains(id))return;
+        windowIDs.add(id);
+        objects.forEach(obj -> Renderer.get(id).render(obj));
+        lines.forEach(line -> Renderer.get(id).render(line));
+        texts.forEach(text -> Renderer.get(id).render(text));
+        polygons.forEach(polygon -> Renderer.get(id).render(polygon));
+    }
+
+    //TODO make it so that objects can be removed on only one screen
+    public void onRemoveFromRenderer(int id){
+        clearLines();
+        clearObjects();
+        clearPolygons();
+        clearTexts();
     }
 
     @Override
     public void addObject(SceneObject obj) {
         super.addObject(obj);
-        renderer.render(obj);
+        for(Integer windowID : windowIDs){
+            Renderer.get(windowID).render(obj);
+        }
     }
 
     @Override
     public void addLine(Line line) {
         super.addLine(line);
-        renderer.render(line);
+        for(Integer windowID : windowIDs){
+            Renderer.get(windowID).render(line);
+        }
     }
 
     @Override
     public void addPolygon(Polygon polygon) {
         super.addPolygon(polygon);
-        renderer.render(polygon);
+        for(Integer windowID : windowIDs){
+            Renderer.get(windowID).render(polygon);
+        }
     }
 
     @Override
     public void addText(Text text) {
         super.addText(text);
-        renderer.render(text);
+        for(Integer windowID : windowIDs){
+            Renderer.get(windowID).render(text);
+        }
     }
 
     @Override
     public void removeLine(Line line) {
         super.removeLine(line);
-        renderer.render(line);
+        line.remove();
     }
 
     @Override
     public void removePolygon(Polygon polygon) {
         super.removePolygon(polygon);
-        renderer.render(polygon);
+        polygon.remove();
     }
 
     @Override
     public void removeText(Text text) {
         super.removeText(text);
-        renderer.render(text);
+        text.setLifeTime(0);
     }
 
     @Override
     public void removeObject(SceneObject obj) {
         super.removeObject(obj);
-        renderer.render(obj);
+        obj.remove();
     }
 
     @Override
     public void clearLines() {
+        lines.forEach(Line::remove);
         super.clearLines();
-        renderer.clearLine();
     }
 
     @Override
     public void clearObjects() {
+        objects.forEach(SceneObject::remove);
         super.clearObjects();
-        renderer.clearObjects();
     }
 
     @Override
     public void clearPolygons() {
+        polygons.forEach(Polygon::remove);
         super.clearPolygons();
-        renderer.clearPolygon();
     }
 
     @Override
     public void clearTexts() {
+        texts.forEach(txt -> txt.setLifeTime(0));
         super.clearTexts();
-        renderer.clearText();
     }
 }

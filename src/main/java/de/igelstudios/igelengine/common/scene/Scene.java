@@ -70,4 +70,11 @@ public class Scene {
     public void clearPolygons(){
         polygons.clear();
     }
+
+    public void clear() {
+        clearObjects();
+        clearLines();
+        clearTexts();
+        clearPolygons();
+    }
 }

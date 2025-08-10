@@ -1,8 +1,11 @@
 package de.igelstudios.igelengine.common.scene;
 
+import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+
+import java.util.Arrays;
 
 /**
  * This class is an Object in the Scene
@@ -14,7 +17,7 @@ public class SceneObject implements BatchContent {
     protected Vector2f size = new Vector2f(1.0f,1.0f);
     private Vector2f texSize = new Vector2f(1.0f,1.0f);
     protected int tex;
-    private boolean dirty;
+    private boolean[] dirty = new boolean[ClientEngine.getWindowCount()];
     private boolean remove;
     protected int rotation = 0;
 
@@ -97,16 +100,19 @@ public class SceneObject implements BatchContent {
         return pos;
     }
 
+    @Override
     public void markDirty(){
-        dirty = true;
+        Arrays.fill(dirty,true);
     }
 
-    public void unMarkDirty(){
-        dirty = false;
+    @Override
+    public void unMarkDirty(int windowID){
+        dirty[windowID] = false;
     }
 
-    public boolean isDirty() {
-        return dirty;
+    @Override
+    public boolean isDirty(int windowID) {
+        return dirty[windowID];
     }
 
     public boolean toRemove() {

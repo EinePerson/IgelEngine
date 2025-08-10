@@ -15,6 +15,8 @@ import java.util.List;
  */
 public abstract class GUI {
     //static GUI instance;
+    private List<Clickable> clickables;
+    private List<CheckBox> checkBoxes;
     private List<Button> buttons;
     private List<TextField> textFields;
     private List<Text> texts;
@@ -22,16 +24,19 @@ public abstract class GUI {
     private List<Polygon> polygons;
     private List<Line> lines;
     protected final int windowId;
+    int selText = -1;
 
     public GUI(int windowId){
         this.windowId = windowId;
 
+        checkBoxes = new ArrayList<>();
         buttons = new ArrayList<>();
         textFields = new ArrayList<>();
         texts = new ArrayList<>();
         objects = new ArrayList<>();
         polygons = new ArrayList<>();
         lines = new ArrayList<>();
+        clickables = new ArrayList<>();
 
         //instance = this;
     }
@@ -112,7 +117,16 @@ public abstract class GUI {
 
     public void addButton(Button button){
         buttons.add(button);
+        clickables.add(button);
         if(button.hasLabel())render(button.getLabel(),button.getPos().x,button.getPos().y);
+    }
+
+    public void addCheckBox(CheckBox checkBox){
+        checkBoxes.add(checkBox);
+        clickables.add(checkBox);
+        render(checkBox.getLabel(),checkBox.getPos().x + 1,checkBox.getPos().y);
+        render(checkBox.getOutline());
+        render(checkBox.getInside());
     }
 
     public void addTextField(TextField textField){
@@ -136,5 +150,15 @@ public abstract class GUI {
 
     public int getWindowId() {
         return windowId;
+    }
+
+    public void removeButton(Button button){
+        buttons.remove(button);
+        clickables.remove(button);
+        if(button.hasLabel())button.getLabel().setLifeTime(0);
+    }
+
+    List<Clickable> getClickables(){
+        return clickables;
     }
 }

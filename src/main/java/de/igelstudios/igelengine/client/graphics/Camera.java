@@ -13,7 +13,6 @@ public class Camera {
     private int y = 45;
     private Matrix4f projMat, viewMat;
     private Vector2f pos;
-    private int id;
 
     /**
      * @return the x size of the Camera view
@@ -40,12 +39,11 @@ public class Camera {
         adjust();
     }
 
-    public Camera(int id){
+    public Camera(){
         this.pos = new Vector2f();
         projMat = new Matrix4f();
         viewMat = new Matrix4f();
         adjust();
-        this.id = id;
 
         //alListener3f(AL_POSITION, pos.x, pos.y, 0.0f);
         //alListener3f(AL_VELOCITY, 0, 0, 0);

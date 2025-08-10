@@ -36,7 +36,7 @@ public final class Text{
     private boolean charsDirty = true;
     private List<GraphChar> fullCharList;
 
-    private int windowId = -1;
+    private boolean[] windowAdded;
 
     private Text(String content,Object ... vals){
         this.content = String.format(content,vals);
@@ -51,12 +51,13 @@ public final class Text{
         childTexts = new ArrayList<>();
         fullCharList = new ArrayList<>();
 
+        windowAdded = new boolean[ClientEngine.getWindowCount()];
+
         update();
     }
 
     public void setWindowId(int windowId){
-        if(this.windowId != -1 && windowId != this.windowId)throw new IllegalStateException("Text can only be rendered on one window");
-        this.windowId = windowId;
+        windowAdded[windowId] = true;
     }
 
     public static void init(String lang){
@@ -128,6 +129,12 @@ public final class Text{
             chat.setPos(new Vector2f(pos.x + i,pos.y));
             i += (font.get(chat.getChat()).getWith() * scale);
         }
+        return this;
+    }
+
+    public Text setPos(float x, float y) {
+        setPos(new Vector2f(x,y));
+
         return this;
     }
 
@@ -253,7 +260,10 @@ public final class Text{
 
         GraphChar graphChar = new GraphChar(c,new Vector2f(pos.x + getVisualLength(),pos.y),lifeTime,scale,r,g,b,font);
         chars.add(graphChar);
-        Renderer.get(windowId).render(graphChar);
+        for(int i = 0; i < windowAdded.length; i++){
+            if(windowAdded[i])Renderer.get(i).render(graphChar);
+        }
+
         changed = true;
     }
 
@@ -313,7 +323,14 @@ public final class Text{
         chars.forEach(GraphChar::remove);
         chars.clear();
         update();
-        chars.forEach(chat -> Renderer.get(windowId).render(chat));
+        for(int i = 0; i < windowAdded.length; i++){
+            if(windowAdded[i]){
+                for(GraphChar chat : chars){
+                    Renderer.get(i).render(chat);
+                }
+            }
+        }
+
 
         return this;
     }

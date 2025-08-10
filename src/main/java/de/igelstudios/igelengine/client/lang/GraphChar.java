@@ -1,8 +1,11 @@
 package de.igelstudios.igelengine.client.lang;
 
+import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
 import de.igelstudios.igelengine.client.graphics.text.GLFont;
 import org.joml.Vector2f;
+
+import java.util.Arrays;
 
 /**
  * This is the Graphical implementation of {@link Text}<br>
@@ -14,7 +17,7 @@ public class GraphChar implements BatchContent {
     private float scale;
     private GLFont font;
     private int lifeTime;
-    private boolean dirty;
+    private boolean[] dirty = new boolean[ClientEngine.getWindowCount()];
     private  boolean remove;
     private char chat;
 
@@ -50,16 +53,19 @@ public class GraphChar implements BatchContent {
         remove = true;
     }
 
-    public void unMarkDirty(){
-        dirty = false;
+    @Override
+    public void unMarkDirty(int windowID){
+        dirty[windowID] = false;
     }
 
+    @Override
     public void markDirty(){
-        dirty = true;
+        Arrays.fill(dirty,true);
     }
 
-    public boolean isDirty() {
-        return dirty;
+    @Override
+    public boolean isDirty(int windowID) {
+        return dirty[windowID];
     }
 
     public Vector2f getPos() {
@@ -123,6 +129,7 @@ public class GraphChar implements BatchContent {
 
     void setScale(float scale) {
         this.scale = scale;
+        markDirty();
     }
 
     void setLifeTime(int lifeTime) {
@@ -131,6 +138,8 @@ public class GraphChar implements BatchContent {
 
     void setPos(Vector2f pos) {
         this.pos = pos;
+
+        markDirty();
     }
 
     void setFont(GLFont font) {

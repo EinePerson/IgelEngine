@@ -26,7 +26,7 @@ public class ObjectBatch extends Batch<SceneObject>{
                 dirty = true;
                 continue;
             }
-            if(objects.get(i).isDirty()){
+            if(objects.get(i).isDirty(id)){
                 add(i,objects.get(i),supplier);
                 dirty = true;
             }
@@ -55,6 +55,6 @@ public class ObjectBatch extends Batch<SceneObject>{
 
             j += 5;
         }
-        obj.unMarkDirty();
+        obj.unMarkDirty(id);
     }
 }

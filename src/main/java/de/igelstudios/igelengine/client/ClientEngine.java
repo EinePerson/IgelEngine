@@ -10,6 +10,7 @@ import de.igelstudios.igelengine.common.Engine;
 import de.igelstudios.igelengine.common.scene.Scene;
 import de.igelstudios.igelengine.common.startup.EngineInitializer;
 import de.igelstudios.igelengine.common.startup.KeyInitializer;
+import de.igelstudios.igelengine.common.util.UnImplemented;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -42,6 +43,8 @@ public class ClientEngine extends Engine {
     private static boolean isSingleWindowed;
     private static GLFont defaultFont = null;
     private volatile boolean shouldRun = true;
+
+    private KeyInitializer keyInit;
 
     /**
      * Because everything that has to do with Open GL(Rendering) has to run on the same thread, you can add a task here so that it may be executed on the next rendering
@@ -88,7 +91,7 @@ public class ClientEngine extends Engine {
         //windows = new ArrayList<>();
         renderThreads = new ArrayList<>();
 
-        KeyInitializer keyInit = new KeyInitializer();
+        keyInit = new KeyInitializer();
         initializer.registerKeys(keyInit);
         keyInit.register();
 
@@ -154,26 +157,6 @@ public class ClientEngine extends Engine {
         return renderThreads.get(id).window;
     }
 
-    /**
-     * Adds the specified renderer to the window, meaning that the supplied renderer will be used like the one returned from {@link Renderer#get(int)}
-     * @param windowId the window on which the objects should be rendered
-     * @param renderer the renderer which will display
-     * @see  #removeRenderer(int, Renderer) 
-     */
-    public static void addRenderer(int windowId,Renderer renderer){
-        renderThreads.get(windowId).extraRenderers.add(renderer);
-    }
-
-    /**
-     * Removes the renderer from the window meaning that its contents will not be displayed anymore
-     * @param windowId the window where the renderer shall be removed
-     * @param renderer the renderer to remove
-     * @see #addRenderer(int, Renderer) 
-     */
-    public static void removeRenderer(int windowId,Renderer renderer){
-        renderThreads.get(windowId).extraRenderers.remove(renderer);
-    }
-
     public static Camera getCamera(int id){
         return renderThreads.get(id).renderer.getCamera();
     }
@@ -211,7 +194,7 @@ public class ClientEngine extends Engine {
         }
     }
 
-    private class Render extends Thread{
+    public class Render extends Thread{
         private int id;
         private static int count = 0;
         private volatile boolean renderTaskQueue = false;
@@ -220,12 +203,9 @@ public class ClientEngine extends Engine {
         private Window window;
         private Renderer renderer;
         private HIDInput input;
-        
-        private List<Renderer> extraRenderers;
 
         private Render(){
             super("Render Thread " + count++);
-            extraRenderers = new ArrayList<>();
         }
 
         @Override
@@ -244,10 +224,9 @@ public class ClientEngine extends Engine {
 
         public void init(){
             id = renderThreads.size();
-            window = new Window(ClientEngine.this.title,id);
-            renderer = new Renderer(new Camera(id),id);
-
             renderThreads.add(this);
+            window = new Window(ClientEngine.this.title,id);
+            renderer = new Renderer(new Camera(),id);
 
             Renderer.add(renderer);
             //windows.add(window);
@@ -294,9 +273,6 @@ public class ClientEngine extends Engine {
 
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
             renderer.render();
-            for(int i = 0; i < extraRenderers.size(); i++){
-                extraRenderers.get(i).render(false);
-            }
             GLFW.glfwSwapBuffers(window.getWindow());
 
             window.pollEvents();
@@ -350,19 +326,41 @@ public class ClientEngine extends Engine {
 
     public static void addScene(ClientScene scene){
         singleWindowCheck();
-        renderThreads.getFirst().extraRenderers.add(scene.getRenderer());
+        scene.onAddToRenderer(0);
     }
 
     public static void removeScene(ClientScene scene){
         singleWindowCheck();
-        renderThreads.getFirst().extraRenderers.remove(scene.getRenderer());
+        scene.onAddToRenderer(0);
     }
 
     public static void addScene(ClientScene scene,int id){
-        renderThreads.get(id).extraRenderers.add(scene.getRenderer());
+        scene.onAddToRenderer(id);
     }
 
     public static void removeScene(ClientScene scene,int id){
-        renderThreads.get(id).extraRenderers.remove(scene.getRenderer());
+        scene.onRemoveFromRenderer(id);
+    }
+
+    @UnImplemented
+    public static void removeAllScenes(int id){
+
+    }
+
+    public static int getRenderThreadIdOr0(){
+        Thread currentThread = Thread.currentThread();
+
+        for(int i = 0; i < renderThreads.size(); i++){
+            if(renderThreads.get(i) == currentThread)return i;
+        }
+        return 0;
+    }
+
+    /*public void focusWindow(int id){
+        GLFW.glfwFocusWindow(renderThreads.get(id).window.getWindow());
+    }*/
+
+    public static int getWindowCount(){
+        return ClientMain.getInstance().getSettings().getWindowCount();
     }
 }

@@ -22,7 +22,7 @@ public class LineBatch extends Batch<Line>{
                 dirty = true;
                 continue;
             }
-            if(objects.get(i).isDirty()){
+            if(objects.get(i).isDirty(id)){
                 add(i,objects.get(i),supplier);
                 dirty = true;
             }
@@ -66,6 +66,6 @@ public class LineBatch extends Batch<Line>{
         vertices[j + 4] = obj.getB();
         vertices[j + 5] = obj.getA();
 
-        obj.unMarkDirty();
+        obj.unMarkDirty(id);
     }
 }

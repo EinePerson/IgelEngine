@@ -1,9 +1,11 @@
 package de.igelstudios.igelengine.client.graphics;
 
+import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.graphics.batch.BatchContent;
 import org.joml.Vector2f;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 /**
  * This represents a simple line
@@ -24,13 +26,14 @@ public class Line implements BatchContent,AlphaColoredObject {
     private float angle;
     private float thickness;
     private float r,g,b,a;
-    private boolean dirty;
+    private boolean[] dirty;
     private boolean remove;
     private Type mirror;
 
     private Line(Vector2f start){
         this.org = start;
-        dirty = true;
+        dirty = new boolean[ClientEngine.getWindowCount()];
+        markDirty();
     }
 
     /**
@@ -86,10 +89,10 @@ public class Line implements BatchContent,AlphaColoredObject {
         this.g = g;
         this.b = b;
         this.a = a;
+        dirty = new boolean[ClientEngine.getWindowCount()];
+        markDirty();
 
         recalculate();
-
-        dirty = true;
     }
 
     /**
@@ -335,7 +338,7 @@ public class Line implements BatchContent,AlphaColoredObject {
         this.r = r;
         this.g = g;
         this.b = b;
-        dirty = true;
+        markDirty();
         return this;
     }
 
@@ -361,7 +364,7 @@ public class Line implements BatchContent,AlphaColoredObject {
         startUp = directional.add(start);
         endUp = new Vector2f(startUp).add(end).sub(start);
 
-        dirty = true;
+        markDirty();
     }
 
     /**
@@ -390,7 +393,7 @@ public class Line implements BatchContent,AlphaColoredObject {
         endUp.sub(end).mul(thickness).add(end);
         startUp.sub(start).mul(thickness).add(start);
 
-        dirty = true;
+        markDirty();
         return this;
     }
 
@@ -426,7 +429,7 @@ public class Line implements BatchContent,AlphaColoredObject {
         }
 
 
-        dirty = true;
+        markDirty();
         return this;
     }
 
@@ -444,7 +447,7 @@ public class Line implements BatchContent,AlphaColoredObject {
         this.g = g;
         this.b = b;
         this.a = a;
-        dirty = true;
+        markDirty();
         return this;
     }
 
@@ -462,16 +465,19 @@ public class Line implements BatchContent,AlphaColoredObject {
         return start;
     }
 
-    public boolean isDirty() {
-        return dirty;
+    @Override
+    public boolean isDirty(int windowID) {
+        return dirty[windowID];
     }
 
+    @Override
     public void markDirty(){
-        dirty = true;
+        Arrays.fill(dirty,true);
     }
 
-    public void unMarkDirty(){
-        dirty = false;
+    @Override
+    public void unMarkDirty(int windowID) {
+        dirty[windowID] = false;
     }
 
     public void removed() {

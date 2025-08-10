@@ -29,7 +29,7 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
                 dirty = true;
                 continue;
             }
-            if(obj.isDirty()){
+            if(obj.isDirty(id)){
                 add(i,obj,supplier);
                 dirty = true;
             }
@@ -58,14 +58,14 @@ public class TextBatch extends Batch<GraphChar>implements Tickable {
 
             j += 9;
         }
-        obj.unMarkDirty();
+        obj.unMarkDirty(id);
     }
 
     @Override
     public void tick() {
-        for (int i = 0; i < Renderer.get(id).getTextSupplier().getT().size(); i++) {
+        /*for (int i = 0; i < Renderer.get(id).getTextSupplier().getT().size(); i++) {
             Renderer.get(id).getTextSupplier().getT().get(i).decrement();
-        }
+        }*/
         //Renderer.get().getTextSupplier().getT().forEach(GraphChar::decrement);
     }
 }

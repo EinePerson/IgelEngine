@@ -9,12 +9,12 @@ import java.util.List;
 /**
  * creates a new Button, when it is clicked all listeners added via {@link #addListener(ButtonClickEvent)} are called
  */
-public class Button {
+public class Button implements Clickable{
     private Vector2f pos;
     private Vector2f size;
     private List<ButtonClickEvent> listeners;
     private boolean hasLabel = false;
-    private Text label = null;
+    protected Text label = null;
 
     /**
      * creates a new button spanning from pos to pos + size
@@ -49,14 +49,17 @@ public class Button {
         listeners.add(e);
     }
 
-    void invoke(MouseButton button){
+    @Override
+    public void invoke(MouseButton button){
         listeners.forEach(buttonClickEvent -> buttonClickEvent.clicked(button));
     }
 
+    @Override
     public Vector2f getPos() {
         return pos;
     }
 
+    @Override
     public Vector2f getSize() {
         return size;
     }

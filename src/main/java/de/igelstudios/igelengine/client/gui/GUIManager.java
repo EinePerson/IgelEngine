@@ -1,5 +1,6 @@
 package de.igelstudios.igelengine.client.gui;
 
+import de.igelstudios.igelengine.client.Window;
 import de.igelstudios.igelengine.client.graphics.Line;
 import de.igelstudios.igelengine.client.graphics.Polygon;
 import de.igelstudios.igelengine.client.keys.*;
@@ -15,22 +16,23 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
  * in this class, one can set the currently shown GUI (only 1) with {@link #setGUI(GUI)}
  */
 public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
-    private static List<GUIManager> instances = new ArrayList<>();
+    //private static List<GUIManager> instances = new ArrayList<>();
     //private double x,y;
-    private int selText = -1;
-    private volatile GUI gui;
+    private final List<GUI> guis = new ArrayList<>();
     private boolean changed = false;
+    private static GUIManager instance;
 
     private GUIManager(){
-        instances.add(this);
+        instance = this;
     }
 
     @KeyHandler("LMB")
     public void lmb(boolean pressed,double x,double y){
-        changed = false;
         if(!pressed)return;
+        GUI gui = guis.get(Window.getSelectedWindowID());
+        changed = false;
         if(gui == null)return;
-        for (Button button : gui.getButtons()) {
+        for (Clickable button : gui.getClickables()) {
             if(changed){
                 changed = false;
                 return;
@@ -53,12 +55,13 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
                 break;
             }
         }
-        if(!set)selText = -1;
+        if(!set)gui.selText = -1;
     }
 
     @KeyHandler("RMB")
     public void rmb(boolean pressed,double x,double y){
         if(!pressed)return;
+        GUI gui = guis.get(Window.getSelectedWindowID());
         if(gui == null)return;
         for (Button button : gui.getButtons()) {
             if(changed){
@@ -74,6 +77,7 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     @KeyHandler("MMB")
     public void mmb(boolean pressed,double x,double y){
         if(!pressed)return;
+        GUI gui = guis.get(Window.getSelectedWindowID());
         if(gui == null)return;
         for (Button button : gui.getButtons()) {
             if(changed){
@@ -87,16 +91,17 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     }
 
     private void changeTextField(int newSelected){
-        if(selText != -1 && gui.getTextFields().get(selText).hasBackground()) {
-            int oldColor = gui.getTextFields().get(selText).getBackGroundColor();
-            gui.getTextFields().get(selText).getBackGround().setRGBA(((oldColor >> 24) & 0xFF) / 255.0f, ((oldColor >> 16) & 0xFF) / 255.0f, ((oldColor >> 8) & 0xFF) / 255.0f, (oldColor & 0xFF) / 255.0f);
+        GUI gui = guis.get(Window.getSelectedWindowID());
+        if(gui.selText != -1 && gui.getTextFields().get(gui.selText).hasBackground()) {
+            int oldColor = gui.getTextFields().get(gui.selText).getBackGroundColor();
+            gui.getTextFields().get(gui.selText).getBackGround().setRGBA(((oldColor >> 24) & 0xFF) / 255.0f, ((oldColor >> 16) & 0xFF) / 255.0f, ((oldColor >> 8) & 0xFF) / 255.0f, (oldColor & 0xFF) / 255.0f);
         }
 
-        selText = newSelected;
+        gui.selText = newSelected;
 
-        if(selText != -1 && gui.getTextFields().get(selText).hasBackground()) {
-            int oldColor = gui.getTextFields().get(selText).getSelectedBackgroundColor();
-            gui.getTextFields().get(selText).getBackGround().setRGBA(((oldColor >> 24) & 0xFF) / 255.0f, ((oldColor >> 16) & 0xFF) / 255.0f, ((oldColor >> 8) & 0xFF) / 255.0f, (oldColor & 0xFF) / 255.0f);
+        if(gui.selText != -1 && gui.getTextFields().get(gui.selText).hasBackground()) {
+            int oldColor = gui.getTextFields().get(gui.selText).getSelectedBackgroundColor();
+            gui.getTextFields().get(gui.selText).getBackGround().setRGBA(((oldColor >> 24) & 0xFF) / 255.0f, ((oldColor >> 16) & 0xFF) / 255.0f, ((oldColor >> 8) & 0xFF) / 255.0f, (oldColor & 0xFF) / 255.0f);
         }
     }
 
@@ -111,70 +116,82 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
      * @param gui the new GUI or null to remove the old GUI
      */
     public static synchronized void setGUI(GUI gui){
-        instances.get(gui.getWindowId()).setGui(gui);
+        instance.guis.set(gui.windowId, gui);
     }
 
     public void addText(int c){
+        GUI gui = guis.get(Window.getSelectedWindowID());
         if(gui == null)return;
-        if(selText != -1){
-            if(c == 259 && gui.getTextFields().get(selText).getLength() > 0)gui.getTextFields().get(selText).remove();
-            if(c >= 46 && c <= 122) gui.getTextFields().get(selText).add((char) c);
+        if(gui.selText != -1){
+            if(c == 259 && gui.getTextFields().get(gui.selText).getLength() > 0)gui.getTextFields().get(gui.selText).remove();
+            if(c >= 46 && c <= 122) gui.getTextFields().get(gui.selText).add((char) c);
         }
     }
 
-    public boolean hasSelText(){
-        return selText != -1;
+    public boolean hasSelText(int windowID){
+        return guis.get(windowID).selText != -1;
     }
 
-    private void setGui(GUI gui) {
-        selText = -1;
+    private synchronized void setGui(GUI gui) {
+        if(gui == null)return;
         changed = true;
-        if(this.gui != null) removeGUI();
-        if(gui == null)HIDInput.deactivateListener(this);
-        else HIDInput.activateListener(this);
-        this.gui = gui;
+        if(guis.get(gui.windowId) != null) removeGUI(gui.windowId);
+        gui.selText = -1;
+        guis.set(gui.windowId, gui);
     }
 
     /**
      * Removes the current GUI
      */
     public static synchronized void removeGui(int id){
-        if(instances.get(id).gui != null)instances.get(id).removeGUI();
+        if(instance.guis.get(id) != null)instance.removeGUI(id);
     }
 
-    private void removeGUI(){
+    private void removeGUI(int windowID){
+        GUI gui = guis.get(windowID);
         gui.getTextFields().forEach(textfield -> textfield.getText().setLifeTime(0));
         gui.getTexts().forEach(text -> text.setLifeTime(0));
         gui.getObjects().forEach(SceneObject::remove);
         gui.getPolygons().forEach(Polygon::remove);
         gui.getLines().forEach(Line::remove);
-        this.gui = null;
+        guis.set(windowID,null);
     }
 
     public static boolean handle(int mods,int key,int id) {
-        if (instances.get(id).hasSelText()) {
+        if(instance.guis.get(id) == null)return false;
+        if (instance.hasSelText(Window.getSelectedWindowID())) {
             if(key == GLFW.GLFW_KEY_ESCAPE){
-                instances.get(id).changeTextField(-1);
+
+                instance.changeTextField(-1);
                 return true;
             }
+
+            if(key == GLFW.GLFW_KEY_ENTER && instance.hasSelText(Window.getSelectedWindowID()) && instance.guis.get(id).getTextFields().get(instance.guis.get(id).selText).hasNext()){
+                instance.changeTextField(instance.guis.get(id).getTextFields().indexOf(instance.guis.get(id).getTextFields().get(instance.guis.get(id).selText).getNextField()));
+            }
+
             int keyS = key;
             if ((mods & GLFW_MOD_SHIFT) == 0) {
                 keyS = Character.toLowerCase(key);
             } else if (key == 47) keyS = 95;
             else if (key == 46) keyS = 58;
-            instances.get(id).addText(keyS);
+            instance.addText(keyS);
             return true;
         }
         return false;
     }
 
     public static void register(){
-        new GUIManager();
-        HIDInput.registerMouseClickListener(instances.getLast());
+        if(instance == null){
+            new GUIManager();
+            HIDInput.registerMouseClickListener(instance);
+            HIDInput.activateListener(instance);
+        }
+        instance.guis.add(null);
         //input.registerMoveListener(instance);
     }
 
     public static synchronized GUI getGui(int id) {
-        return instances.get(id).gui;
+        return instance.guis.get(id);
     }
 }

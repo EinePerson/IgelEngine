@@ -54,42 +54,25 @@ public class Renderer {
         clientRenderers.add(renderer);
     }
 
-    /*public Renderer(Camera camera,int id,BatchSupplier<GraphChar> textSupplier,BatchSupplier<SceneObject> objectSupplier,BatchSupplier<Line> lineSupplier,BatchSupplier<Polygon> polygonSupplier) {
-        this.id = id;
-        textBatch = new TextBatch(80 * 45);
-        textBatch.setId(id);
-        objectBatch = new ObjectBatch(80 * 45);
-        objectBatch.setId(id);
-        lineBatch = new LineBatch(80 * 45);
-        lineBatch.setId(id);
-        polygonBatch = new PolygonBatch(80 * 45);
-        polygonBatch.setId(id);
-        this.textSupplier = textSupplier;
-        this.objectSupplier = objectSupplier;
-        this.lineSupplier = lineSupplier;
-        this.polygonSupplier = polygonSupplier;
-
-        this.camera = camera;
-        render();
-    }*/
-
     public Renderer(Camera camera, int id) {
-        this.id = id;
-        textBatch = new TextBatch(80 * 45);
-        textBatch.setId(id);
-        objectBatch = new ObjectBatch(80 * 45);
-        objectBatch.setId(id);
-        lineBatch = new LineBatch(80 * 45);
-        lineBatch.setId(id);
-        polygonBatch = new PolygonBatch(80 * 45);
-        polygonBatch.setId(id);
-        textSupplier = new TextSupplier();
-        objectSupplier = new ObjectSupplier();
-        lineSupplier = new LineSupplier();
-        polygonSupplier = new PolygonSupplier();
+        ClientEngine.enforceRenderThread(() -> {
+            this.id = id;
+            textBatch = new TextBatch(80 * 45);
+            textBatch.setId(id);
+            objectBatch = new ObjectBatch(80 * 45);
+            objectBatch.setId(id);
+            lineBatch = new LineBatch(80 * 45);
+            lineBatch.setId(id);
+            polygonBatch = new PolygonBatch(80 * 45);
+            polygonBatch.setId(id);
+            textSupplier = new TextSupplier();
+            objectSupplier = new ObjectSupplier();
+            lineSupplier = new LineSupplier();
+            polygonSupplier = new PolygonSupplier();
 
-        this.camera = camera;
-        render();
+            this.camera = camera;
+            render();
+        },id);
     }
 
     /**
@@ -99,8 +82,8 @@ public class Renderer {
      */
     public void render(Polygon polygon) {
         ClientEngine.enforceRenderThread(() -> {
-            polygon.unMarkDirty();
-            polygonBatch.add(polygonSupplier.getSize(), polygon,polygonSupplier);
+            polygon.unMarkDirty(id);
+            polygonBatch.add(polygonSupplier.getT().size(), polygon,polygonSupplier);
             polygonSupplier.add(polygon);
         }, id);
 
@@ -197,19 +180,17 @@ public class Renderer {
     public void render(SceneObject obj){
         ClientEngine.enforceRenderThread(() -> {
             obj.removed();
+            objectBatch.add(objectSupplier.getSize(), obj,objectSupplier);
             objectSupplier.add(obj);
         }, id);
     }
 
-    public void render(){
-        render(true);
-    }
-
-    public synchronized void render(boolean mainRenderer) {
-        polygonBatch.render(polygonSupplier,false);
-        objectBatch.render(objectSupplier,false);
-        lineBatch.render(lineSupplier,false);
-        textBatch.render(textSupplier,false);
+    public synchronized void render() {
+        if(textBatch == null)return;
+        polygonBatch.render(polygonSupplier);
+        objectBatch.render(objectSupplier);
+        lineBatch.render(lineSupplier);
+        textBatch.render(textSupplier);
     }
 
     /**

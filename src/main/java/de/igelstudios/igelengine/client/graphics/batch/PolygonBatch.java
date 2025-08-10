@@ -21,8 +21,7 @@ public class PolygonBatch extends Batch<Polygon>{
                 dirty = true;
                 continue;
             }
-            if(objs.get(i).isDirty()){
-                objs.get(i).unMarkDirty();
+            if(objs.get(i).isDirty(id)){
                 add(i,objs.get(i),supplier);
                 dirty = true;
             }
@@ -95,5 +94,6 @@ public class PolygonBatch extends Batch<Polygon>{
         }
 
         objs.remove(i);
+        objs.get(i).unMarkDirty(id);
     }
 }
