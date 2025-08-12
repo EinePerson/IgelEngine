@@ -63,6 +63,17 @@ public class Polygon implements BatchContent,AlphaColoredObject {
         this(coords,0f,0f,0f,1.0f);
     }
 
+    public Polygon moveBy(float deltaX, float deltaY){
+        Vector2f delta = new Vector2f(deltaX, deltaY);
+
+        for(Vector2f coord : coords){
+            coord.add(delta);
+        }
+
+        markDirty();
+        return this;
+    }
+
     /**
      * sets the colors, from 0 to 1
      * @param r the amount of red

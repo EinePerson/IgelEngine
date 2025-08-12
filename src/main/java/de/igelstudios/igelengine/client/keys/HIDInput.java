@@ -47,6 +47,7 @@ public class HIDInput {
 
     /**
      * Adds a {@link KeyListener} to be called when the specific key was pressed or released
+     * <br> The listener has to be activated using {@link #registerKeyListener(KeyListener)}
      * @param listener The listener class to be used<br> Every method being registered has to be annotated with {@link  KeyHandler} annotation
      * @see KeyHandler
      */

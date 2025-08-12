@@ -28,6 +28,13 @@ public class ClientScene extends Scene {
         windowIDs = new ArrayList<>();
     }
 
+    public void move(float deltaX, float deltaY){
+        objects.forEach(obj -> obj.setPos(obj.getPos().x,obj.getPos().y));
+        polygons.forEach(obj -> obj.moveBy(deltaX, deltaY));
+        texts.forEach(obj -> obj.setPos(obj.getPos().x,obj.getPos().y));
+        lines.forEach(obj -> obj.setStart(new Vector2f(obj.getStart().x,obj.getStart().y)));
+    }
+
     public void onAddToRenderer(int id){
         if(windowIDs.contains(id))return;
         windowIDs.add(id);

@@ -10,10 +10,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * This is the wrapper class used to render string to the screen
@@ -21,6 +18,8 @@ import java.util.Objects;
  * <br> a lifetime in 20th of seconds may be set after which the text will automatically disappear
  */
 public final class Text{
+    //this is applied to the scale so that the height of a character at size one is one
+    private static final int SCALE_MODIFIER = 128;
     private static Map<String,String> translatable;
     private String content;
     private static boolean init = false;
@@ -148,7 +147,7 @@ public final class Text{
      * @return the Text for chained modification calls
      */
     public Text setScale(float scale) {
-        this.scale = scale / 128;
+        this.scale = scale / SCALE_MODIFIER;
         chars.forEach(graphChar -> graphChar.setScale(this.scale));
 
         charsDirty = true;
@@ -314,16 +313,6 @@ public final class Text{
     }
 
     public Text update(String newContent){
-        if(newContent.length() == content.length()){
-            content = newContent;
-            changed = true;
-            charsDirty = true;
-            for(int i = 0; i < chars.size(); i++){
-                chars.get(i).setChat(newContent.charAt(i));
-            }
-
-            return this;
-        }
         content = newContent;
         changed = true;
         charsDirty = true;
@@ -342,24 +331,36 @@ public final class Text{
         return this;
     }
 
+    //TODO fix yOffset
     private void updatePositions(){
-        char[] charArr = content.toCharArray();
-        float j = 0;
+        float xOffset = 0;
+        float yOffset = 0;
 
         for(int i = 0; i < chars.size(); i++){
-            chars.get(i).setPos(new Vector2f(pos.x + j,pos.y));
-            j += chars.get(i).getChar().getWith() * scale;
+            chars.get(i).setPos(new Vector2f(pos.x + xOffset,pos.y + yOffset));
+            if(chars.get(i).getChat() == '\n'){
+                yOffset -= scale * SCALE_MODIFIER;
+                xOffset = 0;
+            }else{
+                xOffset += chars.get(i).getChar().getWith() * scale;
+            }
         }
     }
 
     public Text update(){
         char[] charArr = content.toCharArray();
-        float j = 0;
+        float xOffset = 0;
+        float yOffset = 0;
 
         if(chars.isEmpty()){
             for(int i = 0; i < charArr.length; i++){
-                chars.add(new GraphChar(charArr[i],new Vector2f(pos.x + j,pos.y),lifeTime,scale,r,g,b,font));
-                j += chars.get(i).getChar().getWith() * scale;
+                chars.add(new GraphChar(charArr[i],new Vector2f(pos.x + xOffset,pos.y + yOffset),lifeTime,scale,r,g,b,font));
+                if(charArr[i] == '\n'){
+                    yOffset -= scale * SCALE_MODIFIER;
+                    xOffset = 0;
+                }else{
+                    xOffset += chars.get(i).getChar().getWith() * scale;
+                }
             }
             return this;
         }
@@ -369,21 +370,31 @@ public final class Text{
                 chars.get(i).setChat(charArr[i]);
                 chars.get(i).setColor(r,g,b,a);
                 chars.get(i).setFont(font);
-                chars.get(i).setPos(new Vector2f(pos.x + j,pos.y));
+                chars.get(i).setPos(new Vector2f(pos.x + xOffset,pos.y + yOffset));
                 chars.get(i).setScale(scale);
-                j += chars.get(i).getChar().getWith() * scale;
+                if(charArr[i] == '\n'){
+                    yOffset -= scale * SCALE_MODIFIER;
+                    xOffset = 0;
+                }else{
+                    xOffset += chars.get(i).getChar().getWith() * scale;
+                }
             }
 
             charsDirty = false;
             completeDirty = true;
         }else{
-            j = chars.getLast().getPos().x - pos.x + chars.getLast().getChar().getWith() * scale;
+            xOffset = chars.getLast().getPos().x - pos.x + chars.getLast().getChar().getWith() * scale;
         }
 
         if(changed){
             for(int i = chars.size(); i < charArr.length; i++){
-                chars.add(i,new GraphChar(charArr[i],new Vector2f(pos.x + j,pos.y),lifeTime,scale,r,g,b,font));
-                j += chars.get(i).getChar().getWith() * scale;
+                chars.add(i,new GraphChar(charArr[i],new Vector2f(pos.x + xOffset,pos.y + yOffset),lifeTime,scale,r,g,b,font));
+                if(charArr[i] == '\n'){
+                    yOffset -= scale * SCALE_MODIFIER;
+                    xOffset = 0;
+                }else{
+                    xOffset += chars.get(i).getChar().getWith() * scale;
+                }
             }
 
             applied();

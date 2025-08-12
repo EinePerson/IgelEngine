@@ -66,6 +66,7 @@ public class Texture {
     }
 
     Texture(String path,int tex){
+        if(path == null)throw new IllegalArgumentException("path is null");
         this.path = path;
 
         this.tex = tex;
@@ -93,6 +94,7 @@ public class Texture {
     }
 
     Texture(String path,boolean b){
+        if(path == null)throw new IllegalArgumentException("path is null");
         this.path = path;
 
         ClientEngine.queueForRenderThread(() -> {
@@ -116,7 +118,7 @@ public class Texture {
 
     public static ByteBuffer read(String name,TextureInfo info){
         try (InputStream stream = ClientMain.class.getClassLoader().getResourceAsStream(name)){
-            byte[] bytes = Objects.requireNonNull(stream).readAllBytes();
+            byte[] bytes = Objects.requireNonNull(stream,name + " does not exist").readAllBytes();
             ByteBuffer byteBuffer = BufferUtils.createByteBuffer(bytes.length);
             byteBuffer.put(bytes);
             byteBuffer.rewind();
