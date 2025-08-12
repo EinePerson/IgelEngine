@@ -75,4 +75,8 @@ public class CheckBox implements Clickable{
     public Polygon getOutline() {
         return outline;
     }
+
+    public boolean getState(){
+        return state;
+    }
 }
