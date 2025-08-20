@@ -10,6 +10,7 @@ import de.igelstudios.igelengine.common.Engine;
 import de.igelstudios.igelengine.common.scene.Scene;
 import de.igelstudios.igelengine.common.startup.EngineInitializer;
 import de.igelstudios.igelengine.common.startup.KeyInitializer;
+import de.igelstudios.igelengine.common.util.Tickable;
 import de.igelstudios.igelengine.common.util.UnImplemented;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
@@ -45,6 +46,7 @@ public class ClientEngine extends Engine {
     private volatile boolean shouldRun = true;
 
     private KeyInitializer keyInit;
+    private static ClientEngine instance;
 
     /**
      * Because everything that has to do with Open GL(Rendering) has to run on the same thread, you can add a task here so that it may be executed on the next rendering
@@ -96,6 +98,7 @@ public class ClientEngine extends Engine {
         keyInit.register();
 
         isSingleWindowed = ClientMain.getInstance().getSettings().getWindowCount() == 1;
+        instance = this;
 
         //ClientEngine.this.input = new HIDInput(initializer);
     }
@@ -362,5 +365,9 @@ public class ClientEngine extends Engine {
 
     public static int getWindowCount(){
         return ClientMain.getInstance().getSettings().getWindowCount();
+    }
+
+    public static ClientEngine getInstance() {
+        return instance;
     }
 }

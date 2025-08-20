@@ -82,7 +82,7 @@ public class Camera {
      * @param pos the delta in Camera position
      */
     public void move(Vector2f pos){
-        pos.add(pos);
+        this.pos.add(pos);
         adjust();
     }
 

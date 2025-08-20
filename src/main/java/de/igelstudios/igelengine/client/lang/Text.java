@@ -58,6 +58,7 @@ public final class Text{
 
     public void setWindowId(int windowId){
         windowAdded[windowId] = true;
+        childTexts.forEach(childText -> childText.setWindowId(windowId));
     }
 
     public static void init(String lang){
@@ -327,11 +328,10 @@ public final class Text{
             }
         }
 
-
+        getFullCharList();
         return this;
     }
 
-    //TODO fix yOffset
     private void updatePositions(){
         float xOffset = 0;
         float yOffset = 0;
@@ -397,6 +397,7 @@ public final class Text{
                 }
             }
 
+            getFullCharList();
             applied();
             completeDirty = true;
         }
@@ -449,6 +450,9 @@ public final class Text{
      * @return the Text for chained modification calls
      */
     public Text append(Text text){
+        for(int i = 0; i < windowAdded.length; i++){
+            if(windowAdded[i])text.setWindowId(i);
+        }
         childTexts.add(text);
         charsDirty = true;
 

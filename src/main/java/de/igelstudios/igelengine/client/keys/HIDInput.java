@@ -57,6 +57,7 @@ public class HIDInput {
             if(!method.isAnnotationPresent(KeyHandler.class))continue;
             if(method.getParameters().length == 1 && method.getParameters()[0].getType().equals(boolean.class)) {
                 String name = method.getAnnotation(KeyHandler.class).value();
+                if(name.isEmpty())name = method.getName();
                 boolean contains = false;
                 for (String value : defaultKeys.values()) {
                     if (value.equals(name)) {
@@ -70,6 +71,7 @@ public class HIDInput {
                 listeners.get(name).get(method).add(listener);
             }else if(method.getParameters().length == 0){
                 String name = method.getAnnotation(KeyHandler.class).value();
+                if(name.isEmpty())name = method.getName();
                 boolean contains = false;
                 for (String value : defaultKeys.values()) {
                     if (value.equals(name)) {
@@ -97,6 +99,7 @@ public class HIDInput {
             if(method.getParameters().length == 3 && method.getParameters()[0].getType().equals(boolean.class) && method.getParameters()[1].getType().equals(double.class) &&
                     method.getParameters()[2].getType().equals(double.class)) {
                 String name = method.getAnnotation(KeyHandler.class).value();
+                if(name.isEmpty())name = method.getName();
                 /*boolean contains = false;
                 for (String value : defaultKeys.values()) {
                     if (value.equals(name)) {
