@@ -6,6 +6,9 @@ package de.igelstudios.igelengine.client.graphics;
  */
 public interface AlphaColoredObject extends ColoredObject{
     AlphaColoredObject setRGBA(float r, float g, float b, float a);
+    default AlphaColoredObject setRGBA(int hex){
+        return setRGBA(((hex >> 24) & 0xFF) / 255.0f,((hex >> 16) & 0xFF) / 255.0f,((hex >> 8) & 0xFF) / 255.0f,(hex & 0xFF) / 255.0f);
+    }
 
     float getA();
 }
