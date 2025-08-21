@@ -19,4 +19,9 @@ public class Numbers {
         if(b.length > 4)throw new IllegalArgumentException("An Integer only consist of 4 bytes");
         return ByteBuffer.wrap(b).getInt();
     }
+
+    public static float interpolate(float start,float end,float weight){
+        if(weight < 0 || weight > 1) throw new IllegalArgumentException("The weight must be between 0 and 1");
+        return (end - start) * weight + start;
+    }
 }
