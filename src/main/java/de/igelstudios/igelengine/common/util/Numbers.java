@@ -15,9 +15,18 @@ public class Numbers {
         return ByteBuffer.allocate(4).putInt(i).array();
     }
 
+    public static byte[] toBytes(float f){
+        return ByteBuffer.allocate(4).putFloat(f).array();
+    }
+
     public static int toInt(byte[] b){
         if(b.length > 4)throw new IllegalArgumentException("An Integer only consist of 4 bytes");
         return ByteBuffer.wrap(b).getInt();
+    }
+
+    public static float toFloat(byte[] b){
+        if(b.length > 4)throw new IllegalArgumentException("An Float only consist of 4 bytes");
+        return ByteBuffer.wrap(b).getFloat();
     }
 
     public static float interpolate(float start,float end,float weight){

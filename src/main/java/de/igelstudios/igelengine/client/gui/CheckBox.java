@@ -64,6 +64,12 @@ public class CheckBox implements Clickable{
         }
     }
 
+    public void setState(boolean state){
+        this.state = state;
+        updateState();
+        listeners.forEach(listeners -> listeners.stateChanged(state));
+    }
+
     public Text getLabel() {
         return label;
     }
