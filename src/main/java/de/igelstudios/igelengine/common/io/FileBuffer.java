@@ -54,6 +54,33 @@ public class FileBuffer {
         return value;
     }
 
+    public void writeLong(long value) {
+        writeCheck(8);
+        buffer[writerIndex++] = (byte) ((value >> 56) & 0xFF);
+        buffer[writerIndex++] = (byte) ((value >> 48) & 0xFF);
+        buffer[writerIndex++] = (byte) ((value >> 40) & 0xFF);
+        buffer[writerIndex++] = (byte) ((value >> 32) & 0xFF);
+        buffer[writerIndex++] = (byte) ((value >> 24) & 0xFF);
+        buffer[writerIndex++] = (byte) ((value >> 16) & 0xFF);
+        buffer[writerIndex++] = (byte) ((value >> 8) & 0xFF);
+        buffer[writerIndex++] = (byte) ((value) & 0xFF);
+    }
+
+    public long readLong(){
+        readCheck(8);
+        long value = (long) (buffer[readerIndex++] & 0xFF) << 56;
+        value |= (long) (buffer[readerIndex++] & 0xFF) << 48;
+        value |= (long) (buffer[readerIndex++] & 0xFF) << 40;
+        value |= (long) (buffer[readerIndex++] & 0xFF) << 32;
+        value |= (long) (buffer[readerIndex++] & 0xFF) << 24;
+        value |= (buffer[readerIndex++] & 0xFF) << 16;
+        value |= (buffer[readerIndex++] & 0xFF) << 8;
+        value |= (buffer[readerIndex++] & 0xFF);
+
+        readerIndex += 8;
+        return value;
+    }
+
     public void writeFloat(float value) {
         writeCheck(4);
         writeInt(Float.floatToIntBits(value));
