@@ -41,7 +41,7 @@ public class ClientEngine extends Engine {
     private static final ConcurrentLinkedQueue<Runnable> mainTasks1 = new ConcurrentLinkedQueue<>();
     private static final ConcurrentLinkedQueue<Runnable> mainTasks2 = new ConcurrentLinkedQueue<>();
 
-    private static boolean isSingleWindowed;
+    private static boolean isSingleWindowed = true;
     private static GLFont defaultFont = null;
     private volatile boolean shouldRun = true;
 

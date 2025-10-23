@@ -22,4 +22,8 @@ public interface AlphaColoredObject extends ColoredObject{
     }
 
     float getA();
+
+    default int getRGBA(){
+        return ((int) (getR() * 255) << 24) | ((int) (getG() * 255) << 16) | ((int) (getB() * 255) << 8) | ((int) (getA() * 255));
+    }
 }

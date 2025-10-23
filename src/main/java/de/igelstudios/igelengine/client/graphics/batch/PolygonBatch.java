@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PolygonBatch extends Batch<Polygon>{
     public PolygonBatch(int size) {
-        super(size, new Shader("line").noTexture(), true, true,2,4);
+        super(size, new Shader("line").noTexture(),1, true, true,2,4);
     }
 
     @Override
