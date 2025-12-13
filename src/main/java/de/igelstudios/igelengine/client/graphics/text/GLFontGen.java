@@ -5,6 +5,8 @@ import org.lwjgl.BufferUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.font.GlyphVector;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,11 +26,17 @@ public class GLFontGen {
     int w,h;
     private Map<Integer,Char> chars;
     private int tex;
+    private String subDir;
 
-    public GLFontGen(String name){
+    public GLFontGen(String name,String subDir){
         this.name = name;
+        this.subDir = subDir.isEmpty()?"":subDir + "/";
         this.fontSize = 128;
         generate();
+    }
+
+    public GLFontGen(String name){
+        this(name,"");
     }
 
     public Char get(int i){
@@ -54,20 +62,20 @@ public class GLFontGen {
         g2d.setFont(font);
         FontMetrics metrics = g2d.getFontMetrics();
         w = 0;
-        h = (int) (metrics.getHeight() * 1.4f);
+        h = (int) (metrics.getHeight() /* 1.4f*/);
         int x = 0;
-        int y = (int) (metrics.getHeight() * 1.4f);
+        int y = (int) (metrics.getHeight() /* 1.4f*/);
 
         chars = new HashMap<>();
         for (int i = 0; i < CHAR_COUNT; i++) {
             if(font.canDisplay(i)){
-                Char chat = new Char(x,y,metrics.charWidth(i), (int) (metrics.getHeight() * 1.4f));
+                Char chat = new Char(x,y,metrics.charWidth(i), (int) (metrics.getHeight() /* 1.4f*/));
                 chars.put(i,chat);
                 w = Math.max(x + metrics.charWidth(i),w);
                 x += chat.getWith();
             }
         }
-        h += (int) (metrics.getHeight() * 1.4f);
+        h += (int) (metrics.getHeight() /* 1.4f*/);
         g2d.dispose();
 
         img = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
@@ -75,11 +83,19 @@ public class GLFontGen {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setFont(font);
         g2d.setColor(Color.WHITE);
+        g2d.setPaint(Color.WHITE);
+        g2d.setComposite(AlphaComposite.SrcOver);
+        g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         for (int i = 0; i < CHAR_COUNT; i++) {
             if(font.canDisplay(i)){
                 Char chat = chars.get(i);
                 chat.calcCords(w,h);
-                g2d.drawString(String.valueOf((char) i),chat.getX(),chat.getY());
+                //the old shit stopped working
+                GlyphVector gv = font.createGlyphVector(g2d.getFontRenderContext(), String.valueOf((char) i));
+                Path2D.Double combined = new Path2D.Double(Path2D.WIND_NON_ZERO);
+                Shape full = gv.getOutline(chat.getX(), chat.getY()); // x,y baseline
+                combined.append(full, false);
+                g2d.fill(combined);
             }
         }
         g2d.dispose();
@@ -88,9 +104,9 @@ public class GLFontGen {
             String trimmed = new File(name).getName().replace(".ttf","").replace(".otf","");
             String png = trimmed + ".png";
             String json = trimmed + ".json";
-            if(!new File("src/main/resources/fonts/" + png).exists())new File("src/main/resources/fonts/" + png).createNewFile();
-            ImageIO.write(img,"png",new FileOutputStream("src/main/resources/fonts/" + png));
-            Files.writeString(Path.of("src/main/resources/fonts/" + json),new Gson().toJson(chars));
+            if(!new File(subDir + "src/main/resources/fonts/" + png).exists())new File(subDir + "src/main/resources/fonts/" + png).createNewFile();
+            ImageIO.write(img,"png",new FileOutputStream(subDir + "src/main/resources/fonts/" + png));
+            Files.writeString(Path.of(subDir + "src/main/resources/fonts/" + json),new Gson().toJson(chars));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

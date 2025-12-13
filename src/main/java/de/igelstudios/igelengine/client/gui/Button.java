@@ -4,7 +4,9 @@ import de.igelstudios.igelengine.client.lang.Text;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * creates a new Button, when it is clicked all listeners added via {@link #addListener(ButtonClickEvent)} are called
@@ -15,6 +17,7 @@ public class Button implements Clickable{
     private List<ButtonClickEvent> listeners;
     private boolean hasLabel = false;
     protected Text label = null;
+    private Map<GUI,Boolean> hidden = new HashMap<>();
 
     /**
      * creates a new button spanning from pos to pos + size
@@ -38,6 +41,36 @@ public class Button implements Clickable{
         hasLabel = true;
         this.label = label;
         listeners = new ArrayList<>();
+    }
+
+    /**
+     * removes the button from the GUI thus hiding the (optional) label and making it unClickable
+     * @param gui the GUI to remove the button from
+     */
+    public void hideOn(GUI gui){
+        if(hidden.containsKey(gui) && hidden.get(gui))return;
+
+        hidden.put(gui, true);
+        gui.removeButton(this);
+    }
+
+    /**
+     * Readds this button to the specified GUI, if it was previously removed using {@link #hideOn(GUI)}
+     * @param gui the GUI to readd the button to
+     */
+    public void showOn(GUI gui){
+        if(!hidden.containsKey(gui) || !hidden.get(gui))return;
+
+        hidden.put(gui, false);
+        gui.addButton(this);
+    }
+
+    /**
+     * Creates a new Button with the exact measurements of the Text label
+     * @param label the label to wrap around
+     */
+    public Button(Text label){
+        this(label.getPos(),label);
     }
 
     /**
@@ -70,5 +103,11 @@ public class Button implements Clickable{
 
     public Text getLabel() {
         return label;
+    }
+
+    @Override
+    public String toString() {
+        if(hasLabel)return "Button: " + label.getContent();
+        else return super.toString();
     }
 }

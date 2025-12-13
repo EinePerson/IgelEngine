@@ -3,10 +3,12 @@ package de.igelstudios.igelengine.client.graphics;
 import de.igelstudios.igelengine.client.ClientEngine;
 import de.igelstudios.igelengine.client.ClientScene;
 import de.igelstudios.igelengine.client.graphics.batch.*;
+import de.igelstudios.igelengine.client.keys.HIDInput;
 import de.igelstudios.igelengine.client.lang.GraphChar;
 import de.igelstudios.igelengine.client.lang.Text;
 import de.igelstudios.igelengine.common.scene.SceneObject;
 import org.joml.Matrix4f;
+import org.joml.Vector2d;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ public class Renderer {
     private BatchSupplier<SceneObject> objectSupplier;
     private BatchSupplier<Line> lineSupplier;
     private BatchSupplier<Polygon> polygonSupplier;
+    private HIDInput input;
 
     private Camera camera;
     private int id;
@@ -73,6 +76,15 @@ public class Renderer {
             this.camera = camera;
             render();
         },id);
+    }
+
+    /**
+     * <b> Internal method </b>
+     * @param input
+     */
+    public void setInput(HIDInput input) {
+        if(this.input != null) throw new IllegalStateException("Input is already set");
+        this.input = input;
     }
 
     /**
@@ -134,10 +146,11 @@ public class Renderer {
         text.setLifeTime(lifetime);
         ClientEngine.enforceRenderThread(() -> {
             text.update();
-            text.getChars().forEach(graphChar -> {
+            for(int i = 0; i < text.getChars().size(); i++){
+                GraphChar graphChar = text.getChars().get(i);
                 textBatch.add(textSupplier.getSize(), graphChar,textSupplier);
                 textSupplier.add(graphChar);
-            });
+            }
         }, id);
     }
 
@@ -188,9 +201,9 @@ public class Renderer {
     public synchronized void render() {
         if(textBatch == null)return;
         polygonBatch.render(polygonSupplier);
-        objectBatch.render(objectSupplier);
         lineBatch.render(lineSupplier);
         textBatch.render(textSupplier);
+        objectBatch.render(objectSupplier);
     }
 
     /**
@@ -229,6 +242,10 @@ public class Renderer {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public Vector2f getMouseCursorPos() {
+        return new Vector2f((float) input.getMouseX(),(float) input.getMouseY());
     }
 
     public class TextSupplier implements BatchSupplier<GraphChar> {

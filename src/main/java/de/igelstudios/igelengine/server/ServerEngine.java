@@ -21,6 +21,7 @@ public class ServerEngine extends Engine implements Runnable {
 
     public ServerEngine(ErrorHandler handler){
         this(Client.DEFAULT_PORT,handler);
+        isInit = true;
     }
 
     public ServerEngine(int port,ErrorHandler handler){
@@ -28,6 +29,7 @@ public class ServerEngine extends Engine implements Runnable {
         players = new HashMap<>();
         server = new Server(port,players,handler);
         addTickable(server);
+        isInit = true;
     }
 
     @Override

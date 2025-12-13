@@ -8,24 +8,44 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileBuffer {
+    public static final int APPEND_FILE_WRITER_FLAG = 0b1;
+
     private byte[] buffer;
     private final Path path;
     private int writerIndex;
     private int readerIndex;
     private boolean empty;
+    private final int version;
+    private final int flags;
+
+    public FileBuffer(Path path,int version){
+        this(path, version,1024,0);
+    }
+
+    public FileBuffer(Path path,int version,int initialCapacity,int flags) {
+        this.path = path;
+        buffer = new byte[initialCapacity];
+        this.version = version;
+        this.flags = flags;
+    }
 
     public FileBuffer(Path path) {
-        this.path = path;
-        buffer = new byte[1024];
+        this(path,-1);
     }
 
     public FileBuffer(String path) {
         this(Paths.get(path));
     }
 
+    public FileBuffer(String path, int version) {
+        this(Paths.get(path), version);
+    }
+
     private void writeCheck(int bytesToWrite) {
         if(bytesToWrite + writerIndex >= buffer.length){
-            byte[] data = new byte[buffer.length * 2];
+            int newSize = buffer.length * 2;
+            while(bytesToWrite + writerIndex >= newSize)newSize *= 2;
+            byte[] data = new byte[newSize];
             System.arraycopy(buffer, 0, data, 0, buffer.length);
             buffer = data;
         }
@@ -129,12 +149,25 @@ public class FileBuffer {
         Files.write(path,croppedBuffer);
     }
 
+    /**
+     * Reads the specified file to the beginning of the buffer
+     * @throws IOException if an I/O error occurs reading from the stream
+     */
     public void read() throws IOException {
         empty = !Files.exists(path);
-        if(!empty) buffer = Files.readAllBytes(path);
+        if(!empty){
+            byte[] fileContent = Files.readAllBytes(path);
+            writeCheck(fileContent.length);
+            System.arraycopy(fileContent,0,buffer,0,fileContent.length);
+            if((flags & APPEND_FILE_WRITER_FLAG) != 0)writerIndex = fileContent.length;
+        }
     }
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public int version(){
+        return version;
     }
 }

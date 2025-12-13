@@ -26,6 +26,7 @@ public class EngineSettings {
     private String default_lang;
 
     private String window_count = "1";
+    private int overrideWindowCount = -1;
 
     public static EngineSettingsParser parser(String fileName) {
         return new EngineSettingsParser(fileName);
@@ -68,7 +69,12 @@ public class EngineSettings {
     }
 
     public int getWindowCount() {
+        if(overrideWindowCount != -1)return overrideWindowCount;
         return Integer.parseInt(window_count);
+    }
+
+    public void overrideWindowCount(int overrideWindowCount) {
+        this.overrideWindowCount = overrideWindowCount;
     }
 
     public static class EngineSettingsParser {

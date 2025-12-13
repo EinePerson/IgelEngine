@@ -46,7 +46,7 @@ public class ClientEngine extends Engine {
     private volatile boolean shouldRun = true;
 
     private KeyInitializer keyInit;
-    private static ClientEngine instance;
+    //private static ClientEngine instance;
 
     /**
      * Because everything that has to do with Open GL(Rendering) has to run on the same thread, you can add a task here so that it may be executed on the next rendering
@@ -96,9 +96,10 @@ public class ClientEngine extends Engine {
         keyInit = new KeyInitializer();
         initializer.registerKeys(keyInit);
         keyInit.register();
+        isInit = true;
+
 
         isSingleWindowed = ClientMain.getInstance().getSettings().getWindowCount() == 1;
-        instance = this;
 
         //ClientEngine.this.input = new HIDInput(initializer);
     }
@@ -235,6 +236,7 @@ public class ClientEngine extends Engine {
             //windows.add(window);
             input = new HIDInput(id);
             input.registerGLFWListeners(window.getWindow());
+            renderer.setInput(input);
 
             GL11.glClearColor(1.0f,1.0f,1.0f,1.0f);
 
@@ -368,6 +370,6 @@ public class ClientEngine extends Engine {
     }
 
     public static ClientEngine getInstance() {
-        return instance;
+        return (ClientEngine) instance;
     }
 }

@@ -11,9 +11,12 @@ import java.util.List;
 public abstract class Engine {
     private final List<Tickable> tickables;
     private boolean running;
+    protected boolean isInit = false;
+    protected static Engine instance;
 
     public Engine(){
         tickables = new ArrayList<>();
+        instance = this;
     }
     public void start(){
         running = true;
@@ -123,5 +126,13 @@ public abstract class Engine {
      */
     public void removeTickable(Tickable tickable){
         tickables.remove(tickable);
+    }
+
+    /**
+     * Explicit check to force an operation to only occur before the Engine is initialized
+     * throws a {@link IllegalStateException} when the Engine has been initialized and it is called
+     */
+    public static void initCheck(){
+        if(instance.isInit)throw new IllegalStateException("Engine already initialized!");
     }
 }

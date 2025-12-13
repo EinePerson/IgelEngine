@@ -23,6 +23,7 @@ public class ServerMain {
     private final ErrorHandler handler;
 
     public static void main(String[] args) {
+        Main.args = args;
         new ServerMain(25).start();
     }
     public  static synchronized ServerMain getInstance(){

@@ -86,6 +86,15 @@ public class Camera {
         adjust();
     }
 
+    /**
+     * Sets the new position to specified value
+     * @param pos the new position of the camera
+     */
+    public void setPos(Vector2f pos){
+        this.pos.set(pos);
+        adjust();
+    }
+
     public Vector2f getPos() {
         return pos;
     }

@@ -28,7 +28,7 @@ public class TexturePool {
         return textures.get(texIDs.get(path));
     }
 
-    public static Texture getI(String path){
+    /*public static Texture getI(String path){
         if(!texIDs.containsKey(path)){
             int i;
             if(textures.isEmpty())i = 0;
@@ -37,7 +37,7 @@ public class TexturePool {
             texIDs.put(path,i);
         }
         return textures.get(texIDs.get(path));
-    }
+    }*/
 
     public static int texCount(){
         return textures.size();

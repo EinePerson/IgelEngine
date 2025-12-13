@@ -15,7 +15,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 /**
  * in this class, one can set the currently shown GUI (only 1) with {@link #setGUI(GUI)}
  */
-public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
+public class GUIManager {
     //private static List<GUIManager> instances = new ArrayList<>();
     //private double x,y;
     private final List<GUI> guis = new ArrayList<>();
@@ -26,68 +26,76 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
         instance = this;
     }
 
-    @KeyHandler("LMB")
-    public void lmb(boolean pressed,double x,double y){
-        if(!pressed)return;
-        GUI gui = guis.get(Window.getSelectedWindowID());
-        changed = false;
-        if(gui == null)return;
+    public static boolean lmb(boolean pressed,double x,double y){
+        if(!pressed)return false;
+        GUI gui = instance.guis.get(Window.getSelectedWindowID());
+        instance.changed = false;
+        if(gui == null)return false;
+        boolean invoked = false;
         for (Clickable button : gui.getClickables()) {
-            if(changed){
-                changed = false;
-                return;
+            if(instance.changed){
+                instance.changed = false;
+                return true;
             }
             if(button.getPos().x <= x && button.getPos().x + button.getSize().x > x && button.getPos().y <= y && button.getPos().y + button.getSize().y > y){
                 button.invoke(MouseButton.LMB);
+                invoked = true;
             }
         }
-        if(gui == null)return;
+        if(gui == null)return false;
         boolean set = false;
         for (int i = 0; i < gui.getTextFields().size(); i++) {
-            if(changed){
-                changed = false;
-                return;
+            if(instance.changed){
+                instance.changed = false;
+                return true;
             }
             TextField field = gui.getTextFields().get(i);
             if(field.getPos().x <= x && field.getPos().x + field.getSize().x > x && field.getPos().y <= y && field.getPos().y + field.getSize().y > y){
-                changeTextField(i);
+                instance.changeTextField(i);
                 set = true;
                 break;
             }
         }
-        if(!set)gui.selText = -1;
+        if(!set) gui.selText = -1;
+        return set || invoked;
     }
 
-    @KeyHandler("RMB")
-    public void rmb(boolean pressed,double x,double y){
-        if(!pressed)return;
-        GUI gui = guis.get(Window.getSelectedWindowID());
-        if(gui == null)return;
+    public static boolean rmb(boolean pressed,double x,double y){
+        if(!pressed)return false;
+        GUI gui = instance.guis.get(Window.getSelectedWindowID());
+        if(gui == null)return false;
+        boolean invoked = false;
         for (Button button : gui.getButtons()) {
-            if(changed){
-                changed = false;
-                return;
+            if(instance.changed){
+                instance.changed = false;
+                return true;
             }
             if(button.getPos().x <= x && button.getPos().x + button.getSize().x > x && button.getPos().y <= y && button.getPos().y + button.getSize().y > y){
                 button.invoke(MouseButton.RMB);
+                invoked = true;
             }
         }
+
+        return invoked;
     }
 
-    @KeyHandler("MMB")
-    public void mmb(boolean pressed,double x,double y){
-        if(!pressed)return;
-        GUI gui = guis.get(Window.getSelectedWindowID());
-        if(gui == null)return;
+    public static boolean mmb(boolean pressed,double x,double y){
+        if(!pressed)return false;
+        GUI gui = instance.guis.get(Window.getSelectedWindowID());
+        if(gui == null)return false;
+        boolean invoked = false;
         for (Button button : gui.getButtons()) {
-            if(changed){
-                changed = false;
-                return;
+            if(instance.changed){
+                instance.changed = false;
+                return true;
             }
             if(button.getPos().x <= x && button.getPos().x + button.getSize().x > x && button.getPos().y <= y && button.getPos().y + button.getSize().y > y){
                 button.invoke(MouseButton.MMB);
+                invoked = true;
             }
         }
+
+        return invoked;
     }
 
     private void changeTextField(int newSelected){
@@ -184,8 +192,6 @@ public class GUIManager implements MouseClickListener/*, MouseMoveListener*/ {
     public static void register(){
         if(instance == null){
             new GUIManager();
-            HIDInput.registerMouseClickListener(instance);
-            HIDInput.activateListener(instance);
         }
         instance.guis.add(null);
         //input.registerMoveListener(instance);

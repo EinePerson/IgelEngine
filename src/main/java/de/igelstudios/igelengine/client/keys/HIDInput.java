@@ -40,6 +40,7 @@ public class HIDInput {
     private final GLFWMouseButtonCallback mouseKeys;
     private static KeyConfig keyConfig;
     private static Map<Listener,Boolean> activeListeners = new HashMap<>();
+    private final int windowId;
 
     static {
         registerKeys();
@@ -83,7 +84,7 @@ public class HIDInput {
                 if (!continousListeners.containsKey(name)) continousListeners.put(name, new HashMap<>());
                 if(!continousListeners.get(name).containsKey(method))continousListeners.get(name).put(method, new ArrayList<>());
                 continousListeners.get(name).get(method).add(listener);
-            }else throw new IllegalArgumentException(method.getName() + " does not have exactly one parameter of type boolean");
+            }else if(method.getParameters().length != 3) throw new IllegalArgumentException(method.getName() + " does not have exactly one parameter of type boolean");
         }
     }
 
@@ -96,6 +97,7 @@ public class HIDInput {
         activeListeners.put(listener,false);
         for (Method method : listener.getClass().getMethods()) {
             if(!method.isAnnotationPresent(KeyHandler.class))continue;
+            if(method.getParameters().length < 2)continue;
             if(method.getParameters().length == 3 && method.getParameters()[0].getType().equals(boolean.class) && method.getParameters()[1].getType().equals(double.class) &&
                     method.getParameters()[2].getType().equals(double.class)) {
                 String name = method.getAnnotation(KeyHandler.class).value();
@@ -175,6 +177,7 @@ public class HIDInput {
     public HIDInput(int windowId){
         //KeyInitializer keyInit = new KeyInitializer();
         //initializer.registerKeys(keyInit);
+        this.windowId = windowId;
         registerListeners();
         keyConfig = new KeyConfig(defaultKeys);
         keyboard = new GLFWKeyCallback() {
@@ -271,21 +274,32 @@ public class HIDInput {
                                 }
                             });
                         }
-                    } else {
-                        if (mouseClickListeners.containsKey(keyConfig.get(key))) {
-                            Map<Listener, Boolean> listener = new HashMap<>(activeListeners);
-                            mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
-                                try {
-                                    for(MouseClickListener mouseClickListener : mouseClickListeners.get(keyConfig.get(key)).get(method)){
-                                        if (listener.get(mouseClickListener)) {
-                                            method.invoke(mouseClickListener, true,
-                                                    mouseX * ClientEngine.getCamera(windowId).getX(), mouseY * ClientEngine.getCamera(windowId).getY());
+                    } else{
+                        final double x = mouseX * ClientEngine.getCamera(windowId).getX() + ClientEngine.getCamera(windowId).getPos().x;
+                        final double y = mouseY * ClientEngine.getCamera(windowId).getY() + ClientEngine.getCamera(windowId).getPos().y;
+                        if(key == GLFW_MOUSE_BUTTON_1){
+                            if(GUIManager.lmb(true,x,y)) return;
+                        }else if(key == GLFW_MOUSE_BUTTON_2){
+                            if(GUIManager.mmb(true,x,y)) return;
+                        }else if(key == GLFW_MOUSE_BUTTON_3){
+                            if(GUIManager.rmb(true,x,y)) return;
+                        }else{
+                            if(mouseClickListeners.containsKey(keyConfig.get(key))){
+                                Map<Listener, Boolean> listener = new HashMap<>(activeListeners);
+
+                                mouseClickListeners.get(keyConfig.get(key)).keySet().forEach(method -> {
+                                    try{
+                                        for(MouseClickListener mouseClickListener : mouseClickListeners.get(keyConfig.get(key)).get(method)){
+                                            if(listener.get(mouseClickListener)){
+                                                method.invoke(mouseClickListener,true,
+                                                        x,y);
+                                            }
                                         }
+                                    }catch(IllegalAccessException | InvocationTargetException e){
+                                        e.printStackTrace();
                                     }
-                                } catch (IllegalAccessException | InvocationTargetException e) {
-                                    e.printStackTrace();
-                                }
-                            });
+                                });
+                            }
                         }
                     }
                     keys[key] = (action != GLFW_RELEASE);
@@ -338,5 +352,13 @@ public class HIDInput {
 
     public static void deactivateListener(Listener listener){
         activeListeners.put(listener,false);
+    }
+
+    public double getMouseX() {
+        return mouseX * ClientEngine.getCamera(windowId).getX() + ClientEngine.getCamera(windowId).getPos().x;
+    }
+
+    public double getMouseY() {
+        return mouseY * ClientEngine.getCamera(windowId).getX() + ClientEngine.getCamera(windowId).getPos().y;
     }
 }

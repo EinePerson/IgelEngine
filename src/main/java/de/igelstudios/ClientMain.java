@@ -9,7 +9,7 @@ import de.igelstudios.igelengine.common.startup.EngineInitializer;
 
 import java.lang.reflect.InvocationTargetException;
 
-public class ClientMain {
+public class ClientMain extends Main{
     //public static final Logger LOGGER = LoggerFactory.getLogger(Window.TITLE + ":Client");
     private static ClientMain instance;
 
@@ -18,6 +18,7 @@ public class ClientMain {
     }
 
     public static void main(String[] args) {
+        Main.args = args;
         new ClientMain().start();
     }
 
