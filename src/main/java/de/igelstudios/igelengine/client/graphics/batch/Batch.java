@@ -7,7 +7,7 @@ import de.igelstudios.igelengine.client.graphics.texture.TexturePool;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -19,6 +19,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
  * @param <T> the object that this batch renders, to be set by the implementing class
  */
 public abstract class Batch<T extends BatchContent> {
+    private final int verticesPerObject;
     private final Shader shader;
     protected float[] vertices;
     private int vao,vbo;
@@ -33,6 +34,7 @@ public abstract class Batch<T extends BatchContent> {
     protected int[] indices;
     private boolean dynamic;
     protected int id;
+    protected Consumer<BatchSupplier<T>> drawMode = (supplier) -> glDrawElements(GL_TRIANGLES,supplier.getVertexCount(),GL_UNSIGNED_INT,0);
     /**
      * last parameter of {@link Batch#Batch(int, Shader, boolean,boolean, int...)}  Batch
      */
@@ -43,16 +45,18 @@ public abstract class Batch<T extends BatchContent> {
      * Super Constructor of any Batch child class
      * @param size should be parameter of child constructor
      * @param shader the shader the batch will use
+     * @param verticesPerObject the amount of vertices that constitute one object
      * @param attrs every attribute where the value is the size of the specific attribute
      * @param movable determent's weather objects rendered by this can be moved relative to the player
      * @param dynamic whether the indices are dynamic or static rectangles
      */
-    public Batch(int size,Shader shader,boolean movable,boolean dynamic,int ... attrs){
+    public Batch(int size,Shader shader,int verticesPerObject,boolean movable,boolean dynamic,int ... attrs){
         this.orgSize = size;
         this.shader = shader;
         this.size = size;
         this.attrs = attrs;
         this.dynamic = dynamic;
+        this.verticesPerObject = verticesPerObject;
 
         for (int attr : attrs) {
             total += attr;
@@ -60,12 +64,24 @@ public abstract class Batch<T extends BatchContent> {
 
         this.movable = movable;
 
-        totalInBits = total * 4;
+        totalInBits = total * verticesPerObject;
 
 
         vertices = new float[size * totalInBits];
 
         load();
+    }
+
+    /**
+     * Super Constructor of any Batch child class
+     * @param size should be parameter of child constructor
+     * @param shader the shader the batch will use
+     * @param attrs every attribute where the value is the size of the specific attribute
+     * @param movable determent's weather objects rendered by this can be moved relative to the player
+     * @param dynamic whether the indices are dynamic or static rectangles
+     */
+    public Batch(int size,Shader shader,boolean movable,boolean dynamic,int ... attrs){
+        this(size,shader,4,movable,dynamic,attrs);
     }
 
     private int[] genIndices() {
@@ -130,7 +146,10 @@ public abstract class Batch<T extends BatchContent> {
         if(!dirty) dirty = dirtyCheck(supplier.getT(),supplier);
         if(dirty) {
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
+
+            //TODO create flag to make this work(lower one for Tesselation/bezier upper one for rest)
+            //glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
+            glBufferData(GL_ARRAY_BUFFER,vertices,GL_STATIC_DRAW);
 
             if(dynamic){
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,ebo);
@@ -153,16 +172,11 @@ public abstract class Batch<T extends BatchContent> {
             shader.pitInt("tex", new int[]{0, 1, 2, 3, 4, 5, 6, 7});
         }
 
+        bindUniforms(shader,supplier);
         glBindVertexArray(vao);
-        for (int i = 0; i < attrs.length; i++) {
-            glEnableVertexAttribArray(i);
-        }
 
-        glDrawElements(GL_TRIANGLES,supplier.getVertexCount(),GL_UNSIGNED_INT,0);
+        drawMode.accept(supplier);
 
-        for (int i = 0; i < attrs.length; i++) {
-            glDisableVertexAttribArray(i);
-        }
         glBindVertexArray(0);
 
         if(shader.usesTexture()) {
@@ -199,7 +213,7 @@ public abstract class Batch<T extends BatchContent> {
      */
     public synchronized void add(int i,T obj,BatchSupplier<T> supplier){
         int j = supplier.getSize(i) * totalInBits;
-        if(dynamic)j /= 4;
+        //if(dynamic)j /= 4;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
 
         addP(j,obj);
@@ -210,7 +224,7 @@ public abstract class Batch<T extends BatchContent> {
 
     public synchronized int add(T obj,BatchSupplier<T> supplier){
         int j = gi * totalInBits;
-        if(dynamic)j /= 4;
+        //if(dynamic)j /= 4;
         while (j + obj.getLength() * totalInBits > vertices.length)widen();
 
 
@@ -240,7 +254,7 @@ public abstract class Batch<T extends BatchContent> {
 
         vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER,vbo);
-        glBufferData(GL_ARRAY_BUFFER,vertices.length * 4L,GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER,(long) vertices.length * verticesPerObject,GL_DYNAMIC_DRAW);
 
         ebo = glGenBuffers();
         indices = genIndices();
@@ -249,7 +263,7 @@ public abstract class Batch<T extends BatchContent> {
 
         int j = 0;
         for (int i = 0; i < attrs.length; i++) {
-            glVertexAttribPointer(i,attrs[i],GL_FLOAT,false,totalInBits,j);
+            glVertexAttribPointer(i,attrs[i],GL_FLOAT,false,total * 4,j);
             glEnableVertexAttribArray(i);
 
             j += attrs[i] * 4;
@@ -260,5 +274,9 @@ public abstract class Batch<T extends BatchContent> {
 
     public void setId(int id){
         this.id = id;
+    }
+
+    protected void bindUniforms(Shader shader,BatchSupplier<T> supplier){
+
     }
 }

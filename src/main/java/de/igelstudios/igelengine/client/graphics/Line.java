@@ -349,6 +349,10 @@ public class Line implements BatchContent,AlphaColoredObject {
     private void recalculate(){
         float deltaX = Math.round(length * (float) Math.cos(angle) * 100000) / 100000.0f;
         float deltaY = Math.round(length * (float) Math.sin(angle) * 100000) / 100000.0f;
+        if(deltaX < 0){
+            if(mirror == Type.LEFT)mirror = Type.RIGHT;
+            else if(mirror == Type.RIGHT)mirror = Type.LEFT;
+        }
         if(mirror != Type.CENTER){
             start = new Vector2f(org);
         }else{
@@ -359,7 +363,7 @@ public class Line implements BatchContent,AlphaColoredObject {
         endOrg = new Vector2f((float) (org.x + deltaX), (float) (org.y + deltaY));
 
         Vector2f directional;
-        if(deltaY + deltaX != 0) directional = (mirror == Type.RIGHT ? new Vector2f((float) deltaY, (float) -deltaX) : new Vector2f((float) -deltaY, (float) deltaX)).normalize().mul(thickness);
+        if(Math.abs(deltaY) + Math.abs(deltaX) != 0) directional = (mirror == Type.RIGHT ? new Vector2f((float) deltaY, (float) -deltaX) : new Vector2f((float) -deltaY, (float) deltaX)).normalize().mul(thickness);
         else directional = new Vector2f(0,0);
         startUp = directional.add(start);
         endUp = new Vector2f(startUp).add(end).sub(start);

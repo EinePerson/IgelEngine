@@ -3,6 +3,7 @@ package de.igelstudios.igelengine.client.graphics.shader;
 import de.igelstudios.ClientMain;
 import de.igelstudios.igelengine.client.ClientEngine;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
@@ -13,6 +14,8 @@ import java.net.URISyntaxException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -25,10 +28,21 @@ public class Shader {
     private int program;
     private boolean used = false;
     private boolean usesTexture = true;
+    private static final Map<Integer,String> SHADER_TYPE_FILE_EXTENSION_MAP = Map.of(GL_VERTEX_SHADER,"vert",GL_FRAGMENT_SHADER,"frag"
+            ,GL_TESS_EVALUATION_SHADER,"tese",GL_TESS_CONTROL_SHADER,"tesc",GL_GEOMETRY_SHADER,"geom");
 
     public Shader noTexture() {
         usesTexture = false;
         return this;
+    }
+
+    public static Shader of(String fileName,int ... types){
+        ShaderData[] data = new ShaderData[types.length];
+        for(int i = 0; i < types.length; i++){
+            data[i] = new ShaderData(fileName + "." + SHADER_TYPE_FILE_EXTENSION_MAP.get(types[i]),types[i]);
+        }
+
+        return new Shader(data);
     }
 
     public boolean usesTexture() {
@@ -39,7 +53,7 @@ public class Shader {
      * Creates a new shader
      * @param data the specified shader data holding objects
      */
-    public Shader(ShaderData[] data){
+    public Shader(ShaderData ... data){
         shaders = new int[data.length];
 
 
@@ -54,7 +68,7 @@ public class Shader {
 
             int i = glGetProgrami(program, GL_LINK_STATUS);
         
-        //if (i == GL_FALSE) ClientMain.LOGGER.error(data + " Linking of shaders failed." + glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH)));
+        if (i == GL_FALSE) System.out.println(Arrays.toString(data) + " Linking of shaders failed." + glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH)));
 
     }
     private static int load(int type,String name){
@@ -63,7 +77,7 @@ public class Shader {
             glShaderSource(id,new String(stream.readAllBytes()));
             glCompileShader(id);
             int i = glGetShaderi(id, GL_COMPILE_STATUS);
-            //if (i == GL_FALSE) ClientMain.LOGGER.error(name + " Shader compilation failed." + glGetShaderInfoLog(id, glGetShaderi(id, GL_INFO_LOG_LENGTH)));
+            if (i == GL_FALSE) System.out.println(name + " Shader compilation failed." + glGetShaderInfoLog(id, glGetShaderi(id, GL_INFO_LOG_LENGTH)));
 
             return id;
         } catch (IOException | NullPointerException e) {
@@ -76,7 +90,7 @@ public class Shader {
      * @param name the file name where the vertex shader ends in .vert and the fragment shader in .frag
      */
     public Shader(String name){
-        this(new Shader.ShaderData[]{new Shader.ShaderData(name + ".vert",GL_VERTEX_SHADER),new Shader.ShaderData(name + ".frag",GL_FRAGMENT_SHADER)});
+        this(new Shader.ShaderData(name + ".vert",GL_VERTEX_SHADER),new Shader.ShaderData(name + ".frag",GL_FRAGMENT_SHADER));
     }
 
     public void putMat(String id, Matrix4f mat){
@@ -91,6 +105,12 @@ public class Shader {
         int loc = glGetUniformLocation(program,id);
         use();
         glUniform4f(loc,vec.x,vec.y,vec.z,vec.w);
+    }
+
+    public void putVec2(String id, Vector2f vec){
+        int loc = glGetUniformLocation(program,id);
+        use();
+        glUniform2f(loc,vec.x,vec.y);
     }
 
     public void putFloat(String id,float f){
@@ -127,6 +147,12 @@ public class Shader {
         if(!used)return;
         glUseProgram(0);
         used = false;
+    }
+
+    public void putRGBA(String id, int rgba){
+        int loc = glGetUniformLocation(program,id);
+        use();
+        glUniform4f(loc,(rgba << 24) / 255.0f,(rgba << 16) / 255.0f,(rgba << 8) / 255.0f,rgba / 255.0f);
     }
 
     public record ShaderData(String name,int type){}

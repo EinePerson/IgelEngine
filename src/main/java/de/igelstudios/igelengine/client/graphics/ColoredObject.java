@@ -21,7 +21,23 @@ public interface ColoredObject {
                 ((hex2 >> 16) & 0xFF) / 255.0f,((hex2 >> 8) & 0xFF) / 255.0f,(hex2 & 0xFF) / 255.0f,weight);
     }
 
+    default void setR(float r){
+        setColor(r,getG(),getB());
+    }
+
+    default void setG(float g){
+        setColor(getR(),g,getB());
+    }
+
+    default void setB(float b){
+        setColor(getR(),getG(),b);
+    }
+
     float getR();
     float getG();
     float getB();
+
+    default int getColor(){
+        return ((int) (getR() * 255) << 16) | ((int) (getG() * 255) << 8) | ((int) (getB() * 255));
+    }
 }

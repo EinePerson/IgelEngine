@@ -44,10 +44,12 @@ public class Renderer {
     private ObjectBatch objectBatch;
     private LineBatch lineBatch;
     private PolygonBatch polygonBatch;
+    private BezierBatch bezierBatch;
     private BatchSupplier<GraphChar> textSupplier;
     private BatchSupplier<SceneObject> objectSupplier;
     private BatchSupplier<Line> lineSupplier;
     private BatchSupplier<Polygon> polygonSupplier;
+    private BatchSupplier<BezierCurve> bezierSupplier;
     private HIDInput input;
 
     private Camera camera;
@@ -68,10 +70,13 @@ public class Renderer {
             lineBatch.setId(id);
             polygonBatch = new PolygonBatch(80 * 45);
             polygonBatch.setId(id);
+            bezierBatch = new BezierBatch(80 * 45);
+            bezierBatch.setId(id);
             textSupplier = new TextSupplier();
             objectSupplier = new ObjectSupplier();
             lineSupplier = new LineSupplier();
             polygonSupplier = new PolygonSupplier();
+            bezierSupplier = new BezierSupplier();
 
             this.camera = camera;
             render();
@@ -134,6 +139,14 @@ public class Renderer {
      */
     public void render(Text text){
         render(text,-1);
+    }
+
+    public void render(BezierCurve bezierCurve){
+        ClientEngine.enforceRenderThread(() -> {
+            bezierCurve.removed();
+            bezierBatch.add(bezierSupplier.getT().size(), bezierCurve,bezierSupplier);
+            bezierSupplier.add(bezierCurve);
+        }, id);
     }
 
     /**
@@ -204,6 +217,7 @@ public class Renderer {
         lineBatch.render(lineSupplier);
         textBatch.render(textSupplier);
         objectBatch.render(objectSupplier);
+        bezierBatch.render(bezierSupplier);
     }
 
     /**
@@ -218,6 +232,8 @@ public class Renderer {
         lineBatch.clearBatch();
         polygonSupplier.clear();
         polygonBatch.clearBatch();
+        bezierSupplier.clear();
+        bezierBatch.clearBatch();
     }
 
     public void clearObjects(){
@@ -238,6 +254,11 @@ public class Renderer {
     public void clearPolygon(){
         polygonBatch.clearBatch();
         polygonSupplier.clear();
+    }
+
+    public void clearBeziers(){
+        bezierBatch.clearBatch();
+        bezierSupplier.clear();
     }
 
     public Camera getCamera() {
@@ -297,6 +318,11 @@ public class Renderer {
         @Override
         public Matrix4f getViewMat() {
             return Renderer.this.camera.getViewMat();
+        }
+
+        @Override
+        public Camera getCamera() {
+            return Renderer.this.camera;
         }
 
         @Override
@@ -511,6 +537,72 @@ public class Renderer {
         @Override
         public void add(Polygon polygon) {
             lines.add(polygon);
+        }
+    }
+
+    public class BezierSupplier implements BatchSupplier<BezierCurve> {
+        private List<BezierCurve> lines;
+        //private List<SceneObject> objs;
+
+
+        public BezierSupplier() {
+            lines = new ArrayList<>();
+            //objs = new ArrayList<>();
+        }
+
+        @Override
+        public List<BezierCurve> getT() {
+            return lines;
+        }
+
+        @Override
+        public int getSize() {
+            return lines.size() * BezierBatch.BEZIER_INTERVALS;
+        }
+
+        @Override
+        public int getSize(int i) {
+            return i * BezierBatch.BEZIER_INTERVALS;
+        }
+
+        @Override
+        public int getIndicesSize(int i) {
+            return 0;
+        }
+
+        @Override
+        public int getIndicesSize() {
+            return 0;
+        }
+
+        @Override
+        public int getVertexCount() {
+            return getSize() * 6;
+        }
+
+        @Override
+        public Matrix4f getProjMat() {
+            return Renderer.this.camera.getProjMat();
+        }
+
+        @Override
+        public Matrix4f getViewMat() {
+            return Renderer.this.camera.getViewMat();
+        }
+
+        @Override
+        public void clear() {
+            lines.clear();
+        }
+
+        @Override
+        public void add(BezierCurve line) {
+            lines.add(line);
+        }
+
+        @Override
+        public Camera getCamera() {
+            return Renderer.this.camera;
         }
     }
 

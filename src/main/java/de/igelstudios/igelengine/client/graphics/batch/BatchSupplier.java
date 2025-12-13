@@ -1,10 +1,11 @@
 package de.igelstudios.igelengine.client.graphics.batch;
 
+import de.igelstudios.igelengine.client.graphics.RenderDataSupplier;
 import org.joml.Matrix4f;
 
 import java.util.List;
 
-public interface BatchSupplier<T> {
+public interface BatchSupplier<T> extends RenderDataSupplier {
 
     /**
      * The objects that are Supplied;
@@ -21,18 +22,6 @@ public interface BatchSupplier<T> {
     int getIndicesSize();
 
     int getVertexCount();
-
-    /**
-     * If the Batch to which this is supplied has {@link Batch#movable} set to false this will never be used and should return null;
-     * @return either a Projection Matrix or null
-     */
-    Matrix4f getProjMat();
-
-    /**
-     * If the Batch to which this is supplied has {@link Batch#movable} set to false this will never be used and should return null;
-     * @return either a View Matrix or null
-     */
-    Matrix4f getViewMat();
 
     void clear();
 
