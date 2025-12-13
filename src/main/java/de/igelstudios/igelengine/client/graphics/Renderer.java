@@ -388,6 +388,11 @@ public class Renderer {
         }
 
         @Override
+        public Camera getCamera() {
+            return camera;
+        }
+
+        @Override
         public void clear() {
             objs.clear();
         }
@@ -459,6 +464,11 @@ public class Renderer {
         @Override
         public void add(Line line) {
             lines.add(line);
+        }
+
+        @Override
+        public Camera getCamera() {
+            return camera;
         }
     }
 
@@ -537,6 +547,11 @@ public class Renderer {
         @Override
         public void add(Polygon polygon) {
             lines.add(polygon);
+        }
+
+        @Override
+        public Camera getCamera() {
+            return camera;
         }
     }
 
